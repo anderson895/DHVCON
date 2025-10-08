@@ -1,5 +1,6 @@
 <?php 
   include "src/components/header.php";
+  include "plugins/PageSpinner.php";
   ?>
 
   <!-- Sign Up Form -->
@@ -7,6 +8,13 @@
   <div class="bg-white shadow-2xl rounded-2xl w-full max-w-md p-8 space-y-6 border border-yellow-200">
     <h2 class="text-3xl font-bold text-center text-red-700">Create your account</h2>
     <p class="text-center text-gray-600">Join DHVCON and start connecting instantly.</p>
+
+
+
+    <!-- Spinner Overlay -->
+    <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50" style="display:none; background-color: rgba(255, 255, 255, 0.7);">
+      <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
 
     <form id="frmSignup" method="POST" class="space-y-5">
       <!-- Full Name -->
@@ -62,7 +70,7 @@
       <!-- Submit Button -->
       <button 
         type="submit" 
-        class="w-full bg-yellow-500 text-white font-semibold py-3 rounded-full hover:bg-yellow-600 transition"
+        class="cursor-pointer w-full bg-yellow-500 text-white font-semibold py-3 rounded-full hover:bg-yellow-600 transition"
       >
         Sign Up
       </button>

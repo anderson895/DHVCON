@@ -4,7 +4,7 @@
   #loadingScreen {
       position: fixed;
       inset: 0;
-      background-color: #000000ff; /* White background */
+      background-color: #ffffffff; /* White background */
       display: flex;
       justify-content: center;
       align-items: center;
