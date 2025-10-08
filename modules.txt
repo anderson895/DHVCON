@@ -1,5 +1,5 @@
-• Login and Registration Form
-• Landing Page
+✓• Login and Registration Form
+✓• Landing Page
 • Creating Meeting Features
 • Join Meeting Features
 • Conference Page
