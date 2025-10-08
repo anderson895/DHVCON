@@ -55,4 +55,68 @@ class global_class extends db_connect
 
 
 
+
+
+
+
+
+
+
+    
+    
+    public function Login($email, $password)
+{
+    $query = $this->conn->prepare("SELECT * FROM `user` WHERE `user_email` = ?");
+    $query->bind_param("s", $email);
+
+    if ($query->execute()) {
+        $result = $query->get_result();
+        if ($result->num_rows > 0) {
+            $user = $result->fetch_assoc();
+
+            if (password_verify($password, $user['user_password'])) {
+                // 🔍 Check if inactive
+                if ($user['user_status'] == 0) {
+                    $query->close();
+                    return [
+                        'success' => false,
+                        'message' => 'Your account is not active.'
+                    ];
+                }
+
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+                $_SESSION['user_id'] = $user['user_id'];
+
+                $query->close();
+                return [
+                    'success' => true,
+                    'message' => 'Login successful.',
+                    'data' => [
+                        'user_id' => $user['user_id']
+                    ]
+                ];
+            } else {
+                $query->close();
+                return ['success' => false, 'message' => 'Incorrect password.'];
+            }
+        } else {
+            $query->close();
+            return ['success' => false, 'message' => 'User not found.'];
+        }
+    } else {
+        $query->close();
+        return ['success' => false, 'message' => 'Database error during execution.'];
+    }
+}
+
+
+
+
+
+    
+
+
+
 }

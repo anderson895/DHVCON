@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($loginResult['success']) {
                 echo json_encode([
                     'status' => 'success',
-                    'message' => $loginResult['message'],
-                    'user_position' => $loginResult['data']['user_position']
+                    'message' => $loginResult['message']
                 ]);
             } else {
                 echo json_encode([
