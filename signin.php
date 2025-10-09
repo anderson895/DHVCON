@@ -7,6 +7,12 @@
       <h2 class="text-3xl font-bold text-center text-red-700">Welcome back!</h2>
       <p class="text-center text-gray-600">Sign in to continue to DHVCON</p>
 
+      <!-- Spinner Overlay -->
+    <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50" style="display:none; background-color: rgba(255, 255, 255, 0.7);">
+      <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+
       <form id="frmLogin" method="POST" class="space-y-5">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
