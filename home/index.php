@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discord Quests Replica</title>
+  <title>DHVCON</title>
   <link href="../src/output.css" rel="stylesheet" />
   <!-- ✅ Google Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -23,8 +23,8 @@
         <span>Servers</span>
       </a>
       <a href="#" class="flex items-center gap-3 px-3 py-2 bg-[#3c3f44] rounded-md">
-        <span class="material-icons-outlined text-xl text-gray-300">emoji_events</span>
-        <span>Quests</span>
+        <span class="material-icons-outlined text-xl text-gray-300">videocam</span>
+        <span>Meeting</span>
       </a>
     </nav>
 
@@ -45,29 +45,28 @@
     <!-- Top Tabs -->
     <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
       <div class="flex items-center gap-6">
-        <button class="text-white font-semibold border-b-2 border-white pb-1">All Quests</button>
-        <button class="text-gray-400 hover:text-white">Claimed Quests</button>
+        <button class="text-white font-semibold border-b-2 border-white pb-1">All Meeting</button>
+        <button class="cursor-pointer text-gray-400 hover:text-white">Claimed Certificate</button>
       </div>
-      <button class="bg-gray-700 text-white px-2 py-1 rounded-full text-xs flex items-center justify-center">
-        <span class="material-icons-outlined text-sm">settings</span>
-      </button>
+     
     </div>
 
     <!-- Banner -->
-    <section class="p-6 bg-gradient-to-r from-[#1e1f22] via-[#2f3150] to-[#1e1f22]">
-      <div class="rounded-2xl bg-[#2b2d31] p-10 text-center shadow-lg">
-        <h1 class="text-4xl font-extrabold mb-3">INTRODUCING DISCORD ORBS</h1>
-        <p class="text-gray-400 mb-5">Reward your play. Earn through Quests. Spend in the Shop.</p>
-        <div class="flex justify-center gap-4">
-          <button class="bg-white text-black font-semibold px-4 py-2 rounded-md hover:bg-gray-200">
-            Explore Orbs Exclusives
-          </button>
-          <button class="bg-[#5865f2] text-white font-semibold px-4 py-2 rounded-md hover:bg-[#4752c4]">
-            Discord Orbs Terms
-          </button>
+   <section class="p-6 bg-gradient-to-r from-[#1e1f22] via-[#2f3150] to-[#1e1f22]">
+        <div class="rounded-2xl bg-[#2b2d31] p-10 text-center shadow-lg">
+            <h1 class="text-4xl font-extrabold mb-3 text-white">Welcome to DHVCON</h1>
+            <p class="text-gray-400 mb-5 text-lg">Empowering collaboration and innovation — earn your certificate through our official platform.</p>
+            <div class="flex justify-center gap-4">
+            <button class="cursor-pointer bg-white text-black font-semibold px-5 py-2.5 rounded-md hover:bg-gray-200 transition">
+                Create Meeting
+            </button>
+            <button class="cursor-pointer bg-[#5865f2] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#4752c4] transition">
+                Join Meeting
+            </button>
+            </div>
         </div>
-      </div>
     </section>
+
 
     <!-- Available Quests -->
     <section class="px-6 pb-12">
@@ -86,7 +85,7 @@
               Claim 700 Discord Orbs
             </p>
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Start Video Quest
+              Join Meeting
             </button>
           </div>
         </div>
@@ -103,7 +102,7 @@
               Claim a Tactibear Flex Avatar
             </p>
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Accept Quest
+              Join Meeting
             </button>
           </div>
         </div>
@@ -120,7 +119,7 @@
               Claim a Bombhead’s Explade
             </p>
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Accept Quest
+              Join Meeting
             </button>
           </div>
         </div>
