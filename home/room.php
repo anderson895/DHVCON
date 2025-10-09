@@ -11,7 +11,7 @@ $code=$_GET['code'];
     <div class="flex items-center gap-6">
       <button class="tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
       <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="meeting">Meeting</button>
-      <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
+      <button class=" tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
       <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
       <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
       
