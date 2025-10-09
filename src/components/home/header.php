@@ -81,6 +81,20 @@ if (isset($_SESSION['user_id'])) {
     </div>
   </aside>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
   <script>
     $(document).ready(function () {
       $("#settings-btn").on("click", function () {

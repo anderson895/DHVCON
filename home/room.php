@@ -216,10 +216,30 @@ $code=$_GET['code'];
             <h3 class="font-semibold text-lg text-white">Project Discussion</h3>
             <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>
             <p class="text-sm text-gray-300">Claim 700 Discord Orbs</p>
+           
+           
             <a href="https://meet.google.com/" target="_blank" 
               class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
               Join Meeting
             </a>
+
+
+             <a href="https://meet.google.com/" target="_blank" 
+              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+              Close Meeting
+            </a>
+
+
+             <a href="https://meet.google.com/" target="_blank" 
+              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+              Generate Certificate
+            </a>
+
+            <a href="https://meet.google.com/" target="_blank" 
+              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+              Meeting Logs
+            </a>
+
           </div>
         </div>
 
