@@ -152,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }else if ($_GET['requestType'] == 'getRoomDetails') {
 
-           $code = $_GET['code'] ?? null;
+           $code = $_GET['code'];
 
             if (!$code) {
                 echo json_encode([

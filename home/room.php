@@ -100,10 +100,8 @@ $code=$_GET['code'];
 <section id="feed" class="tab-section p-6 bg-gradient-to-r from-[#1e1f22] via-[#2f3150] to-[#1e1f22] space-y-10">
   <!-- Welcome Banner -->
   <div class="rounded-2xl bg-[#2b2d31] p-10 text-center shadow-lg">
-    <h1 class="text-4xl font-extrabold mb-3 text-white">Welcome to ROOM 101</h1>
-    <p class="text-gray-400 mb-2 text-lg">
-      Empowering collaboration and innovation — earn your certificate through our official platform.
-    </p>
+    <h1 class="text-4xl font-extrabold mb-3 text-white uppercase">Welcome to <span class="roomName"></span></h1>
+    <p class="text-gray-400 mb-2 text-lg roomDescription"> </p>
   </div>
   <!-- Create Post Section -->
   
@@ -111,8 +109,10 @@ $code=$_GET['code'];
   <!-- News Feed Timeline -->
   <div class="bg-[#2b2d31] rounded-2xl shadow-lg p-8">
     <h2 class="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2 flex items-center gap-2">
-      <span class="material-icons-round text-[#5865f2]">timeline</span> Latest News & Updates
-    </h2>
+    <span class="material-icons-round text-[#5865f2]">hourglass_empty</span>
+    Pending Works
+  </h2>
+
 
     <div class="relative border-l-2 border-[#5865f2]/40 pl-8 space-y-10">
 
@@ -258,8 +258,12 @@ $code=$_GET['code'];
 
 </main>
 
-<!-- jQuery Section Toggle -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<?php 
+include "../src/components/home/footer.php";
+?>
+
+
 <script>
 $(document).ready(function(){
   $(".tab-btn").click(function(){
@@ -284,6 +288,4 @@ $(document).ready(function(){
 });
 </script>
 
-<?php 
-include "../src/components/home/footer.php";
-?>
+<script src="../static/js/home/room.js"></script>
