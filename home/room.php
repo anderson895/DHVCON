@@ -19,7 +19,7 @@ include "../src/components/home/header.php";
 
   <!-- Welcome Banner -->
   <div class="rounded-2xl bg-[#2b2d31] p-10 text-center shadow-lg">
-    <h1 class="text-4xl font-extrabold mb-3 text-white">Welcome to DHVCON</h1>
+    <h1 class="text-4xl font-extrabold mb-3 text-white">Welcome to ROOM 101</h1>
     <p class="text-gray-400 mb-2 text-lg">
       Empowering collaboration and innovation — earn your certificate through our official platform.
     </p>
@@ -80,9 +80,6 @@ include "../src/components/home/header.php";
 
       <!-- Post 2 (Alternate right side) -->
       <div class="relative flex gap-6 flex-row-reverse items-start">
-        <div class="absolute -right-[14px] bg-[#5865f2] rounded-full w-6 h-6 flex items-center justify-center">
-          <span class="material-icons-round text-white text-sm">verified</span>
-        </div>
 
         <div class="bg-[#1e1f22] rounded-2xl p-6 w-full hover:bg-[#2f3150] transition">
           <div class="flex justify-between items-center">
