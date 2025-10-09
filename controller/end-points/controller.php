@@ -198,8 +198,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => $response['message']
                 ]);
             }
+        }else if ($_GET['requestType'] == 'getCreatedRooms') {
+
+            $user_id = $_SESSION['user_id'];
+
+            $response = $db->getCreatedRooms($user_id);
+
+            if ($response['success']) {
+                echo json_encode([
+                    'status' => 200,
+                    'data' => $response['data'],
+                    'user_id' => $user_id
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 500,
+                    'message' => $response['message']
+                ]);
+            }
         }else if ($_GET['requestType'] == 'getRoomDetails') {
 
+
+            $user_id = $_SESSION['user_id'];
            $code = $_GET['code'];
 
             if (!$code) {
@@ -215,12 +235,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($response['success']) {
                 echo json_encode([
                     'status' => 200,
-                    'data' => $response['data']
+                    'data' => $response['data'],
+                    'user_id' => $user_id
                 ]);
             } else {
                 echo json_encode([
                     'status' => 500,
-                    'message' => $response['message']
+                    'message' => $response['message'],
+                    'user_id' => $user_id
                 ]);
             }
 

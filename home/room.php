@@ -10,10 +10,11 @@ $code=$_GET['code'];
   <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
     <div class="flex items-center gap-6">
       <button class="tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
-      <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
       <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="meeting">Meeting</button>
-      <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
       <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
+      <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
+      <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
+      
     </div>
   </div>
 
@@ -182,7 +183,7 @@ $code=$_GET['code'];
 
   <!-- MEETING SECTION -->
   <section id="meeting" class="tab-section hidden p-6 text-white">
-    <div class="bg-[#2b2d31] rounded-xl p-8 shadow-lg text-center mb-8">
+    <div class="creator-only bg-[#2b2d31] rounded-xl p-8 shadow-lg text-center mb-8">
       <h2 class="text-3xl font-bold mb-3">Meetings</h2>
       <p class="text-gray-400 mb-6">Collaborate with your team — create or join a meeting below.</p>
       <div class="flex justify-center gap-4">
@@ -197,18 +198,7 @@ $code=$_GET['code'];
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
 
-     <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
-          <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Meeting" class="w-full h-40 object-cover">
-          <div class="p-4 space-y-3">
-            <h3 class="font-semibold text-lg text-white">Team Sync Meeting</h3>
-            <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>
-            <p class="text-sm text-gray-300">Claim 700 Discord Orbs</p>
-            <a href="https://meet.google.com/" target="_blank" 
-              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Join Meeting
-            </a>
-          </div>
-        </div>
+   
 
         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
           <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Meeting" class="w-full h-40 object-cover">
@@ -219,26 +209,26 @@ $code=$_GET['code'];
            
            
             <a href="https://meet.google.com/" target="_blank" 
-              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+              class="joiner-only block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
               Join Meeting
             </a>
 
-
-             <a href="https://meet.google.com/" target="_blank" 
-              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+            <button 
+              class="creator-only w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition cursor-pointer">
               Close Meeting
-            </a>
+            </button>
 
-
-             <a href="https://meet.google.com/" target="_blank" 
-              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+            <button 
+              class="joiner-only w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
               Generate Certificate
-            </a>
+            </button>
 
-            <a href="https://meet.google.com/" target="_blank" 
-              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+            <button 
+              class="creator-only w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
               Meeting Logs
-            </a>
+            </button>
+
+
 
           </div>
         </div>

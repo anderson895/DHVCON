@@ -255,6 +255,48 @@ public function getAllPendingClasswork($user_id, $room_id) {
 
 
 
+public function getCreatedRooms($user_id) {
+    $query = "
+        SELECT room_id, room_name, room_code, room_banner, room_description, room_date_created
+        FROM room
+        WHERE room_creator_user_id = ?
+        ORDER BY room_date_created DESC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return [
+            'success' => false,
+            'message' => 'Prepare failed: ' . $this->conn->error
+        ];
+    }
+
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $rooms = [];
+    while ($row = $result->fetch_assoc()) {
+        $rooms[] = $row;
+    }
+
+    $stmt->close();
+
+    return [
+        'success' => true,
+        'data' => $rooms
+    ];
+}
+
+
+
+
+
+
+
+
+
+
 
 
 

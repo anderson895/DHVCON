@@ -27,7 +27,7 @@ $(document).ready(function() {
     $('head').append(spinnerStyle);
 
     // FETCH ROOM DETAILS
-    function fetchRoomsDetails() {
+        function fetchRoomsDetails() {
         // Show spinner while fetching room details
         $('#pendingWorksContainer').html(spinner);
 
@@ -38,20 +38,31 @@ $(document).ready(function() {
             success: function(response) {
                 console.log("Room Details:", response);
 
-                room_id = response.data.room_id;
+                const data = response.data;
+                room_id = data.room_id;
 
-                $(".roomName").text(response.data.room_name);
-                $(".roomDescription").text(response.data.room_description);
-                $(".roomBanner").attr("src", response.data.room_banner);
+                $(".roomName").text(data.room_name);
+                $(".roomDescription").text(data.room_description);
+                $(".roomBanner").attr("src", data.room_banner);
 
-                // Now fetch pending works after we have room_id
-                fetchAllWorksPending();
-            },
-            error: function() {
-                $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
-            }
-        });
-    }
+              if (response.user_id !== data.creator_id) {
+                    $('.creator-only').hide();
+                    $('.joiner-only').show();
+                } else {
+                    $('.creator-only').show();
+                    $('.joiner-only').hide();
+                }
+
+
+            // Now fetch pending works after we have room_id
+            fetchAllWorksPending();
+        },
+        error: function() {
+            $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
+        }
+    });
+}
+
 
     function fetchAllWorksPending() {
         if (!room_id) return;
