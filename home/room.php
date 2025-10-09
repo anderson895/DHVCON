@@ -2,6 +2,7 @@
 include "../src/components/home/header.php";
 ?>
 
+
   <!-- Main Content -->
   <main class="flex-1 flex flex-col bg-[#1e1f22]">
     <!-- Top Tabs -->
@@ -20,10 +21,10 @@ include "../src/components/home/header.php";
             <p class="text-gray-400 mb-5 text-lg">Empowering collaboration and innovation — earn your certificate through our official platform.</p>
             <div class="flex justify-center gap-4">
             <button class="cursor-pointer bg-white text-black font-semibold px-5 py-2.5 rounded-md hover:bg-gray-200 transition">
-                Create Room
+                Create Meeting
             </button>
             <button class="cursor-pointer bg-[#5865f2] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#4752c4] transition">
-                Join Room
+                Join Meeting
             </button>
             </div>
         </div>
@@ -32,7 +33,7 @@ include "../src/components/home/header.php";
 
     <!-- Available Quests -->
     <section class="px-6 pb-12">
-      <div class="mb-4"></div>
+      <h2 class="text-2xl font-bold mb-4">Available Quests</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
         <!-- Quest Card -->
@@ -47,7 +48,7 @@ include "../src/components/home/header.php";
               Claim 700 Discord Orbs
             </p>
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Join Room
+              Join Meeting
             </button>
           </div>
         </div>
@@ -66,7 +67,7 @@ include "../src/components/home/header.php";
               Claim 700 Discord Orbs
             </p>
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Join Room
+              Join Meeting
             </button>
           </div>
         </div>
@@ -76,8 +77,6 @@ include "../src/components/home/header.php";
       </div>
     </section>
   </main>
-
-
 <?php 
 include "../src/components/home/footer.php";
 ?>
