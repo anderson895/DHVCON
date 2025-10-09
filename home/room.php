@@ -170,27 +170,47 @@ $code=$_GET['code'];
       <h2 class="text-3xl font-bold mb-3">Meetings</h2>
       <p class="text-gray-400 mb-6">Collaborate with your team — create or join a meeting below.</p>
       <div class="flex justify-center gap-4">
-        <button class="cursor-pointer bg-white text-black font-semibold px-5 py-2.5 rounded-md hover:bg-gray-200 transition">
+        <button id="btnCreateMeeting" 
+                class="cursor-pointer bg-white text-black font-semibold px-5 py-2.5 rounded-md hover:bg-gray-200 transition">
           Create Meeting
-        </button>
-        <button class="cursor-pointer bg-[#5865f2] text-white font-semibold px-5 py-2.5 rounded-md hover:bg-[#4752c4] transition">
-          Join Meeting
         </button>
       </div>
     </div>
 
     <!-- Meeting Cards -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
-        <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Meeting" class="w-full h-40 object-cover">
-        <div class="p-4 space-y-3">
-          <h3 class="font-semibold text-lg text-white">Meeting Name</h3>
-          <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>
-          <p class="text-sm text-gray-300">Claim 700 Discord Orbs</p>
-          <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">Join Meeting</button>
+
+
+     <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
+          <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Meeting" class="w-full h-40 object-cover">
+          <div class="p-4 space-y-3">
+            <h3 class="font-semibold text-lg text-white">Team Sync Meeting</h3>
+            <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>
+            <p class="text-sm text-gray-300">Claim 700 Discord Orbs</p>
+            <a href="https://meet.google.com/" target="_blank" 
+              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+              Join Meeting
+            </a>
+          </div>
         </div>
-      </div>
+
+        <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
+          <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Meeting" class="w-full h-40 object-cover">
+          <div class="p-4 space-y-3">
+            <h3 class="font-semibold text-lg text-white">Project Discussion</h3>
+            <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>
+            <p class="text-sm text-gray-300">Claim 700 Discord Orbs</p>
+            <a href="https://meet.google.com/" target="_blank" 
+              class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
+              Join Meeting
+            </a>
+          </div>
+        </div>
+
+
     </div>
+
+    
   </section>
 
   <!-- CLAIMED CERTIFICATE SECTION -->
@@ -264,7 +284,110 @@ include "../src/components/home/footer.php";
 ?>
 
 
+
+
+<!-- Modal Background -->
+<div id="createMeetingModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
+  <!-- Modal Content -->
+  <div class="bg-[#2b2d31] w-full max-w-lg rounded-xl shadow-lg p-6 text-white relative">
+    
+    <!-- Close Button -->
+    <button id="closeModal" 
+            class="absolute top-3 right-3 text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+
+    <h2 class="text-2xl font-semibold mb-4 border-b border-gray-700 pb-2">
+      Create Meeting
+    </h2>
+
+    <!-- Form -->
+    <form id="meetingForm" class="space-y-4">
+      
+      <div>
+        <label class="block mb-1 text-sm">Meeting Link</label>
+        <input type="url" name="meeting_link" placeholder="https://meet.google.com/xyz-abc"
+               class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm">Meeting Title</label>
+        <input type="text" name="meeting_title" placeholder="Enter meeting title"
+               class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+      </div>
+
+      <div>
+        <label class="block mb-1 text-sm">Meeting Description</label>
+        <textarea name="meeting_description" rows="3" placeholder="Enter description..."
+                  class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block mb-1 text-sm">Start Date</label>
+          <input type="datetime-local" name="start_date"
+                 class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+        </div>
+        <div>
+          <label class="block mb-1 text-sm">End Date</label>
+          <input type="datetime-local" name="end_date"
+                 class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+        </div>
+      </div>
+
+      <div class="pt-4 flex justify-end gap-3">
+        <button type="button" id="cancelMeeting" 
+                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">Cancel</button>
+        <button type="submit" 
+                class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-md">Save Meeting</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+
+
+
 <script>
+
+$(document).ready(function() {
+
+  // Open modal
+  $('#btnCreateMeeting').click(function() {
+    $('#createMeetingModal').fadeIn().css('display', 'flex');
+  });
+
+  // Close modal
+  $('#closeModal, #cancelMeeting').click(function() {
+    $('#createMeetingModal').fadeOut();
+  });
+
+  // Handle form submission
+  $('#meetingForm').submit(function(e) {
+    e.preventDefault();
+
+    const meetingData = {
+      link: $('input[name="meeting_link"]').val(),
+      title: $('input[name="meeting_title"]').val(),
+      description: $('textarea[name="meeting_description"]').val(),
+      start: $('input[name="start_date"]').val(),
+      end: $('input[name="end_date"]').val()
+    };
+
+    console.log("Meeting Data:", meetingData);
+    alert("Meeting saved successfully!");
+    $('#createMeetingModal').fadeOut();
+  });
+
+});
+
+
+
+
+
+
+
+
 $(document).ready(function(){
   $(".tab-btn").click(function(){
     const tab = $(this).data("tab");
