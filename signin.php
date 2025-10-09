@@ -8,7 +8,7 @@
       <p class="text-center text-gray-400">Sign in to continue to DHVCON</p>
 
       <!-- Spinner Overlay -->
-      <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50 hidden bg-[#1e1f22]/70">
+      <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50  bg-[#1e1f22]/70" style="display:none;">
         <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
       </div>
 
