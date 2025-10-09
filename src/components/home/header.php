@@ -48,7 +48,7 @@ if (isset($_SESSION['user_id'])) {
     <h2 class="text-lg font-semibold px-2 mb-4">DHVCON</h2>
 
     <nav class="flex flex-col gap-1">
-      <a href="#" class="flex items-center gap-3 px-3 py-2 bg-[#3c3f44] rounded-md">
+      <a href="../home/" class="flex items-center gap-3 px-3 py-2 bg-[#3c3f44] rounded-md">
         <span class="material-icons-outlined text-xl text-gray-300">groups</span>
         <span>Create Room</span>
       </a>
