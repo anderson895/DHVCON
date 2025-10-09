@@ -136,9 +136,6 @@ public function getAllRooms($user_id) {
 
 
 
-
-
- // ✅ Get all rooms joined by a specific user
     public function getJoinedRooms($user_id) {
         $query = "
             SELECT r.room_name, r.room_code
@@ -171,6 +168,109 @@ public function getAllRooms($user_id) {
             'data' => $rooms
         ];
     }
+
+
+
+
+
+
+
+
+
+public function getRoomDetails($code)
+{
+    // Get room details
+    $query = "
+        SELECT 
+            r.room_id,
+            r.room_code,
+            r.room_name,
+            r.room_description,
+            r.room_banner,
+            r.room_date_created,
+            u.user_id AS creator_id,
+            u.user_fullname AS creator_name,
+            u.user_email AS creator_email,
+            COUNT(DISTINCT rm.user_id) AS total_members
+        FROM room r
+        INNER JOIN user u ON r.room_creator_user_id = u.user_id
+        LEFT JOIN room_members rm ON r.room_id = rm.room_id
+        WHERE r.room_code = ?
+        GROUP BY 
+            r.room_id, 
+            r.room_code, 
+            r.room_name, 
+            r.room_description, 
+            r.room_banner, 
+            r.room_date_created, 
+            u.user_id, 
+            u.user_fullname, 
+            u.user_email
+        LIMIT 1
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return [
+            "success" => false,
+            "message" => "Prepare failed: " . $this->conn->error
+        ];
+    }
+
+    $stmt->bind_param("s", $code);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $room = $result->fetch_assoc();
+
+    // If room exists
+    if ($room) {
+        $room_id = $room['room_id'];
+
+        // Fetch members
+        $memberQuery = "
+            SELECT 
+                u.user_id,
+                u.user_fullname,
+                u.user_email
+            FROM room_members rm
+            INNER JOIN user u ON rm.user_id = u.user_id
+            WHERE rm.room_id = ?
+        ";
+
+        $stmtMembers = $this->conn->prepare($memberQuery);
+        if ($stmtMembers) {
+            $stmtMembers->bind_param("i", $room_id);
+            $stmtMembers->execute();
+            $membersResult = $stmtMembers->get_result();
+
+            $members = [];
+            while ($row = $membersResult->fetch_assoc()) {
+                $members[] = $row;
+            }
+
+            $room['members'] = $members;
+        } else {
+            $room['members'] = [];
+        }
+
+        return [
+            "success" => true,
+            "data" => $room
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "Room not found"
+        ];
+    }
+}
+
+
+
+
+
+
 
 
 

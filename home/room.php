@@ -1,5 +1,7 @@
 <?php 
 include "../src/components/home/header.php";
+
+$code=$_GET['code'];
 ?>
 
 <!-- Main Content -->

@@ -150,6 +150,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => $response['message']
                 ]);
             }
+        }else if ($_GET['requestType'] == 'getRoomDetails') {
+
+           $code = $_GET['code'] ?? null;
+
+            if (!$code) {
+                echo json_encode([
+                    'status' => 400,
+                    'message' => 'Missing room code'
+                ]);
+                exit;
+            }
+
+            $response = $db->getRoomDetails($code);
+
+            if ($response['success']) {
+                echo json_encode([
+                    'status' => 200,
+                    'data' => $response['data']
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 500,
+                    'message' => $response['message']
+                ]);
+            }
+
         } else{
             echo "404";
         }
