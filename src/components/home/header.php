@@ -47,7 +47,7 @@ if (isset($_SESSION['user_id'])) {
   <aside class="w-60 bg-[#232428] flex flex-col p-3 border-r border-gray-800">
     <h2 class="text-lg font-semibold px-2 mb-4">DHVCON</h2>
 
-    <nav class="flex flex-col gap-1">
+    <nav id="roomNav" class="flex flex-col gap-1">
       <a href="../home/" class="flex items-center gap-3 px-3 py-2 bg-[#3c3f44] rounded-md">
         <span class="material-icons-outlined text-xl text-gray-300">groups</span>
         <span>Create Room</span>
@@ -57,14 +57,10 @@ if (isset($_SESSION['user_id'])) {
 
       <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Rooms</h2>
 
-      <a href="room.php" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#3c3f44] transition">
-        <span>Room 101</span>
-      </a>
-
-      <a href="room.php" class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#3c3f44] transition">
-        <span>Room 102</span>
-      </a>
+      <!-- Container where rooms will be loaded -->
+      <div id="joinedRooms"></div>
     </nav>
+
 
     <!-- User Section -->
     <div class="mt-auto pt-4 border-t border-gray-700 relative">

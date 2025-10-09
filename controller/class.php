@@ -129,6 +129,41 @@ public function getAllRooms() {
 
 
 
+ // ✅ Get all rooms joined by a specific user
+    public function getJoinedRooms($user_id) {
+        $query = "
+            SELECT r.room_name, r.room_code
+            FROM room_members rm
+            JOIN room r ON rm.room_id = r.room_id
+            WHERE rm.user_id = ?
+        ";
+
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) {
+            return [
+                'success' => false,
+                'message' => 'Prepare failed: ' . $this->conn->error
+            ];
+        }
+
+        $stmt->bind_param("i", $user_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $rooms = [];
+        while ($row = $result->fetch_assoc()) {
+            $rooms[] = $row;
+        }
+
+        $stmt->close();
+
+        return [
+            'success' => true,
+            'data' => $rooms
+        ];
+    }
+
+
 
     
     
@@ -184,6 +219,77 @@ public function getAllRooms() {
 
 
     
+
+
+
+
+
+
+
+
+
+
+
+public function joinRoom($user_id, $roomCode) {
+    // 1. Find the room by code
+    $query = "SELECT room_id, room_creator_user_id FROM room WHERE room_code = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("s", $roomCode);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        return [
+            'success' => false,
+            'message' => 'Invalid room code.'
+        ];
+    }
+
+    $room = $result->fetch_assoc();
+    $room_id = $room['room_id'];
+    $creator_id = $room['room_creator_user_id'];
+
+    // 🚫 2. Check if the user is the room creator
+    if ($creator_id == $user_id) {
+        return [
+            'success' => false,
+            'message' => 'You cannot join your own room.'
+        ];
+    }
+
+    // 3. Check if the user already joined the room
+    $checkQuery = "SELECT * FROM room_members WHERE room_id = ? AND user_id = ?";
+    $checkStmt = $this->conn->prepare($checkQuery);
+    $checkStmt->bind_param("ii", $room_id, $user_id);
+    $checkStmt->execute();
+    $checkResult = $checkStmt->get_result();
+
+    if ($checkResult->num_rows > 0) {
+        return [
+            'success' => false,
+            'message' => 'You have already joined this room.'
+        ];
+    }
+
+    // 4. Insert new record if not joined yet
+    $insertQuery = "INSERT INTO room_members (room_id, user_id) VALUES (?, ?)";
+    $insertStmt = $this->conn->prepare($insertQuery);
+    $insertStmt->bind_param("ii", $room_id, $user_id);
+
+    if ($insertStmt->execute()) {
+        return [
+            'success' => true,
+            'message' => 'Successfully joined the room.'
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Join failed. Please try again.'
+        ];
+    }
+}
+
+
 
 
 

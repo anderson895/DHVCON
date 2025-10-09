@@ -26,56 +26,74 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => $result['message']
                     ]);
                 }
+        }else if ($_POST['requestType'] == 'joinRoom') {
+                $user_id = $_SESSION['user_id'];
+                $roomCode = $_POST['roomCode'];
+
+
+              
+                $result = $db->joinRoom($user_id,$roomCode);
+
+                if ($result['success']) {
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => $result['message'],
+                    ]);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => $result['message']
+                    ]);
+                }
+
+
+
+
         }else if ($_POST['requestType'] == 'createRoom') {
+            $user_id = $_SESSION['user_id'];
+            $roomName = $_POST['roomName'];
+            $roomDescription = $_POST['roomDescription'];
 
-       
+            $roomBanner = $_FILES['roomBanner'];
+            $uploadDir = '../../static/upload/';
+            $roomImageFileName = null; 
 
-        $user_id = $_SESSION['user_id'];
-        $roomName = $_POST['roomName'];
-        $roomDescription = $_POST['roomDescription'];
+                if (isset($roomBanner) && $roomBanner['error'] === UPLOAD_ERR_OK) {
+                    $bannerExtension = pathinfo($roomBanner['name'], PATHINFO_EXTENSION);
+                    $roomImageFileName = uniqid('room_', true) . '.' . $bannerExtension;
+                    $bannerPath = $uploadDir . $roomImageFileName;
 
-        $roomBanner = $_FILES['roomBanner'];
-        $uploadDir = '../../static/upload/';
-        $roomImageFileName = null; // default to null if no file
+                    if (!move_uploaded_file($roomBanner['tmp_name'], $bannerPath)) {
+                        echo json_encode([
+                            'status' => 500,
+                            'message' => 'Error uploading roomBanner image.'
+                        ]);
+                        exit;
+                    }
+                } elseif ($roomBanner['error'] !== UPLOAD_ERR_NO_FILE && $roomBanner['error'] !== 0) {
+                    echo json_encode([
+                        'status' => 400,
+                        'message' => 'Invalid image upload.'
+                    ]);
+                    exit;
+                }
 
-        if (isset($roomBanner) && $roomBanner['error'] === UPLOAD_ERR_OK) {
-            $bannerExtension = pathinfo($roomBanner['name'], PATHINFO_EXTENSION);
-            $roomImageFileName = uniqid('room_', true) . '.' . $bannerExtension;
-            $bannerPath = $uploadDir . $roomImageFileName;
+                // Call createRoom and get inserted ID
+                $insertedId = $db->createRoom($roomName, $roomDescription, $roomImageFileName, $user_id);
 
-            if (!move_uploaded_file($roomBanner['tmp_name'], $bannerPath)) {
-                echo json_encode([
-                    'status' => 500,
-                    'message' => 'Error uploading roomBanner image.'
-                ]);
-                exit;
-            }
-        } elseif ($roomBanner['error'] !== UPLOAD_ERR_NO_FILE && $roomBanner['error'] !== 0) {
-            echo json_encode([
-                'status' => 400,
-                'message' => 'Invalid image upload.'
-            ]);
-            exit;
-        }
+                if ($insertedId) {
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => 'Room created successfully.',
+                        'room_id' => $insertedId
+                    ]);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Failed to create room.'
+                    ]);
+                }
 
-        // Call createRoom and get inserted ID
-        $insertedId = $db->createRoom($roomName, $roomDescription, $roomImageFileName, $user_id);
-
-        if ($insertedId) {
-            echo json_encode([
-                'status' => 'success',
-                'message' => 'Room created successfully.',
-                'room_id' => $insertedId
-            ]);
-        } else {
-            echo json_encode([
-                'status' => 'error',
-                'message' => 'Failed to create room.'
-            ]);
-        }
-
-
-               
 
         }else if ($_POST['requestType'] == 'Login') {
             $email = $_POST['email'];
@@ -105,11 +123,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    if (isset($_GET['requestType']))
     {
         if ($_GET['requestType'] == 'getAllRooms') {
+
+            $user_id = $_SESSION['user_id'];
+
             $result = $db->getAllRooms();
             echo json_encode([
                 'status' => 200,
-                'data' => $result
+                'data' => $result,
+                'user_id' => $user_id,
             ]);
+        }else if ($_GET['requestType'] == 'getJoinedRooms') {
+
+            $user_id = $_SESSION['user_id'];
+
+            $response = $db->getJoinedRooms($user_id);
+
+            if ($response['success']) {
+                echo json_encode([
+                    'status' => 200,
+                    'data' => $response['data'],
+                    'user_id' => $user_id
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 500,
+                    'message' => $response['message']
+                ]);
+            }
         } else{
             echo "404";
         }
