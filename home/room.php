@@ -130,7 +130,7 @@ $code=$_GET['code'];
   </h2>
 
 
-    <div class="relative border-l-2 border-[#5865f2]/40 pl-8 space-y-10">
+    <div id="pendingWorksContainer" class="relative border-l-2 border-[#5865f2]/40 pl-8 space-y-10">
 
       <!-- Post 1 -->
       <a href="view_task" class="block relative flex gap-6 items-start cursor-pointer no-underline">
@@ -366,14 +366,5 @@ include "../src/components/home/footer.php";
 
 
 
-<script>
-
-
-
-
-
-
-
-</script>
 
 <script src="../static/js/home/room.js"></script>

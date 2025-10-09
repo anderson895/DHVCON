@@ -182,14 +182,16 @@ public function getAllRooms($user_id) {
 
 
 
-
-public function getAllClasswork($room_id) {
+public function getAllPendingClasswork($user_id, $room_id) {
     $query = "
-        SELECT * 
-        FROM `classwork`
-        WHERE classwork_room_id  NOT IN (
-            SELECT room_id FROM room_members WHERE user_id = ?
-        )
+        SELECT cw.*
+        FROM classwork cw
+        LEFT JOIN submitted_classwork sw 
+            ON cw.classwork_id = sw.sw_classwork_id 
+            AND sw.sw_user_id = ?
+        WHERE cw.classwork_room_id = ?
+            AND sw.sw_id IS NULL
+            AND cw.classwork_status = 1
     ";
 
     $stmt = $this->conn->prepare($query);
@@ -197,17 +199,17 @@ public function getAllClasswork($room_id) {
         die('Prepare failed: ' . $this->conn->error);
     }
 
-    $stmt->bind_param('i', $user_id);
+    $stmt->bind_param('ii', $user_id, $room_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $rooms = [];
+    $classworks = [];
     while ($row = $result->fetch_assoc()) {
-        $rooms[] = $row;
+        $classworks[] = $row;
     }
 
     $stmt->close();
-    return $rooms;
+    return $classworks;
 }
 
 
