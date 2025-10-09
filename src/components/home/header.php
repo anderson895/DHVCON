@@ -41,6 +41,7 @@ if (isset($_SESSION['user_id'])) {
 
 </head>
 
+
 <body class="bg-[#1e1f22] text-white min-h-screen flex">
 
   <!-- Sidebar -->
@@ -48,10 +49,12 @@ if (isset($_SESSION['user_id'])) {
     <h2 class="text-lg font-semibold px-2 mb-4">DHVCON</h2>
 
     <nav id="roomNav" class="flex flex-col gap-1">
-      <a href="../home/" class="flex items-center gap-3 px-3 py-2 bg-[#3c3f44] rounded-md">
-        <span class="material-icons-outlined text-xl text-gray-300">groups</span>
-        <span>Create Room</span>
+     <a href="../home/" class="flex items-center gap-3 px-3 py-2 rounded-md 
+        text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+          <span class="material-icons-outlined text-xl">groups</span>
+          <span>Create Room</span>
       </a>
+
 
       <hr class="my-3 border-gray-600">
 
