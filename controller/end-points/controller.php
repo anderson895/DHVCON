@@ -111,6 +111,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => $loginResult['message']
                 ]);
             }
+        }else if ($_POST['requestType'] == 'CreateClasswork') {
+            $user_id = $_SESSION['user_id'];
+            $title = $_POST['title'];
+            $instructions = $_POST['instructions'];
+            $room_id = $_POST['room_id']; 
+
+            $file_upload = $_FILES['file_upload'];
+            $uploadDir = '../../static/upload/';
+            $fileName = null;
+
+            if (isset($file_upload) && $file_upload['error'] === UPLOAD_ERR_OK) {
+                // Get original file extension
+                $fileExtension = pathinfo($file_upload['name'], PATHINFO_EXTENSION);
+                // Create a clean, unique filename
+                $fileName = uniqid('classwork_', true) . '.' . strtolower($fileExtension);
+                $filePath = $uploadDir . $fileName;
+
+                // Move the uploaded file
+                if (!move_uploaded_file($file_upload['tmp_name'], $filePath)) {
+                    echo json_encode([
+                        'status' => 500,
+                        'message' => 'Error uploading file.'
+                    ]);
+                    exit;
+                }
+            } elseif ($file_upload['error'] !== UPLOAD_ERR_NO_FILE && $file_upload['error'] !== 0) {
+                echo json_encode([
+                    'status' => 400,
+                    'message' => 'Invalid file upload.'
+                ]);
+                exit;
+            }
+
+            // ✅ Insert into database (adjust your method to accept room_id)
+            $insertedId = $db->CreateClasswork($title, $instructions, $fileName, $user_id, $room_id);
+
+            if ($insertedId) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Classwork created successfully.',
+                    'classwork_id' => $insertedId
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to create classwork.'
+                ]);
+            }
         }else{
             echo "404";
         }

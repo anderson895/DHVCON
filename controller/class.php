@@ -74,8 +74,11 @@ private function generateUniqueRoomCode($length = 6) {
     return $code;
 }
 
+
+
+
 public function createRoom($roomName, $roomDescription, $roomImageFileName, $user_id) {
-    $room_code = $this->generateUniqueRoomCode(); // Generate unique code
+    $room_code = $this->generateUniqueRoomCode(); 
 
     // Use ? placeholders for prepared statements
     $query = "INSERT INTO `room` (`room_creator_user_id`, `room_banner`, `room_name`, `room_description`, `room_code`) 
@@ -100,6 +103,55 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
     return $inserted_id; 
 }
+
+
+
+
+
+
+
+
+
+
+public function CreateClasswork($title, $instructions, $fileName, $user_id, $room_id)
+{
+    // ✅ SQL query with placeholders, now includes room_id
+    $query = "
+        INSERT INTO `classwork` 
+        (`classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`) 
+        VALUES (?, ?, ?, ?, ?)
+    ";
+
+    // ✅ Prepare statement
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    // ✅ Bind parameters (s = string, i = integer)
+    $stmt->bind_param("sssii", $title, $instructions, $fileName, $user_id, $room_id);
+
+    // ✅ Execute
+    $result = $stmt->execute();
+
+    if (!$result) {
+        $stmt->close();
+        return false;
+    }
+
+    // ✅ Get the inserted ID
+    $inserted_id = $this->conn->insert_id;
+    $stmt->close();
+
+    return $inserted_id;
+}
+
+
+
+
+
+
+
 
 
 

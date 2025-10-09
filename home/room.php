@@ -31,8 +31,15 @@ $code=$_GET['code'];
       <h2 class="text-2xl font-semibold">Assignment</h2>
     </div>
 
+    <!-- Spinner Overlay -->
+    <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50 bg-[#1e1f22]/70" style="display:none;">
+      <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+
+
     <!-- Form -->
-    <form class="space-y-6">
+      <form id="frmCreateClasswork" class="space-y-6">
 
       <!-- Title -->
       <div>
@@ -42,19 +49,22 @@ $code=$_GET['code'];
         <input
           type="text"
           id="title"
-          placeholder="Enter assignment title"
+          name="title"
+          placeholder="Enter title"
           class="w-full p-3 bg-[#3a3b3f] border border-[#505155] rounded-lg 
           focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+          required
         />
       </div>
 
       <!-- Instructions -->
       <div>
         <label for="instructions" class="block text-sm font-medium mb-2">
-          Instructions (optional)
+          Instructions 
         </label>
         <textarea
           id="instructions"
+          name="instructions"
           rows="5"
           placeholder="Add instructions..."
           class="w-full p-3 bg-[#3a3b3f] border border-[#505155] rounded-lg 
@@ -62,29 +72,35 @@ $code=$_GET['code'];
         ></textarea>
       </div>
 
-      <!-- Single File Attachment -->
-      <div class="border-t border-gray-600 pt-6">
-        <h3 class="text-sm font-medium mb-4">Attach File</h3>
-        <label
-          for="file-upload"
-          class="flex flex-col items-center justify-center p-6 bg-[#3a3b3f] border-2 border-dashed border-gray-500 rounded-lg cursor-pointer hover:border-blue-500 transition"
-        >
-          <span class="material-icons text-4xl text-gray-300 mb-2">upload_file</span>
-          <span class="text-sm text-gray-300">Click to upload or drag a file here</span>
-          <input id="file-upload" type="file" class="hidden" />
-        </label>
-      </div>
+            <!-- Preview container -->
+        <div id="file-preview" class="mt-4 text-gray-300"></div>
+
+        <!-- Your existing file input -->
+        <div class="border-t border-gray-600 pt-6">
+            <h3 class="text-sm font-medium mb-4">Attach File</h3>
+            <label
+              for="file-upload"
+              class="flex flex-col items-center justify-center p-6 bg-[#3a3b3f] border-2 border-dashed border-gray-500 rounded-lg cursor-pointer hover:border-blue-500 transition"
+            >
+              <span class="material-icons text-4xl text-gray-300 mb-2">upload_file</span>
+              <span class="text-sm text-gray-300">Click to upload or drag a file here</span>
+              <input id="file-upload" name="file_upload" type="file" class="hidden" />
+            </label>
+        </div>
+
 
       <!-- Submit Button -->
       <div class="flex justify-end pt-4">
         <button
           type="submit"
-          class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
+          id="btnCreateWork"
+          class="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-2 rounded-lg transition"
         >
           Post
         </button>
       </div>
     </form>
+
   </div>
 </section>
 
@@ -301,6 +317,8 @@ include "../src/components/home/footer.php";
 
     <!-- Form -->
     <form id="meetingForm" class="space-y-4">
+
+  
       
       <div>
         <label class="block mb-1 text-sm">Meeting Link</label>
@@ -350,65 +368,12 @@ include "../src/components/home/footer.php";
 
 <script>
 
-$(document).ready(function() {
-
-  // Open modal
-  $('#btnCreateMeeting').click(function() {
-    $('#createMeetingModal').fadeIn().css('display', 'flex');
-  });
-
-  // Close modal
-  $('#closeModal, #cancelMeeting').click(function() {
-    $('#createMeetingModal').fadeOut();
-  });
-
-  // Handle form submission
-  $('#meetingForm').submit(function(e) {
-    e.preventDefault();
-
-    const meetingData = {
-      link: $('input[name="meeting_link"]').val(),
-      title: $('input[name="meeting_title"]').val(),
-      description: $('textarea[name="meeting_description"]').val(),
-      start: $('input[name="start_date"]').val(),
-      end: $('input[name="end_date"]').val()
-    };
-
-    console.log("Meeting Data:", meetingData);
-    alert("Meeting saved successfully!");
-    $('#createMeetingModal').fadeOut();
-  });
-
-});
 
 
 
 
 
 
-
-
-$(document).ready(function(){
-  $(".tab-btn").click(function(){
-    const tab = $(this).data("tab");
-
-    // Hide all sections
-    $(".tab-section").hide();
-
-    // Show selected section
-    $("#" + tab).show();
-
-    // Reset all tab styles
-    $(".tab-btn")
-      .removeClass("text-white font-semibold border-b-2 border-white pb-1")
-      .addClass("text-gray-400");
-
-    // Highlight active tab
-    $(this)
-      .removeClass("text-gray-400")
-      .addClass("text-white font-semibold border-b-2 border-white pb-1");
-  });
-});
 </script>
 
 <script src="../static/js/home/room.js"></script>
