@@ -22,40 +22,12 @@ include "../src/components/home/header.php";
     </section>
 
 
-    <!-- Available Quests -->
+  
     <section class="px-6 pb-12">
       <div class="mb-4"></div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div class="room-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
-        <!-- Quest Card -->
-        <!-- <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
-          <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Battlefield" class="w-full h-40 object-cover">
-          <div class="p-4 space-y-3">
-            <h3 class="font-semibold text-lg flex items-center gap-2">
-              Battlefield 6 Trailer Quest
-            </h3>
-            <p class="text-gray-400 text-sm">Description dito</p>
-            <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Join Room
-            </button>
-          </div>
-        </div>
-
-
-
-        <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
-          <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Battlefield" class="w-full h-40 object-cover">
-          <div class="p-4 space-y-3">
-            <h3 class="font-semibold text-lg flex items-center gap-2">
-              Battlefield 6 Trailer Quest
-            </h3>
-            <p class="text-gray-400 text-sm">Description dito</p>
-           
-            <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-              Join Room
-            </button>
-          </div>
-        </div> -->
+       
 
 
 

@@ -79,9 +79,9 @@ $(document).ready(function() {
             type: 'GET',
             dataType: 'json',
             success: function(response) {
-                if (response.status === 200) {  // ✅ changed here
-                    let container = $('.grid.grid-cols-1'); // your grid container
-                    container.empty(); // clear any existing cards
+                if (response.status === 200) { 
+                    let container = $('.room-list');
+                    container.empty(); 
 
                     response.data.forEach(room => {
                         // Use room_banner as full path
