@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2025 at 05:04 PM
+-- Generation Time: Oct 09, 2025 at 06:15 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,7 +43,8 @@ CREATE TABLE `classwork` (
 
 INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`) VALUES
 (4, 'assignment 1', 'awdawd', 'classwork_68e7c2dfa75215.91300019.pdf', 3, 10, 1),
-(5, 'assignment 2', 'awdaw', 'classwork_68e7c916a3f775.14889696.jpg', 3, 10, 1);
+(5, 'assignment 2', 'awdaw', 'classwork_68e7c916a3f775.14889696.jpg', 3, 10, 1),
+(6, 'assignment for today', 'aawdfesfsefrsgg', 'classwork_68e7d874ce3e57.46174445.pdf', 6, 15, 1);
 
 -- --------------------------------------------------------
 
@@ -68,10 +69,11 @@ CREATE TABLE `room` (
 INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code`, `room_name`, `room_description`, `room_date_created`) VALUES
 (9, 2, 'room_68e7b0f7623f87.48263628.webp', 'HC8WJV', 'room 101', 'Empowering collaboration and innovation — earn your certificate through our official platform.', '2025-10-09 13:26:32'),
 (10, 2, 'room_68e7b105930182.58150215.webp', 'OIVBY2', 'room 102', 'A creative workspace designed for brainstorming and collaboration. Equipped with digital whiteboards, cozy seating, and a modern aesthetic perfect for team discussions or workshops.', '2025-10-09 13:27:36'),
-(11, 3, 'room_68e7b135503632.26898286.webp', '1TAFV4', 'room 102', 'A calm and relaxing environment ideal for study sessions or casual hangouts. Soft lighting, minimalist décor, and ambient music make it a peaceful spot to focus or unwind.', '2025-10-09 13:27:41'),
+(11, 3, 'room_68e7b135503632.26898286.webp', '1TAFV4', 'room 106', 'A calm and relaxing environment ideal for study sessions or casual hangouts. Soft lighting, minimalist décor, and ambient music make it a peaceful spot to focus or unwind.', '2025-10-09 16:08:22'),
 (12, 3, 'room_68e7b150e50f32.70005846.png', 'UOKQFX', 'room 103', 'Where players unite! This room is built for gaming enthusiasts — featuring competitive challenges, tournaments, and friendly banter. Grab your controller and join the fun.', '2025-10-09 13:27:47'),
 (13, 3, 'room_68e7b17648be30.74494203.jpg', 'QN4CF2', 'room 104', 'A focused, distraction-free room for students and professionals alike. With access to shared notes, project discussions, and helpful resources, productivity comes naturally here.', '2025-10-09 13:27:53'),
-(14, 3, 'room_68e7b1888a2761.92219144.webp', 'WD1CB3', 'room 105', 'A community space for artists, designers, and content creators to share ideas, showcase projects, and collaborate on creative ventures. Inspiration starts the moment you join.', '2025-10-09 13:27:59');
+(14, 3, 'room_68e7b1888a2761.92219144.webp', 'WD1CB3', 'room 105', 'A community space for artists, designers, and content creators to share ideas, showcase projects, and collaborate on creative ventures. Inspiration starts the moment you join.', '2025-10-09 13:27:59'),
+(15, 6, 'room_68e7d8423f3f13.17165375.jpg', '30HERQ', 'my own room', 'sawdwadawdawd', '2025-10-09 15:44:02');
 
 -- --------------------------------------------------------
 
@@ -90,9 +92,7 @@ CREATE TABLE `room_members` (
 --
 
 INSERT INTO `room_members` (`id`, `room_id`, `user_id`) VALUES
-(6, 9, 3),
-(5, 10, 3),
-(7, 10, 5);
+(12, 9, 6);
 
 -- --------------------------------------------------------
 
@@ -130,7 +130,8 @@ INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `
 (2, 'john john', 'john@gmail.com', '$2y$10$FF11SoWjaBpdpaE6oEycfe2Gh9QmQLsfecQ0x/Viv4mBQVqXcjAIy', 1),
 (3, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$rxa/yT1Cx9EhWyRhnB8l1O213zkUBiaaNw/qaoaHo5H2Np/MCFmv6', 1),
 (4, 'samantha flores', 'samantha123@gmail.com', '$2y$10$f9XLVW/ETL/uMDZ2z/YIHOlRwqFm7.ajG6Yf3kWngyPiBYLDa8BNS', 1),
-(5, 'john doe', 'jdoe@gmail.com', '$2y$10$xVtSGeRcTRn8wAg.2VLXXOxCGL9wCDWFkxkOZM41xPCscqnU7/GxC', 1);
+(5, 'john doe', 'jdoe@gmail.com', '$2y$10$xVtSGeRcTRn8wAg.2VLXXOxCGL9wCDWFkxkOZM41xPCscqnU7/GxC', 1),
+(6, 'juan san pedro', 'juandelacruz@gmail.com', '$2y$10$f27OSMOB/ychFOaG3yLwkeFco/0S8tJLSnbqTX3dpW72d7dptMbh2', 1);
 
 --
 -- Indexes for dumped tables
@@ -181,19 +182,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`
@@ -205,7 +206,7 @@ ALTER TABLE `submitted_classwork`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Constraints for dumped tables
