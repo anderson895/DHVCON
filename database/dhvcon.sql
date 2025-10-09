@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2025 at 04:21 PM
+-- Generation Time: Oct 09, 2025 at 05:04 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,8 @@ CREATE TABLE `classwork` (
 --
 
 INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`) VALUES
-(4, 'assignment 1', 'awdawd', 'classwork_68e7c2dfa75215.91300019.pdf', 3, 10, 1);
+(4, 'assignment 1', 'awdawd', 'classwork_68e7c2dfa75215.91300019.pdf', 3, 10, 1),
+(5, 'assignment 2', 'awdaw', 'classwork_68e7c916a3f775.14889696.jpg', 3, 10, 1);
 
 -- --------------------------------------------------------
 
@@ -180,7 +181,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `room`
