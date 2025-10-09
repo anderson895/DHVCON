@@ -92,8 +92,6 @@ $(document).ready(function() {
 
 
 
-
-
 $(document).ready(function() {
     function fetchRooms() {
         $.ajax({
@@ -105,48 +103,66 @@ $(document).ready(function() {
                     let container = $(".room-list");
                     container.empty(); 
 
+                    // ✅ Empty state
+                    if (response.data.length === 0) {
+                        // Palitan ang layout ng room-list para maging full-screen centered
+                        container.removeClass("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6")
+                                 .addClass("flex flex-col items-center justify-center min-h-[80vh]");
+
+                        container.html(`
+                            <div class="text-center animate-fadeIn">
+                                <img src="../static/image/no_rooms_banner.png" 
+                                     alt="No Rooms Available" 
+                                     class="w-[28rem] h-[28rem] object-contain rounded-2xl mb-8">
+                                <h2 class="text-3xl font-bold text-white mb-3">No Rooms Available</h2>
+                                <p class="text-gray-400 text-lg max-w-lg mx-auto">
+                                    Create a new room or join an existing one to start collaborating.
+                                </p>
+                            </div>
+                        `);
+                        return;
+                    }
+
+                    // ✅ Kung may rooms, ibalik ang grid layout
+                    container.removeClass("flex flex-col items-center justify-center min-h-[80vh]")
+                             .addClass("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6");
+
                     response.data.forEach(room => {
-                        // Use room_banner as full path
                         let bannerUrl = room.room_banner 
                             ? "../static/upload/" + room.room_banner 
                             : "../static/image/no_image.jpg";
 
-                        // Declare card variable outside the if/else
                         let card = "";
 
                         if (room.room_creator_user_id == response.user_id) {
                             card = `
-                               <div class="bg-white text-black rounded-xl overflow-hidden shadow-md">
+                                <div class="bg-white text-black rounded-xl overflow-hidden shadow-md animate-fadeIn">
                                     <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
                                     <div class="p-4 space-y-3">
                                         <h3 class="uppercase font-semibold text-lg flex items-center gap-2">
-                                        ${room.room_name}
+                                            ${room.room_name}
                                         </h3>
                                         <p class="text-gray-700 text-sm">${room.room_description}</p>
                                         <p class="text-gray-700 text-sm">CODE: ${room.room_code}</p>
-
                                         <a href="room.php?code=${room.room_code}" 
-                                        class="block text-center bg-black text-white font-semibold py-2 rounded-md hover:bg-gray-800 transition">
-                                        My Room
+                                           class="block text-center bg-black text-white font-semibold py-2 rounded-md hover:bg-gray-800 transition">
+                                           My Room
                                         </a>
                                     </div>
                                 </div>
-
-
                             `;
                         } else {
                             card = `
-                                <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
+                                <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md animate-fadeIn">
                                     <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
                                     <div class="p-4 space-y-3">
                                         <h3 class="uppercase font-semibold text-lg flex items-center gap-2">
                                             ${room.room_name}
                                         </h3>
                                         <p class="text-gray-400 text-sm">${room.room_description}</p>
-                                        <p class="text-white-700 text-sm">CODE: ${room.room_code}</p>
+                                        <p class="text-gray-400 text-sm">CODE: ${room.room_code}</p>
                                         <button class="btnJoinRoom cursor-pointer w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition"
-                                        data-code='${room.room_code}'
-                                        >
+                                                data-code='${room.room_code}'>
                                             Join Room
                                         </button>
                                     </div>

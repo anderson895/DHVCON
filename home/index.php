@@ -6,7 +6,7 @@ include "../src/components/home/header.php";
   <main class="flex-1 flex flex-col bg-[#1e1f22]">
 
     <!-- Banner -->
-   <section class="p-6 bg-gradient-to-r from-[#1e1f22] via-[#2f3150] to-[#1e1f22]">
+   <section class="p-6 bg-gradient-to-r ">
         <div class="rounded-2xl bg-[#2b2d31] p-10 text-center shadow-lg">
             <h1 class="text-4xl font-extrabold mb-3 text-white">Welcome to DHVCON</h1>
             <p class="text-gray-400 mb-5 text-lg">Empowering collaboration and innovation — earn your certificate through our official platform.</p>
@@ -25,16 +25,13 @@ include "../src/components/home/header.php";
 
 
   
-    <section class="px-6 pb-12">
-      <div class="mb-4"></div>
-      <div class="room-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+   <section class="px-6 pb-12">
+    <div class="mb-4"></div>
+        <div class="room-list grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        </div>
+  </section>
 
-       
-
-
-
-      </div>
-    </section>
+    
   </main>
 
 
