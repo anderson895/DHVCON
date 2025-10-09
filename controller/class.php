@@ -57,6 +57,74 @@ class global_class extends db_connect
 
 
 
+private function generateUniqueRoomCode($length = 6) {
+    do {
+        // Generate random alphanumeric code
+        $code = substr(str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, $length);
+
+        // Check if code already exists
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM `room` WHERE `room_code` = ?");
+        $stmt->bind_param("s", $code);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
+    } while ($count > 0); // repeat if code exists
+
+    return $code;
+}
+
+public function createRoom($roomName, $roomDescription, $roomImageFileName, $user_id) {
+    $room_code = $this->generateUniqueRoomCode(); // Generate unique code
+
+    // Use ? placeholders for prepared statements
+    $query = "INSERT INTO `room` (`room_creator_user_id`, `room_banner`, `room_name`, `room_description`, `room_code`) 
+              VALUES (?, ?, ?, ?, ?)";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $stmt->bind_param("issss", $user_id, $roomImageFileName, $roomName, $roomDescription, $room_code);
+
+    $result = $stmt->execute();
+
+    if (!$result) {
+        $stmt->close();
+        return false;
+    }
+
+    $inserted_id = $this->conn->insert_id; 
+    $stmt->close();
+
+    return $inserted_id; 
+}
+
+
+
+
+public function getAllRooms() {
+    $query = "SELECT * FROM `room`";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $rooms = [];
+    while ($row = $result->fetch_assoc()) {
+        $rooms[] = $row;
+    }
+
+    $stmt->close();
+    return $rooms;
+}
+
+
+
 
 
 

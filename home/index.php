@@ -4,14 +4,6 @@ include "../src/components/home/header.php";
 
   <!-- Main Content -->
   <main class="flex-1 flex flex-col bg-[#1e1f22]">
-    <!-- Top Tabs -->
-    <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
-      <div class="flex items-center gap-6">
-        <button class="text-white font-semibold border-b-2 border-white pb-1">All Meeting</button>
-        <button class="cursor-pointer text-gray-400 hover:text-white">Claimed Certificate</button>
-      </div>
-     
-    </div>
 
     <!-- Banner -->
    <section class="p-6 bg-gradient-to-r from-[#1e1f22] via-[#2f3150] to-[#1e1f22]">
@@ -36,16 +28,13 @@ include "../src/components/home/header.php";
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
         <!-- Quest Card -->
-        <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
+        <!-- <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
           <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Battlefield" class="w-full h-40 object-cover">
           <div class="p-4 space-y-3">
             <h3 class="font-semibold text-lg flex items-center gap-2">
               Battlefield 6 Trailer Quest
             </h3>
-            <p class="text-gray-400 text-sm">Ends 10/10 • Promoted by EA</p>
-            <p class="text-sm text-gray-300 flex items-center gap-1">
-              Claim 700 Discord Orbs
-            </p>
+            <p class="text-gray-400 text-sm">Description dito</p>
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
               Join Room
             </button>
@@ -54,22 +43,19 @@ include "../src/components/home/header.php";
 
 
 
-        <!-- Quest Card -->
         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
           <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Battlefield" class="w-full h-40 object-cover">
           <div class="p-4 space-y-3">
             <h3 class="font-semibold text-lg flex items-center gap-2">
               Battlefield 6 Trailer Quest
             </h3>
-            <p class="text-gray-400 text-sm">Ends 10/10 • Promoted by EA</p>
-            <p class="text-sm text-gray-300 flex items-center gap-1">
-              Claim 700 Discord Orbs
-            </p>
+            <p class="text-gray-400 text-sm">Description dito</p>
+           
             <button class="w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition">
               Join Room
             </button>
           </div>
-        </div>
+        </div> -->
 
 
 
@@ -78,6 +64,52 @@ include "../src/components/home/header.php";
   </main>
 
 
+
+
+
+
+
+
+
+
+
+<!-- Create Room Modal -->
+<div id="createRoomModal" class="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center hidden z-50">
+  <div class="bg-[#2b2d31] p-8 rounded-2xl w-full max-w-md shadow-lg relative">
+    <h2 class="text-2xl font-bold mb-4 text-white">Create a New Room</h2>
+
+      <!-- Spinner Overlay -->
+      <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50  bg-[#1e1f22]/70" style="display:none;">
+        <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
+    <form id="createRoomForm" class="space-y-4">
+      <!-- Room Name -->
+      <input type="text" name="roomName" placeholder="Room Name" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
+      
+      <!-- Room Description -->
+      <textarea name="roomDescription" placeholder="Room Description" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600"></textarea>
+      
+      <!-- Single File Input (e.g., Room Image) -->
+      <label class="block text-white">Room Banner:</label>
+      <input type="file" name="roomBanner" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
+      
+
+
+      <!-- Action Buttons -->
+      <div class="flex justify-end gap-2">
+        <button type="button" id="closeModal" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
+        <button type="submit" id="btnCreateRoom" class="px-4 py-2 bg-[#5865f2] text-white rounded-md hover:bg-[#4752c4]">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
 <?php 
 include "../src/components/home/footer.php";
 ?>
+
+<script src="../static/js/home/index.js"></script>
