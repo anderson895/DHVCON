@@ -55,7 +55,7 @@ if (isset($_SESSION['user_id'])) {
 
       <hr class="my-3 border-gray-600">
 
-      <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Rooms</h2>
+      <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Joined Rooms</h2>
 
       <!-- Container where rooms will be loaded -->
       <div id="joinedRooms"></div>

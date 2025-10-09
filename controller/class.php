@@ -104,13 +104,21 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
 
 
-public function getAllRooms() {
-    $query = "SELECT * FROM `room`";
+public function getAllRooms($user_id) {
+    $query = "
+        SELECT * 
+        FROM `room`
+        WHERE room_id NOT IN (
+            SELECT room_id FROM room_members WHERE user_id = ?
+        )
+    ";
+
     $stmt = $this->conn->prepare($query);
     if (!$stmt) {
-        die("Prepare failed: " . $this->conn->error);
+        die('Prepare failed: ' . $this->conn->error);
     }
 
+    $stmt->bind_param('i', $user_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -122,6 +130,7 @@ public function getAllRooms() {
     $stmt->close();
     return $rooms;
 }
+
 
 
 

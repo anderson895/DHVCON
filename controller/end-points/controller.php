@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $user_id = $_SESSION['user_id'];
 
-            $result = $db->getAllRooms();
+            $result = $db->getAllRooms($user_id);
             echo json_encode([
                 'status' => 200,
                 'data' => $result,
