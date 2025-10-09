@@ -150,17 +150,44 @@ public function CreateClasswork($title, $instructions, $fileName, $user_id, $roo
 
 
 
-
-
-
-
-
-
 public function getAllRooms($user_id) {
     $query = "
         SELECT * 
         FROM `room`
         WHERE room_id NOT IN (
+            SELECT room_id FROM room_members WHERE user_id = ?
+        )
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die('Prepare failed: ' . $this->conn->error);
+    }
+
+    $stmt->bind_param('i', $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $rooms = [];
+    while ($row = $result->fetch_assoc()) {
+        $rooms[] = $row;
+    }
+
+    $stmt->close();
+    return $rooms;
+}
+
+
+
+
+
+
+
+public function getAllClasswork($room_id) {
+    $query = "
+        SELECT * 
+        FROM `classwork`
+        WHERE classwork_room_id  NOT IN (
             SELECT room_id FROM room_members WHERE user_id = ?
         )
     ";
@@ -449,6 +476,23 @@ public function joinRoom($user_id, $roomCode) {
         ];
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
