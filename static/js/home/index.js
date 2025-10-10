@@ -95,58 +95,75 @@ $(document).ready(function() {
                     });
 
                     // ✅ Attach click event for delete buttons after rendering
-                    $(".delete-room").click(function() {
-                        let room_id = $(this).data("room_id");
+                 $(".delete-room").click(function() {
+                    let room_id = $(this).data("room_id");
 
-                        console.log(room_id);
+                    console.log(room_id);
 
-                        Swal.fire({
-                            title: 'Are you sure?',
-                            text: "This will permanently delete the room!",
-                            icon: 'warning',
-                            showCancelButton: true,
-                            confirmButtonColor: '#d33',
-                            cancelButtonColor: '#3085d6',
-                            confirmButtonText: 'Yes, delete it!',
-                            cancelButtonText: 'Cancel'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                // AJAX request to delete room
-                                $.ajax({
-                                    url: "../controller/end-points/controller.php",
-                                    type: "POST",
-                                    data: {
-                                        requestType: "deleteRoom",
-                                        room_id: room_id
-                                    },
-                                    success: function(res) {
-                                        let response = JSON.parse(res);
-                                        if (response.status === 200) {
-                                            Swal.fire(
-                                                'Deleted!',
-                                                'Your room has been deleted.',
-                                                'success'
-                                            );
-                                            fetchRooms(); // Refresh the room list
-                                        } else {
-                                            Swal.fire(
-                                                'Error!',
-                                                response.message || 'Failed to delete room.',
-                                                'error'
-                                            );
-                                        }
-                                    },
-                                    error: function(err) {
-                                        Swal.fire(
-                                            'Error!',
-                                            'AJAX error: Could not delete room.',
-                                            'error'
-                                        );
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "This will permanently delete the room!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, delete it!',
+                        cancelButtonText: 'Cancel',
+                        background: '#2b2d31', // Dark background
+                        color: '#fff',          // White text
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        customClass: {
+                            popup: 'swal-dark-popup',
+                            title: 'swal-dark-title',
+                            content: 'swal-dark-content',
+                            confirmButton: 'swal-dark-confirm',
+                            cancelButton: 'swal-dark-cancel'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: "../controller/end-points/controller.php",
+                                type: "POST",
+                                data: {
+                                    requestType: "deleteRoom",
+                                    room_id: room_id
+                                },
+                                success: function(res) {
+                                    let response = JSON.parse(res);
+                                    if (response.status === 200) {
+                                        Swal.fire({
+                                            title: 'Deleted!',
+                                            text: 'Your room has been deleted.',
+                                            icon: 'success',
+                                            background: '#2b2d31',
+                                            color: '#fff',
+                                            confirmButtonColor: '#3085d6'
+                                        });
+                                        fetchRooms(); // Refresh the room list
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error!',
+                                            text: response.message || 'Failed to delete room.',
+                                            icon: 'error',
+                                            background: '#2b2d31',
+                                            color: '#fff',
+                                            confirmButtonColor: '#d33'
+                                        });
                                     }
-                                });
-                            }
-                        });
+                                },
+                                error: function(err) {
+                                    Swal.fire({
+                                        title: 'Error!',
+                                        text: 'AJAX error: Could not delete room.',
+                                        icon: 'error',
+                                        background: '#2b2d31',
+                                        color: '#fff',
+                                        confirmButtonColor: '#d33'
+                                    });
+                                }
+                            });
+                        }
                     });
+                });
 
                 } else {
                     console.error("Failed to fetch rooms");
