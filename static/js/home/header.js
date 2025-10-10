@@ -1,5 +1,25 @@
 $(document).ready(function() {
 
+  function getRoomNameFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('room_name'); // Get the room_name from URL
+  }
+
+  function markActiveRoom() {
+    const roomName = getRoomNameFromURL();
+    if (!roomName) return;
+
+    // Remove active from all first
+    $("#joinedRooms a, #createdRooms a").removeClass("bg-[#56585d] font-bold");
+
+    // Add active to the matching room
+    $(`#joinedRooms a span:contains("${roomName}"), #createdRooms a span:contains("${roomName}")`).each(function() {
+      if ($(this).text() === roomName) {
+        $(this).closest('a').addClass("bg-[#56585d] font-bold");
+      }
+    });
+  }
+
   // Load rooms the user has joined
   function load_getJoinedRooms() {
     $.ajax({
@@ -12,7 +32,7 @@ $(document).ready(function() {
         if (response.status === 200 && response.data.length > 0) {
           response.data.forEach(function(room) {
             output += `
-              <a href="room.php?code=${room.room_code}"
+              <a href="room.php?code=${room.room_code}&&room_name=${room.room_name}"
                  class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#3c3f44] transition">
                 <span>${room.room_name}</span>
               </a>`;
@@ -24,6 +44,7 @@ $(document).ready(function() {
         }
 
         $("#joinedRooms").html(output);
+        markActiveRoom(); // Call after rendering
       },
       error: function() {
         $("#joinedRooms").html(`<p class="text-red-500 px-3 text-sm">Error fetching rooms.</p>`);
@@ -43,7 +64,7 @@ $(document).ready(function() {
         if (response.status === 200 && response.data.length > 0) {
           response.data.forEach(function(room) {
             output += `
-              <a href="room.php?code=${room.room_code}"
+              <a href="room.php?code=${room.room_code}&&room_name=${room.room_name}"
                  class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#3c3f44] transition font-semibold text-yellow-400">
                 <span>${room.room_name}</span>
               </a>`;
@@ -55,6 +76,7 @@ $(document).ready(function() {
         }
 
         $("#createdRooms").html(output);
+        markActiveRoom(); // Call after rendering
       },
       error: function() {
         $("#createdRooms").html(`<p class="text-red-500 px-3 text-sm">Error fetching rooms.</p>`);

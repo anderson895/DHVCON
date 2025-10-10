@@ -47,8 +47,8 @@
       document.getElementById('loadingScreen').style.opacity = '0';
       setTimeout(function() {
         document.getElementById('loadingScreen').style.display = 'none';
-      }, 2000); // Hide after the opacity transition is complete
-    }, 2000); // Show for 1 second
+      }, 3000); // Hide after the opacity transition is complete
+    }, 3000); // Show for 1 second
 
     // Mark the page as loaded in sessionStorage
     sessionStorage.setItem('loaded', 'true');
