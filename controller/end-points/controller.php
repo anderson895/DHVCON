@@ -215,6 +215,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => 'Failed to create classwork.'
                 ]);
             }
+        }else if ($_POST['requestType'] == 'CreateMeeting') {
+            $user_id = $_SESSION['user_id'];
+            $meeting_link = $_POST['meeting_link'];
+            $meeting_title = $_POST['meeting_title'];
+            $meeting_description = $_POST['meeting_description'];
+            $start_date = $_POST['start_date'];
+            $end_date = $_POST['end_date'];
+            $room_id = $_POST['room_id']; 
+
+            $insertedId = $db->CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_description, $start_date, $end_date, $room_id);
+
+            if ($insertedId) {
+                echo json_encode([
+                    'status' => 'success',
+                    'message' => 'Classwork created successfully.',
+                    'classwork_id' => $insertedId
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 'error',
+                    'message' => 'Failed to create classwork.'
+                ]);
+            }
         }else{
             echo "404";
         }

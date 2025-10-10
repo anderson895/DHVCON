@@ -14,10 +14,8 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 
 
-   
 
         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
-          <img src="https://images.unsplash.com/photo-1606112219348-204d7d8b94ee?w=600" alt="Meeting" class="w-full h-40 object-cover">
           <div class="p-4 space-y-3">
             <h3 class="font-semibold text-lg text-white">Project Discussion</h3>
             <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>

@@ -163,6 +163,48 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
 
 
+public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_description, $start_date, $end_date, $room_id)
+{
+    // ✅ SQL query with 6 placeholders
+    $query = "
+        INSERT INTO `meeting` 
+        (`meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`) 
+        VALUES (?, ?, ?, ?, ?, ?)
+    ";
+
+    // ✅ Prepare statement
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    // ✅ Bind parameters
+    // s = string, i = integer
+    $stmt->bind_param(
+        "sssssi",
+        $meeting_link,
+        $meeting_title,
+        $meeting_description,
+        $start_date,
+        $end_date,
+        $room_id
+    );
+
+    // ✅ Execute
+    $result = $stmt->execute();
+
+    if (!$result) {
+        $stmt->close();
+        return false;
+    }
+
+    // ✅ Get the inserted ID
+    $inserted_id = $this->conn->insert_id;
+    $stmt->close();
+
+    return $inserted_id;
+}
+
 
 
 

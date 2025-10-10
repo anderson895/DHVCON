@@ -75,9 +75,13 @@ include "../src/components/home/footer.php";
     </h2>
 
     <!-- Form -->
-    <form id="meetingForm" class="space-y-4">
+    <form id="frmMeeting" class="space-y-4">
 
-  
+    <!-- Fullscreen Spinner Overlay -->
+      <div class="spinner fixed inset-0 flex items-center justify-center z-[9999] bg-[#1e1f22]/80" style="display:none;">
+        <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
       
       <div>
         <label class="block mb-1 text-sm">Meeting Link</label>
@@ -112,9 +116,8 @@ include "../src/components/home/footer.php";
 
       <div class="pt-4 flex justify-end gap-3">
         <button type="button" id="cancelMeeting" 
-                class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">Cancel</button>
-        <button type="submit" 
-                class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-md">Save Meeting</button>
+                class="cursor-pointer bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md">Cancel</button>
+        <button type="submit" id="btnCreateMeeting" class="cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-md">Save Meeting</button>
       </div>
 
     </form>
