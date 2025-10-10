@@ -282,7 +282,7 @@ public function get_rooms_members($room_id) {
 
 
 
-public function getClassworkDetails($id) {
+public function getClassworkDetails_all($id) {
     $sql = "
         SELECT 
             c.classwork_id,
@@ -313,6 +313,39 @@ public function getClassworkDetails($id) {
     }
 }
 
+
+
+public function getClassworkDetails_where_user_id_only($user_id, $classwork_id){
+    $sql = "
+        SELECT 
+            c.classwork_id,
+            c.classwork_title,
+            c.classwork_instruction,
+            c.classwork_file,
+            u.user_fullname AS posted_by,
+            DATE_FORMAT(c.created_at, '%M %e, %Y %h:%i %p') AS posted_time,
+            r.room_name,
+            sc.*
+        FROM classwork c
+        LEFT JOIN user u ON c.classwork_by_user_id = u.user_id
+        LEFT JOIN room r ON c.classwork_room_id = r.room_id
+        LEFT JOIN submitted_classwork sc 
+            ON sc.sw_classwork_id = c.classwork_id 
+            AND sc.sw_user_id = ?
+        WHERE c.classwork_id = ?
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ii", $user_id, $classwork_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc();
+    } else {
+        return false;
+    }
+}
 
 
 

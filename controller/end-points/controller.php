@@ -372,9 +372,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             }
 
-        }else if ($_GET['requestType'] === 'getClassworkDetails') {
+        }else if ($_GET['requestType'] === 'getClassworkDetails_all') {
                     $id = intval($_GET['classwork_id']);
-                    $response = $db->getClassworkDetails($id);
+                    $response = $db->getClassworkDetails_all($id);
+
+                    if ($response) {
+                        echo json_encode([
+                            'status' => 200,
+                            'data' => $response
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'status' => 500,
+                            'message' => $response
+                        ]);
+                    }
+                    
+        }else if ($_GET['requestType'] === 'getClassworkDetails_where_user_id_only') {
+                    $user_id = $_SESSION['user_id'];
+                    $classwork_id = intval($_GET['classwork_id']);
+                    $response = $db->getClassworkDetails_where_user_id_only($user_id,$classwork_id);
 
                     if ($response) {
                         echo json_encode([

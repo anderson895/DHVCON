@@ -91,7 +91,7 @@ $(document).ready(function () {
     $.ajax({
       url: "../controller/end-points/controller.php",
       type: "GET",
-      data: { requestType: "getClassworkDetails", classwork_id: classworkId },
+      data: { requestType: "getClassworkDetails_where_user_id_only", classwork_id: classworkId },
       dataType: "json",
       success: function(res) {
         if (res.status === 200 && res.data) {
