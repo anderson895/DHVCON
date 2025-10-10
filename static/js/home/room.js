@@ -113,7 +113,7 @@ function fetchRoomsDetails() {
       // Fetch other data after setup
       fetchAllWorksPending(data.room_name);
       fetchRoomMembers(room_id);
-      fetchAllCreatedWorks(room_id);
+      fetchAllCreatedWorks(room_id,data.room_name);
       fetchAllWorks_TurnIn(room_id);
     },
     error: function () {
@@ -297,7 +297,7 @@ function fetchRoomsDetails() {
 
 
 
-function fetchAllCreatedWorks(roomId) {
+function fetchAllCreatedWorks(roomId, room_name) {
   $.ajax({
     url: `../controller/end-points/controller.php`,
     type: 'GET',
@@ -322,35 +322,45 @@ function fetchAllCreatedWorks(roomId) {
             ? `<a href="../static/upload/${work.classwork_file}" target="_blank" class="text-blue-400 underline cursor-pointer">${work.classwork_file}</a>`
             : `<span class="text-gray-500 italic">No file</span>`;
 
+          const instructionText = work.classwork_instruction || 'No instructions provided.';
+          const maxLength = 50;
+          const truncatedInstruction = instructionText.length > maxLength
+            ? instructionText.substring(0, maxLength) + '...'
+            : instructionText;
+
+          const seeMoreButton = instructionText.length > maxLength
+            ? ` <button class="see-more-btn cursor-pointer text-blue-400 hover:underline text-xs">See more</button>`
+            : '';
+
+          // Append row
           const row = `
             <tr class="hover:bg-[#3a3b3f]/50 transition">
               <td class="px-4 py-3 text-sm text-gray-300">${index + 1}</td>
               <td class="px-4 py-3 text-sm text-gray-300">${work.classwork_title}</td>
-              <td class="px-4 py-3 text-sm text-gray-400 line-clamp-1">
-                ${work.classwork_instruction || 'No instructions provided.'}
+              <td class="px-4 py-3 text-sm text-gray-400 instruction-cell">
+                <span class="instruction-text" data-full="${instructionText}">${truncatedInstruction}</span>${seeMoreButton}
               </td>
               <td class="px-4 py-3 text-sm">${fileDisplay}</td>
               <td class="px-4 py-3 text-sm text-gray-400">${formattedDate}</td>
               <td class="px-4 py-3 text-center">
-                  <div class="flex justify-center items-center gap-2">
-                    <button 
-                      class="cursor-pointer edit-btn bg-blue-500 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
-                      data-id="${work.classwork_id}">
-                      Edit
-                    </button>
-                    <button 
-                      class="view-response-btn cursor-pointer bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
-                      data-id="${work.classwork_id}">
-                      Response
-                    </button>
-                    <button 
-                      class="delete-btn bg-red-500 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
-                      data-id="${work.classwork_id}">
-                      Delete
-                    </button>
-                  </div>
-                </td>
-
+                <div class="flex justify-center items-center gap-2">
+                  <button 
+                    class="cursor-pointer edit-btn bg-blue-500 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                    data-id="${work.classwork_id}">
+                    Edit
+                  </button>
+                  <a 
+                    href="view_response?classwork_id=${work.classwork_id}&&room_name=${room_name}" 
+                    class="view-response-btn cursor-pointer bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm">
+                    Response
+                  </a>
+                  <button 
+                    class="delete-btn bg-red-500 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                    data-id="${work.classwork_id}">
+                    Delete
+                  </button>
+                </div>
+              </td>
             </tr>
           `;
           tbody.append(row);
@@ -376,6 +386,24 @@ function fetchAllCreatedWorks(roomId) {
     }
   });
 }
+
+// Toggle "See more" / "See less"
+$(document).on('click', '.see-more-btn', function() {
+  const $btn = $(this);
+  const $text = $btn.siblings('.instruction-text');
+  const fullText = $text.data('full');
+
+  if ($btn.text() === 'See more') {
+    $text.text(fullText);
+    $btn.text('See less');
+  } else {
+    const maxLength = 50;
+    const truncated = fullText.length > maxLength ? fullText.substring(0, maxLength) + '...' : fullText;
+    $text.text(truncated);
+    $btn.text('See more');
+  }
+});
+
 
 
 

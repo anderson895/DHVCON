@@ -40,7 +40,7 @@ $(document).ready(function() {
         if (response.status === 200 && response.data.length > 0) {
           response.data.forEach(function(room) {
             output += `
-              <a href="room.php?code=${room.room_code}&&room_name=${room.room_name}"
+              <a href="room?code=${room.room_code}&&room_name=${room.room_name}"
                  class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#3c3f44] transition">
                 <span>${room.room_name}</span>
               </a>`;
@@ -72,7 +72,7 @@ $(document).ready(function() {
         if (response.status === 200 && response.data.length > 0) {
           response.data.forEach(function(room) {
             output += `
-              <a href="room.php?code=${room.room_code}&&room_name=${room.room_name}"
+              <a href="room?code=${room.room_code}&&room_name=${room.room_name}"
                  class="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-[#3c3f44] transition font-semibold text-yellow-400">
                 <span>${room.room_name}</span>
               </a>`;

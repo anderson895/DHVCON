@@ -144,7 +144,7 @@ $(document).ready(function() {
                                         </h3>
                                         <p class="text-gray-700 text-sm">${room.room_description}</p>
                                         <p class="text-gray-700 text-sm">CODE: ${room.room_code}</p>
-                                        <a href="room.php?code=${room.room_code}&&room_name=${room.room_name}" 
+                                        <a href="room?code=${room.room_code}&&room_name=${room.room_name}" 
                                            class="block text-center bg-black text-white font-semibold py-2 rounded-md hover:bg-gray-800 transition">
                                            My Room
                                         </a>
