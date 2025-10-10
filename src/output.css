@@ -261,6 +261,9 @@
   .z-50 {
     z-index: 50;
   }
+  .z-\[9999\] {
+    z-index: 9999;
+  }
   .col-span-full {
     grid-column: 1 / -1;
   }
@@ -592,6 +595,9 @@
   .overflow-y-auto {
     overflow-y: auto;
   }
+  .rounded {
+    border-radius: 0.25rem;
+  }
   .rounded-2xl {
     border-radius: var(--radius-2xl);
   }
@@ -693,8 +699,14 @@
   .bg-\[\#1e1f22\]\/70 {
     background-color: color-mix(in oklab, #1e1f22 70%, transparent);
   }
+  .bg-\[\#1e1f22\]\/80 {
+    background-color: color-mix(in oklab, #1e1f22 80%, transparent);
+  }
   .bg-\[\#1f2024\] {
     background-color: #1f2024;
+  }
+  .bg-\[\#2a2b2e\] {
+    background-color: #2a2b2e;
   }
   .bg-\[\#2b2d31\] {
     background-color: #2b2d31;
@@ -981,6 +993,9 @@
   .text-yellow-400 {
     color: var(--color-yellow-400);
   }
+  .capitalize {
+    text-transform: capitalize;
+  }
   .uppercase {
     text-transform: uppercase;
   }
@@ -1163,6 +1178,20 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-red-700);
+      }
+    }
+  }
+  .hover\:text-blue-400 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-blue-400);
+      }
+    }
+  }
+  .hover\:text-red-400 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-red-400);
       }
     }
   }

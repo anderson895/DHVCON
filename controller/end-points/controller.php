@@ -30,8 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $user_id = $_SESSION['user_id'];
                 $roomCode = $_POST['roomCode'];
 
-
-              
                 $result = $db->joinRoom($user_id,$roomCode);
 
                 if ($result['success']) {
@@ -45,9 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => $result['message']
                     ]);
                 }
-
-
-
 
         }else if ($_POST['requestType'] == 'createRoom') {
             $user_id = $_SESSION['user_id'];
@@ -78,7 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
 
-                // Call createRoom and get inserted ID
                 $insertedId = $db->createRoom($roomName, $roomDescription, $roomImageFileName, $user_id);
 
                 if ($insertedId) {
@@ -94,11 +88,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                 }
 
+        }else if ($_POST['requestType'] === 'UploadFiles') {
+            $user_id = $_SESSION['user_id'];
+            $classwork_id = $_POST['classwork_id'];
+            $uploadDir = '../../static/upload/';
+            $uploadedFiles = [];
 
+            if (!empty($_FILES['files']['name'][0])) {
+                foreach ($_FILES['files']['name'] as $key => $name) {
+                    if ($_FILES['files']['error'][$key] !== UPLOAD_ERR_OK) continue;
+                    $tmp = $_FILES['files']['tmp_name'][$key];
+                    $ext = pathinfo($name, PATHINFO_EXTENSION);
+                    $newName = uniqid('submission_', true) . "." . $ext;
+                    if (move_uploaded_file($tmp, $uploadDir . $newName)) {
+                        $uploadedFiles[] = $newName;
+                    }
+                }
+            }
+
+            // Pass user_id and classwork_id to saveFiles
+            $merged = $db->saveFiles($user_id, $classwork_id, $uploadedFiles);
+
+            echo json_encode(['status' => 'success', 'files' => $merged]);
+            exit;
+        }else if($_POST['requestType'] === 'RemoveFile'){
+            $user_id = $_SESSION['user_id'];
+            $classwork_id = $_POST['classwork_id'];
+            $filename = $_POST['filename'];
+            $uploadDir = '../../static/upload/';
+
+            // Fetch current files
+            $stmt = $db->conn->prepare("SELECT sw_files FROM submitted_classwork WHERE sw_classwork_id=? AND sw_user_id=?");
+            $stmt->bind_param("ii", $classwork_id, $user_id);
+            $stmt->execute();
+            $res = $stmt->get_result()->fetch_assoc();
+            $stmt->close();
+
+            if(!$res) {
+                echo json_encode(['status'=>'error','message'=>'No submission found']); exit;
+            }
+
+            $files = $res['sw_files'] ? json_decode($res['sw_files'], true) : [];
+            $files = array_filter($files, fn($f) => $f !== $filename);
+            $filesJson = json_encode(array_values($files));
+
+            // Update DB
+            $stmt = $db->conn->prepare("UPDATE submitted_classwork SET sw_files=? WHERE sw_classwork_id=? AND sw_user_id=?");
+            $stmt->bind_param("sii", $filesJson, $classwork_id, $user_id);
+            $stmt->execute();
+            $stmt->close();
+
+            // Delete physical file if exists
+            if(file_exists($uploadDir.$filename)) unlink($uploadDir.$filename);
+
+            echo json_encode(['status'=>'success']);
+            exit;
+        }else if($_POST['requestType'] === 'SubmittedWorks' || $_POST['requestType'] === 'UnsubmitWork') {
+            $user_id = $_SESSION['user_id'];
+            $classwork_id = $_POST['classwork_id'];
+            $status = $_POST['requestType'] === 'SubmittedWorks' ? 1 : 0;
+            $updated = $db->updateSwStatus($status,$user_id,$classwork_id);
+            echo json_encode(['status'=> $updated ? 'success' : 'error']);
+            exit;
+            
         }else if ($_POST['requestType'] == 'Login') {
-            $email = $_POST['email'];
-            $password = $_POST['password'];
-            $loginResult = $db->Login($email, $password);
+                    $email = $_POST['email'];
+                    $password = $_POST['password'];
+                    $loginResult = $db->Login($email, $password);
 
             if ($loginResult['success']) {
                 echo json_encode([

@@ -13,6 +13,58 @@ class global_class extends db_connect
         $this->connect();
     }
 
+    public function saveFiles(int $user_id, int $classwork_id, array $uploadedFiles): array 
+    {
+        // Fetch existing files
+        $stmt = $this->conn->prepare(
+            "SELECT sw_files FROM submitted_classwork WHERE sw_classwork_id=? AND sw_user_id=?"
+        );
+        $stmt->bind_param("ii", $classwork_id, $user_id);
+        $stmt->execute();
+        $res = $stmt->get_result()->fetch_assoc();
+        $stmt->close();
+
+        // If record exists, get existing files; otherwise empty array
+        $existing = ($res && !empty($res['sw_files'])) ? json_decode($res['sw_files'], true) : [];
+
+        $merged = array_merge($existing, $uploadedFiles);
+        $mergedJson = json_encode($merged);
+
+        if ($res) { // Update existing record
+            $stmt = $this->conn->prepare(
+                "UPDATE submitted_classwork SET sw_files=? WHERE sw_classwork_id=? AND sw_user_id=?"
+            );
+            $stmt->bind_param("sii", $mergedJson, $classwork_id, $user_id);
+            $stmt->execute();
+            $stmt->close();
+        } else { // Insert new record
+            $stmt = $this->conn->prepare(
+                "INSERT INTO submitted_classwork (sw_classwork_id, sw_user_id, sw_files, sw_status) VALUES (?,?,?,0)"
+            );
+            $stmt->bind_param("iis", $classwork_id, $user_id, $mergedJson);
+            $stmt->execute();
+            $stmt->close();
+        }
+
+        return $merged;
+    }
+
+
+    /**
+     * Update submission status (0 = Not Turned In, 1 = Turned In)
+     */
+    public function updateSwStatus($status, $user_id, $classwork_id) {
+        $stmt = $this->conn->prepare("UPDATE submitted_classwork SET sw_status=? WHERE sw_classwork_id=? AND sw_user_id=?");
+        $stmt->bind_param("iii", $status, $classwork_id, $user_id); // <-- use the method parameters
+        $stmt->execute();
+
+        $affectedRows = $stmt->affected_rows;
+        $stmt->close();
+
+        return $affectedRows > 0;
+    }
+
+
 
     public function SignUp($full_name, $email, $password){
         // Check if the email already exists
@@ -103,6 +155,15 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
     return $inserted_id; 
 }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -230,10 +291,12 @@ public function getClassworkDetails($id) {
             c.classwork_file,
             u.user_fullname AS posted_by,
             DATE_FORMAT(c.created_at, '%M %e, %Y %h:%i %p') AS posted_time,
-            r.room_name
+            r.room_name,
+            sc.*
         FROM classwork c
-        JOIN user u ON c.classwork_by_user_id = u.user_id
-        JOIN room r ON c.classwork_room_id = r.room_id
+        LEFT JOIN user u ON c.classwork_by_user_id = u.user_id
+        LEFT JOIN room r ON c.classwork_room_id = r.room_id
+        LEFT JOIN submitted_classwork sc ON sc.sw_classwork_id = c.classwork_id
         WHERE c.classwork_id = ?
         LIMIT 1
     ";
@@ -249,6 +312,10 @@ public function getClassworkDetails($id) {
         return false;
     }
 }
+
+
+
+
 
 
 

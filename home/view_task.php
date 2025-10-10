@@ -18,12 +18,10 @@ include "../src/components/home/header.php";
       <!-- Header -->
       <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
         <span class="material-icons-round text-[#5865f2] text-3xl">assignment</span>
-        <h1 class="text-xl md:text-2xl font-bold text-white">Assignment Task</h1>
+        <h1 class="classwork_title capitalize text-xl md:text-2xl font-bold text-white">Assignment Task</h1>
       </div>
 
-      <p class="text-sm text-gray-400 mb-4 text-center md:text-left">
-        Posted by <span class="font-medium text-gray-300">Ryan Rodriguez</span> • 4:31 PM
-      </p>
+      <p class="postedby text-sm text-gray-400 mb-4 text-center md:text-left"></p>
 
       <!-- Description Card -->
       <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] hover:border-[#5865f2] transition flex flex-col">
@@ -36,11 +34,18 @@ include "../src/components/home/header.php";
 
     <!-- Your Work Section -->
     <section class="flex flex-col mt-3">
+
+     <!-- Fullscreen Spinner Overlay -->
+      <div id="spinner" class="fixed inset-0 flex items-center justify-center z-[9999] bg-[#1e1f22]/80" style="display:none;">
+        <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+
+
       <form id="frmSubmittedWorks" class="flex flex-col mt-3">
         <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] shadow-md flex flex-col gap-4">
           <div class="flex items-center justify-between">
             <h2 class="text-base md:text-lg font-semibold text-white">Your Work</h2>
-            <span class="text-xs md:text-sm text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Assigned</span>
+            <span class="taskStatus text-xs md:text-sm text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Assigned</span>
           </div>
 
           <input type="file" id="fileInput" name="files[]" multiple class="hidden">
@@ -52,7 +57,7 @@ include "../src/components/home/header.php";
 
           <div id="filePreview" class="flex flex-col gap-2 max-h-48 overflow-y-auto p-1 custom-scrollbar"></div>
 
-          <button type="submit"
+          <button type="submit" id="btnSubmitWorks"
             class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base">
             Mark as done
           </button>
@@ -78,114 +83,182 @@ $(document).ready(function () {
   const classworkId = urlParams.get('classwork_id');
   if (!classworkId) return console.error("Missing classwork_id in URL");
 
-  $.ajax({
-    url: "../controller/end-points/controller.php",
-    type: "GET",
-    data: {
-      requestType: "getClassworkDetails",
-      classwork_id: classworkId
-    },
-    dataType: "json",
-    success: function (res) {
-      if (res.status === 200 && res.data) {
-        const cw = res.data;
+  const spinner = $("#spinner");
+  const filePreview = $("#filePreview");
 
-        // Title and details
-        $("h1").text(cw.classwork_title);
-        $(".text-sm.text-gray-400.mb-4").html(
-          `Posted by <span class="font-medium text-gray-300">${cw.posted_by}</span> • ${cw.posted_time}`
-        );
+  // Fetch classwork
+  function fetchClasswork() {
+    $.ajax({
+      url: "../controller/end-points/controller.php",
+      type: "GET",
+      data: { requestType: "getClassworkDetails", classwork_id: classworkId },
+      dataType: "json",
+      success: function(res) {
+        if (res.status === 200 && res.data) {
+          const cw = res.data;
 
-        // Instruction text with preserved spacing
-        $(".classwork_instruction").html(
-          cw.classwork_instruction.replace(/\r?\n/g, "<br>")
-        );
+          $(".classwork_title").text(cw.classwork_title);
+          $(".postedby").html(`Posted by <span class="font-medium text-gray-300">${cw.posted_by}</span> • ${cw.posted_time}`);
 
-        // Attachment display logic
-        const attachmentContainer = $(".attachement-creator");
-        if (cw.classwork_file && cw.classwork_file.trim() !== "") {
-          const filePath = `../static/upload/${cw.classwork_file}`;
-          const ext = cw.classwork_file.split(".").pop().toLowerCase();
+          // Update Turn In / Not Turned In status
+          updateTurnInStatus(cw.sw_status);
 
-          let fileHTML = "";
+          // Instructions
+          $(".classwork_instruction").html(cw.classwork_instruction.replace(/\r?\n/g, "<br>"));
 
-          if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
-            fileHTML = `
-              <img src="${filePath}" alt="Attachment" class="object-cover w-full h-auto">
-              <div class="p-3 text-sm text-gray-400 border-t border-[#3a3b40] bg-[#1e1f22]">
-                <span class="truncate block text-gray-200 font-medium">${cw.classwork_file}</span>
-                <p class="text-xs text-gray-500">Image Attachment</p>
-              </div>
-            `;
-          } else {
-            fileHTML = `
-              <div class="text-center p-3">
-                <span class="material-icons-round text-[#5865f2] text-4xl mb-2">description</span>
-                <div class="text-sm text-gray-400">
-                  <span class="truncate block text-gray-200 font-medium">${cw.classwork_file}</span>
-                  <a href="${filePath}" target="_blank" class="text-[#5865f2] hover:underline text-xs">Download</a>
+          // Creator attachment
+          const attachmentContainer = $(".attachement-creator");
+          if(cw.classwork_file && cw.classwork_file.trim() !== ""){
+            const filePath = `../static/upload/${cw.classwork_file}`;
+            const ext = cw.classwork_file.split(".").pop().toLowerCase();
+            let fileHTML = '';
+            if(["jpg","jpeg","png","gif","webp"].includes(ext)){
+              fileHTML = `<img src="${filePath}" class="object-cover w-full h-auto">
+                          <div class="p-3 text-sm text-gray-400 border-t border-[#3a3b40] bg-[#1e1f22]">
+                            <span class="truncate block text-gray-200 font-medium">${cw.classwork_file}</span>
+                            <p class="text-xs text-gray-500">Image Attachment</p>
+                          </div>`;
+            } else {
+              fileHTML = `<div class="text-center p-3">
+                            <span class="material-icons-round text-[#5865f2] text-4xl mb-2">description</span>
+                            <div class="text-sm text-gray-400">
+                              <span class="truncate block text-gray-200 font-medium">${cw.classwork_file}</span>
+                              <a href="${filePath}" target="_blank" class="text-[#5865f2] hover:underline text-xs">Download</a>
+                            </div>
+                          </div>`;
+            }
+            attachmentContainer.html(fileHTML).removeClass("hidden");
+          } else attachmentContainer.remove();
+
+          // Existing user files with Remove button
+          filePreview.empty();
+          if(cw.sw_files){
+            JSON.parse(cw.sw_files).forEach(f=>{
+              filePreview.append(`
+                <div class="flex items-center justify-between gap-2 text-gray-300 text-sm bg-[#2a2b2e] p-1 rounded">
+                  <div class="flex items-center gap-2">
+                    <i class="uil uil-file-alt"></i>
+                    <a href="../../static/upload/${f}" target="_blank" class="truncate hover:text-blue-400">${f}</a>
+                  </div>
+                  <button type="button" class="removeFileBtn cursor-pointer text-red-500 hover:text-red-400 text-xs" data-filename="${f}">Remove</button>
                 </div>
-              </div>
-            `;
+              `);
+            });
           }
-
-          attachmentContainer.html(fileHTML).removeClass("hidden");
-        } else {
-          attachmentContainer.remove();
         }
+      },
+      error: function(e){ console.error(e); }
+    });
+  }
 
-      } else {
-        console.warn("No classwork details found");
-      }
-    },
-    error: function (xhr, status, error) {
-      console.error("AJAX error:", error);
+  // Function to update Turn In / Not Turned In UI
+  function updateTurnInStatus(status) {
+    if(status == 1){
+      $(".taskStatus").html('<span class="text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Turned in</span>');
+      $("#btnSubmitWorks").text("Not turned in").attr("data-status","1")
+        .removeClass("bg-[#5865f2] hover:bg-[#4752c4]").addClass("bg-gray-500 hover:bg-gray-600");
+    } else {
+      $(".taskStatus").html('<span class="text-gray-400 font-medium bg-[#2a2b2e] px-2 py-1 rounded-md">Not turned in</span>');
+      $("#btnSubmitWorks").text("Mark as done").attr("data-status","0")
+        .removeClass("bg-gray-500 hover:bg-gray-600").addClass("bg-[#5865f2] hover:bg-[#4752c4]");
     }
+  }
+
+  // Remove file handler — bind only once
+  filePreview.on("click", ".removeFileBtn", function(){
+    const filename = $(this).data("filename");
+    if(!confirm(`Remove ${filename}?`)) return;
+
+    spinner.show();
+
+    $.post("../controller/end-points/controller.php", 
+      {
+        requestType: "RemoveFile",
+        classwork_id: classworkId,
+        filename: filename
+      },
+      function(res){
+        spinner.hide();
+        if(res.status === "success"){
+          // alertify.success("File removed successfully");
+          fetchClasswork(); // refresh preview
+        } else alertify.error(res.message);
+      },
+      "json"
+    );
   });
-});
-</script>
 
+  fetchClasswork();
 
-
-
-
-
-<script>
-$(document).ready(function(){
-  // Trigger hidden file input when button is clicked
-  $("#addFilesBtn").click(function(){
-    $("#fileInput").click();
-  });
-
-  // Show selected files as preview
+  // Upload files immediately when selected
+  $("#addFilesBtn").click(()=>$("#fileInput").click());
   $("#fileInput").on("change", function(){
     const files = $(this)[0].files;
-    const previewContainer = $("#filePreview");
-    previewContainer.empty(); // clear previous previews
+    if(files.length === 0) return;
 
-    Array.from(files).forEach(file => {
-      const fileName = file.name;
-      const fileType = file.type;
+    const formData = new FormData();
+    Array.from(files).forEach(f=>formData.append('files[]', f));
+    formData.append('requestType', 'UploadFiles');
+    formData.append('classwork_id', classworkId);
 
-      // If image, show thumbnail
-      if(fileType.startsWith("image/")) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = $('<img>').attr('src', e.target.result)
-                                .addClass('w-full h-24 object-cover rounded-md border border-gray-600');
-          const caption = $('<span>').text(fileName)
-                                    .addClass('text-xs text-gray-300 truncate');
-          const wrapper = $('<div>').addClass('flex flex-col gap-1').append(img, caption);
-          previewContainer.append(wrapper);
-        }
-        reader.readAsDataURL(file);
-      } else {
-        // For non-image files, just show filename
-        const span = $('<span>').text(fileName)
-                                .addClass('text-sm text-gray-300');
-        previewContainer.append(span);
+    spinner.show();
+
+    $.ajax({
+      url: "../controller/end-points/controller.php",
+      type: "POST",
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      success: function(res){
+        spinner.hide();
+        if(res.status === "success"){
+          alertify.success("Files uploaded successfully");
+          fetchClasswork(); // refresh file preview
+        } else alertify.error(res.message);
+      },
+      error: function(){
+        spinner.hide();
+        alertify.error("Failed to upload files");
       }
     });
   });
+
+  // Submit/Mark as done
+  $("#frmSubmittedWorks").submit(function(e){
+    e.preventDefault();
+    toggleTurnInStatus();
+  });
+
+  // Function to toggle Turn In / Not Turned In
+  function toggleTurnInStatus(){
+    const currentStatus = $("#btnSubmitWorks").attr("data-status");
+    const requestType = currentStatus === "1" ? "UnsubmitWork" : "SubmittedWorks";
+
+    spinner.show();
+    $("#btnSubmitWorks").prop("disabled", true);
+
+    $.post("../controller/end-points/controller.php",
+      { requestType, classwork_id: classworkId },
+      function(res){
+        spinner.hide();
+        $("#btnSubmitWorks").prop("disabled", false);
+
+        if(res.status==="success"){
+          fetchClasswork();
+          // alertify.success(requestType==="SubmittedWorks" ? "Marked as Turned In" : "Marked as Not Turned In");
+        } else alertify.error(res.message);
+      },
+      "json"
+    );
+  }
+
 });
+
+
 </script>
+
+
+
+
+<script src="../static/js/home/view_task.js"></script>

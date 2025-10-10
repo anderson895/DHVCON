@@ -1,25 +1,3 @@
-<style>
-  /* Custom dark scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #2b2d31; /* track color */
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #868686ff; /* thumb color */
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #6f6f72ff;
-}
-
-</style>
-
 
 <section id="classwork" class="tab-section hidden p-6 text-white">
   <div class="bg-[#2b2d31] rounded-2xl shadow-lg p-8">
