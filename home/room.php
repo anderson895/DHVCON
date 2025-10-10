@@ -7,24 +7,30 @@ $code=$_GET['code'];
 <!-- Main Content -->
 <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
 <!-- Top Tabs -->
-<div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
-  
-  <!-- Left Tabs -->
-  <div class="flex items-center gap-6">
-    <button class="joiner-only tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
-    <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="meeting">Meeting</button>
-    <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
-    <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
-    <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
-    <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="members">Members</button>
-  </div>
-  
-  <!-- Right Leave Button -->
-  <button id="btnLeaveRoom" data-code="<?=$code?>" class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white">
-    Leave Room
+<div class="flex justify-between items-center px-4 sm:px-6 py-4 border-b border-gray-800 bg-[#2b2d31] flex-wrap">
+
+  <!-- Leave Button (Moves left on mobile) -->
+ <button id="btnLeaveRoom" data-code="<?=$code?>" 
+        class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white order-1 sm:order-2 mb-2 sm:mb-0">
+    
+    <!-- Icon always visible -->
     <span class="material-icons">exit_to_app</span>
-  </button>
-  
+
+    <!-- Text only visible on desktop (sm and above) -->
+    <span class="hidden sm:inline">Leave Room</span>
+</button>
+
+
+  <!-- Left Tabs -->
+  <div class="flex items-center gap-4 sm:gap-6 overflow-x-auto scrollbar-hide order-2 sm:order-1">
+    <button class="joiner-only tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1 flex-shrink-0" data-tab="feed">Feed</button>
+    <button class="tab-btn cursor-pointer text-gray-400 hover:text-white flex-shrink-0" data-tab="meeting">Meeting</button>
+    <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white flex-shrink-0" data-tab="worksubmitted">Work Submitted</button>
+    <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white flex-shrink-0" data-tab="classwork">Classwork</button>
+    <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white flex-shrink-0" data-tab="certificate">Claimed Certificate</button>
+    <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white flex-shrink-0" data-tab="members">Members</button>
+  </div>
+
 </div>
 
 

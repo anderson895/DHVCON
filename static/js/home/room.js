@@ -257,7 +257,19 @@ function fetchMeetings() {
 
 
             } else {
-                container.append('<p class="text-gray-400 col-span-full text-center">No meetings scheduled.</p>');
+              container.append(`
+               <div class="col-span-full text-center px-4">
+  <img 
+    src="../static/image/no_schedule_banner.png" 
+    alt="No meetings" 
+    class="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto" 
+  />
+  <p class="text-gray-400 mt-4 text-base sm:text-lg md:text-xl">No meetings scheduled.</p>
+</div>
+
+
+              `);
+
             }
         },
         error: function(xhr, status, error) {
