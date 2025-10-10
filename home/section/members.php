@@ -4,31 +4,10 @@
       Members
     </h2>
 
-    <div class="relative space-y-4">
-      <!-- Member Item -->
-      <div class="flex items-center justify-between bg-[#1f2024] p-4 rounded-xl shadow hover:bg-[#292b30] transition cursor-pointer">
-        <div class="flex items-center gap-4">
-          <div>
-            <h3 class="text-white font-semibold">John Doe</h3>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between bg-[#1f2024] p-4 rounded-xl shadow hover:bg-[#292b30] transition cursor-pointer">
-        <div class="flex items-center gap-4">
-          <div>
-            <h3 class="text-white font-semibold">Jane Smith</h3>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center justify-between bg-[#1f2024] p-4 rounded-xl shadow hover:bg-[#292b30] transition cursor-pointer">
-        <div class="flex items-center gap-4">
-          <div>
-            <h3 class="text-white font-semibold">Michael Lee</h3>
-          </div>
-        </div>
-      </div>
+    <div id="membersList" class="relative space-y-4">
+      <!-- Members will be loaded here dynamically -->
     </div>
   </div>
 </section>
+
+

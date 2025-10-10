@@ -183,6 +183,51 @@ public function getAllRooms($user_id) {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+public function get_rooms_members($room_id) {
+    $query = "
+        SELECT 
+            rm.id AS membership_id,
+            rm.room_id,
+            rm.user_id,
+            rm.date_joined,
+            u.user_fullname,
+            u.user_email
+        FROM room_members AS rm
+        INNER JOIN user AS u ON rm.user_id = u.user_id
+        WHERE rm.room_id = ?
+        ORDER BY rm.id ASC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("i", $room_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $members = [];
+    while ($row = $result->fetch_assoc()) {
+        $members[] = $row;
+    }
+
+    return $members;
+}
+
+
+
+
+
+
 public function getAllPendingClasswork($user_id, $room_id) {
     $query = "
         SELECT cw.*

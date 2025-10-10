@@ -259,8 +259,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 exit;
             }
-
             $response = $db->getAllPendingClasswork($user_id,$room_id);
+
+            if ($response) {
+                echo json_encode([
+                    'status' => 200,
+                    'data' => $response
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 500,
+                    'message' => $response
+                ]);
+            }
+
+        }else if ($_GET['requestType'] == 'get_rooms_members') {
+
+
+            $room_id = $_GET['room_id'];
+            $response = $db->get_rooms_members($room_id);
 
             if ($response) {
                 echo json_encode([
