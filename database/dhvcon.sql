@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2025 at 11:33 AM
+-- Generation Time: Oct 10, 2025 at 01:33 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -45,6 +45,32 @@ CREATE TABLE `classwork` (
 INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
 (10, 'assignment 1', 'Objective:\r\n\r\nThis assignment is designed to help you develop skills in critical reading, analytical thinking, and academic writing. You will analyze a selected text and present a well-structured, evidence-based argument in response to a prompt.\r\n\r\nInstructions:\r\n\r\nChoose a Text\r\nSelect one of the assigned readings from Weeks 4–6. You may not use outside sources for this paper.\r\n\r\nWrite a Critical Analysis\r\nYour paper should focus on how the author uses rhetorical strategies to achieve their purpose. Consider elements such as tone, word choice, structure, and use of evidence.\r\n\r\nDevelop a Thesis Statement\r\nYour analysis should be guided by a clear, arguable thesis that reflects your interpretation of the text.\r\n\r\nSupport Your Argument\r\nUse direct quotes and specific examples from the text to support your points. Make sure to analyze—not just summarize—the content.\r\n\r\nFormatting Requirements\r\n\r\nLength: 1,000–1,200 words\r\n\r\nFont: Times New Roman, 12 pt\r\n\r\nSpacing: Double-spaced\r\n\r\nCitations: MLA format\r\n\r\nFile Type: Submit as a .docx or .pdf file\r\n\r\nSubmission Guidelines\r\nUpload your final paper to the course LMS under the \"Assignments\" tab. Late submissions will receive a 10% deduction per day late unless prior arrangements are made.', NULL, 2, 16, 1, '2025-10-10 05:51:24'),
 (11, 'Assignment 2: Argument Analysis Essay', 'Instructions:\r\n\r\nChoose a Media Source:\r\n\r\nSelect one opinion-based article or editorial, OR\r\n\r\nA short video or speech (under 10 minutes) that presents a clear argument.\r\n\r\nSource must be from the last 3 years and from a credible publication/platform.\r\n\r\nAnalyze the Argument:\r\n\r\nIdentify the main claim (thesis).\r\n\r\nList the supporting reasons and evidence.\r\n\r\nDetermine the underlying assumptions.\r\n\r\nEvaluate the logical strength of the argument (any fallacies? bias?).\r\n\r\nWrite an Essay That Includes:\r\n\r\nIntroduction: Introduce the source and summarize its main argument.\r\n\r\nBody Paragraphs: Analyze the argument’s structure, logic, and evidence. Use critical thinking tools (e.g., identifying fallacies, evaluating assumptions).\r\n\r\nConclusion: Provide a reasoned judgment on the argument’s overall persuasiveness and your own stance, supported by reasoning.\r\n\r\nUse At Least Two Academic Sources to support your evaluation (e.g., sources on argumentation, logic, or context of the topic).\r\n\r\nCite All Sources in APA or MLA format.', 'classwork_68e8c0d2f3fd56.86058434.webp', 2, 16, 1, '2025-10-10 08:16:19');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meeting`
+--
+
+CREATE TABLE `meeting` (
+  `meeting_id` int(11) NOT NULL,
+  `meeting_link` text NOT NULL,
+  `meeting_title` varchar(60) NOT NULL,
+  `meeting_description` text NOT NULL,
+  `meeting_start` datetime NOT NULL,
+  `meeting_end` datetime NOT NULL,
+  `meeting_room_id` int(11) NOT NULL,
+  `meeting_creator_user_id` int(11) NOT NULL,
+  `meeting_pass` varchar(30) NOT NULL,
+  `meeting_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=close,1=open'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting`
+--
+
+INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
+(4, 'https://meet.google.com/nkb-qyek-uui', 'Java programming lesson 1', '', '2025-10-10 18:00:00', '2025-10-10 19:00:00', 16, 2, 'bc80f41f', 1);
 
 -- --------------------------------------------------------
 
@@ -122,7 +148,8 @@ CREATE TABLE `submitted_classwork` (
 
 INSERT INTO `submitted_classwork` (`sw_id`, `sw_classwork_id`, `sw_user_id`, `sw_files`, `sw_status`) VALUES
 (8, 10, 3, '[\"submission_68e8bdcf3b4b14.87473710.jpg\"]', 1),
-(9, 11, 6, '[\"submission_68e8c22b41f340.20897429.pdf\",\"submission_68e8d0cdc87242.66366408.jpg\",\"submission_68e8d0cdc89ab4.00600599.jpg\",\"submission_68e8d0cdc8b748.36500097.png\",\"submission_68e8d0cdc8d040.77894652.webp\"]', 1);
+(9, 11, 6, '[\"submission_68e8c22b41f340.20897429.pdf\",\"submission_68e8d0cdc87242.66366408.jpg\",\"submission_68e8d0cdc89ab4.00600599.jpg\",\"submission_68e8d0cdc8d040.77894652.webp\"]', 1),
+(10, 10, 6, '[\"submission_68e8d9662af8f4.34634629.cpp\"]', 1);
 
 -- --------------------------------------------------------
 
@@ -161,6 +188,14 @@ ALTER TABLE `classwork`
   ADD PRIMARY KEY (`classwork_id`),
   ADD KEY `classword_by_user_id` (`classwork_by_user_id`),
   ADD KEY `classwork_room_id` (`classwork_room_id`);
+
+--
+-- Indexes for table `meeting`
+--
+ALTER TABLE `meeting`
+  ADD PRIMARY KEY (`meeting_id`),
+  ADD KEY `meeting_room_id` (`meeting_room_id`),
+  ADD KEY `meeting_creator_user_id` (`meeting_creator_user_id`);
 
 --
 -- Indexes for table `room`
@@ -202,6 +237,12 @@ ALTER TABLE `classwork`
   MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
+-- AUTO_INCREMENT for table `meeting`
+--
+ALTER TABLE `meeting`
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
@@ -217,7 +258,7 @@ ALTER TABLE `room_members`
 -- AUTO_INCREMENT for table `submitted_classwork`
 --
 ALTER TABLE `submitted_classwork`
-  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -235,6 +276,13 @@ ALTER TABLE `user`
 ALTER TABLE `classwork`
   ADD CONSTRAINT `classwork_ibfk_1` FOREIGN KEY (`classwork_by_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `classwork_ibfk_2` FOREIGN KEY (`classwork_room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `meeting`
+--
+ALTER TABLE `meeting`
+  ADD CONSTRAINT `meeting_ibfk_1` FOREIGN KEY (`meeting_room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `meeting_ibfk_2` FOREIGN KEY (`meeting_creator_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `room`
