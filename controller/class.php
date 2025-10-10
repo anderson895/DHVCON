@@ -162,13 +162,25 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
 
 
-
 public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_description, $start_date, $end_date, $room_id)
 {
+    // ✅ Generate a unique meeting pass that does not already exist
+    do {
+        $meeting_pass = bin2hex(random_bytes(4)); // 8-character random hex
+        $checkQuery = "SELECT COUNT(*) as count FROM `meeting` WHERE meeting_pass = ?";
+        $checkStmt = $this->conn->prepare($checkQuery);
+        $checkStmt->bind_param("s", $meeting_pass);
+        $checkStmt->execute();
+        $checkStmt->bind_result($count);
+        $checkStmt->fetch();
+        $checkStmt->close();
+    } while ($count > 0); // repeat if pass already exists
+
+    // ✅ Insert meeting
     $query = "
         INSERT INTO `meeting` 
-        (`meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`,`meeting_creator_user_id`) 
-        VALUES (?, ?, ?, ?, ?, ?,?)
+        (`meeting_pass`,`meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`,`meeting_creator_user_id`) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     ";
 
     $stmt = $this->conn->prepare($query);
@@ -177,7 +189,8 @@ public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_
     }
 
     $stmt->bind_param(
-        "sssssii",
+        "ssssssii",
+        $meeting_pass,
         $meeting_link,
         $meeting_title,
         $meeting_description,
@@ -187,7 +200,6 @@ public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_
         $user_id
     );
 
-    // ✅ Execute
     $result = $stmt->execute();
 
     if (!$result) {
@@ -195,7 +207,6 @@ public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_
         return false;
     }
 
-    // ✅ Get the inserted ID
     $inserted_id = $this->conn->insert_id;
     $stmt->close();
 
@@ -223,7 +234,8 @@ public function GetMeetingsByRoom($room_id)
             meeting_end,
             meeting_room_id,
             meeting_creator_user_id ,
-            meeting_status
+            meeting_status,
+            meeting_pass
         FROM meeting
         WHERE meeting_room_id = ?
         ORDER BY meeting_start ASC

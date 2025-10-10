@@ -127,7 +127,6 @@ function fetchRoomsDetails() {
 
 
 
-
 function fetchMeetings() {
     $.ajax({
         url: `../controller/end-points/controller.php`,
@@ -143,31 +142,38 @@ function fetchMeetings() {
 
             if (response.status === 200 && response.data.length > 0) {
                 response.data.forEach(meeting => {
-                    // Format Start & End Date
+                    // Format Start & End Date (short format)
                     const startDate = new Date(meeting.meeting_start);
                     const endDate = new Date(meeting.meeting_end);
                     const formattedStart = startDate.toLocaleString('en-PH', { 
-                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', 
-                        hour: '2-digit', minute: '2-digit', hour12: true 
+                      year: 'numeric', month: 'short', day: 'numeric', 
+                      hour: '2-digit', minute: '2-digit', hour12: true 
                     });
                     const formattedEnd = endDate.toLocaleString('en-PH', { 
-                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', 
+                        year: 'numeric', month: 'short', day: 'numeric', 
                         hour: '2-digit', minute: '2-digit', hour12: true 
                     });
+
+                    // Display with labels
+                    const dateInfo = `
+                        <p class="text-gray-400 text-sm"><span class="font-medium">Start:</span> ${formattedStart}</p>
+                        <p class="text-gray-400 text-sm"><span class="font-medium">End:</span> ${formattedEnd}</p>
+                    `;
+
 
                     // Determine action button
                     let actionButton = "";
                     if (meeting.meeting_status == 0) {
                         actionButton = `
                             <button 
-                                class="joiner-only w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                                class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
                                 Generate Certificate
                             </button>
                         `;
                     } else if (meeting.meeting_status == 1) {
                         actionButton = `
                             <a href="${meeting.meeting_link}" target="_blank" 
-                               class="joiner-only block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                               class="block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
                                Join Meeting
                             </a>
                         `;
@@ -177,6 +183,7 @@ function fetchMeetings() {
                     let creatorButtons = '';
                     if (response.user_id === meeting.meeting_creator_user_id) {
                         creatorButtons = `
+                            <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
                             <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition cursor-pointer">
                                 Close Meeting
                             </button>
@@ -191,7 +198,7 @@ function fetchMeetings() {
                             <div class="p-4 space-y-3">
                                 <h3 class="font-semibold text-lg text-white">${meeting.meeting_title}</h3>
                                 <p class="text-gray-400 text-sm">
-                                    ${formattedStart} • ${formattedEnd}
+                                    ${dateInfo}
                                 </p>
                                 <p class="text-sm text-gray-300">${meeting.meeting_description}</p>
                                 ${creatorButtons || actionButton}
@@ -210,6 +217,7 @@ function fetchMeetings() {
         }
     });
 }
+
 
 
     // Initial fetch
