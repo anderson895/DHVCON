@@ -17,9 +17,9 @@
 
         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
           <div class="p-4 space-y-3">
-            <h3 class="font-semibold text-lg text-white">Project Discussion</h3>
-            <p class="text-gray-400 text-sm">Ends 10/10 • Organized by EA</p>
-            <p class="text-sm text-gray-300">Claim 700 Discord Orbs</p>
+            <h3 class="font-semibold text-lg text-white">Meeting Title Here</h3>
+            <p class="text-gray-400 text-sm">Start datetime here  • Ends datetime here </p>
+            <p class="text-sm text-gray-300">description here</p>
            
            
             <a href="https://meet.google.com/" target="_blank" 

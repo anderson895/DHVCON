@@ -115,12 +115,105 @@ function fetchRoomsDetails() {
       fetchRoomMembers(room_id);
       fetchAllCreatedWorks(room_id,data.room_name);
       fetchAllWorks_TurnIn(room_id);
+      fetchMeetings(room_id);
     },
     error: function () {
       $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
     },
   });
 }
+
+
+
+
+
+
+function fetchMeetings() {
+    $.ajax({
+        url: `../controller/end-points/controller.php`,
+        type: "GET",
+        data: {
+            requestType: "getMeetingsByRoom",
+            room_id: room_id
+        },
+        dataType: "json",
+        success: function(response) {
+            const container = $("#meeting .grid");
+            container.empty(); 
+
+            if (response.status === 200 && response.data.length > 0) {
+                response.data.forEach(meeting => {
+                    // Format Start & End Date
+                    const startDate = new Date(meeting.meeting_start);
+                    const endDate = new Date(meeting.meeting_end);
+                    const formattedStart = startDate.toLocaleString('en-PH', { 
+                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', 
+                        hour: '2-digit', minute: '2-digit', hour12: true 
+                    });
+                    const formattedEnd = endDate.toLocaleString('en-PH', { 
+                        weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', 
+                        hour: '2-digit', minute: '2-digit', hour12: true 
+                    });
+
+                    // Determine action button
+                    let actionButton = "";
+                    if (meeting.meeting_status == 0) {
+                        actionButton = `
+                            <button 
+                                class="joiner-only w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                                Generate Certificate
+                            </button>
+                        `;
+                    } else if (meeting.meeting_status == 1) {
+                        actionButton = `
+                            <a href="${meeting.meeting_link}" target="_blank" 
+                               class="joiner-only block w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                               Join Meeting
+                            </a>
+                        `;
+                    }
+
+                    // Check if current user is the creator
+                    let creatorButtons = '';
+                    if (response.user_id === meeting.meeting_creator_user_id) {
+                        creatorButtons = `
+                            <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition cursor-pointer">
+                                Close Meeting
+                            </button>
+                            <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                                Meeting Logs
+                            </button>
+                        `;
+                    }
+
+                    const card = `
+                        <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
+                            <div class="p-4 space-y-3">
+                                <h3 class="font-semibold text-lg text-white">${meeting.meeting_title}</h3>
+                                <p class="text-gray-400 text-sm">
+                                    ${formattedStart} • ${formattedEnd}
+                                </p>
+                                <p class="text-sm text-gray-300">${meeting.meeting_description}</p>
+                                ${creatorButtons || actionButton}
+                            </div>
+                        </div>
+                    `;
+                    container.append(card);
+                });
+
+            } else {
+                container.append('<p class="text-gray-400 col-span-full text-center">No meetings scheduled.</p>');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(error);
+        }
+    });
+}
+
+
+    // Initial fetch
+  
 
 
 
@@ -386,6 +479,25 @@ function fetchAllCreatedWorks(roomId, room_name) {
     }
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Toggle "See more" / "See less"
 $(document).on('click', '.see-more-btn', function() {

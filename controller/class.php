@@ -165,29 +165,26 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
 public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_description, $start_date, $end_date, $room_id)
 {
-    // ✅ SQL query with 6 placeholders
     $query = "
         INSERT INTO `meeting` 
-        (`meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`) 
-        VALUES (?, ?, ?, ?, ?, ?)
+        (`meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`,`meeting_creator_user_id`) 
+        VALUES (?, ?, ?, ?, ?, ?,?)
     ";
 
-    // ✅ Prepare statement
     $stmt = $this->conn->prepare($query);
     if (!$stmt) {
         die("Prepare failed: " . $this->conn->error);
     }
 
-    // ✅ Bind parameters
-    // s = string, i = integer
     $stmt->bind_param(
-        "sssssi",
+        "sssssii",
         $meeting_link,
         $meeting_title,
         $meeting_description,
         $start_date,
         $end_date,
-        $room_id
+        $room_id,
+        $user_id
     );
 
     // ✅ Execute
@@ -205,6 +202,50 @@ public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_
     return $inserted_id;
 }
 
+
+
+
+
+
+
+
+
+
+public function GetMeetingsByRoom($room_id)
+{
+    $query = "
+        SELECT 
+            meeting_id,
+            meeting_link,
+            meeting_title,
+            meeting_description,
+            meeting_start,
+            meeting_end,
+            meeting_room_id,
+            meeting_creator_user_id ,
+            meeting_status
+        FROM meeting
+        WHERE meeting_room_id = ?
+        ORDER BY meeting_start ASC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $stmt->bind_param("i", $room_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meetings = [];
+    while ($row = $result->fetch_assoc()) {
+        $meetings[] = $row;
+    }
+
+    $stmt->close();
+    return $meetings;
+}
 
 
 

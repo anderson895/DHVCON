@@ -463,6 +463,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                     }
                     
+        }else if ($_GET['requestType'] === 'getMeetingsByRoom') {
+                    $room_id = intval($_GET['room_id']);
+                    $user_id = $_SESSION['user_id'];
+
+
+                    $response = $db->GetMeetingsByRoom($room_id);
+
+                    if ($response) {
+                        echo json_encode([
+                            'status' => 200,
+                            'user_id' => $user_id,
+                            'data' => $response
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'status' => 500,
+                            'user_id' => $user_id,
+                            'message' => $response
+                        ]);
+                    }
+                    
         } else{
             echo "404";
         }
