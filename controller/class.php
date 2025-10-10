@@ -650,7 +650,7 @@ public function getWorkResponses($classwork_id) {
     ON classwork.classwork_id = submitted_classwork.sw_classwork_id 
     LEFT JOIN user
     ON user.user_id = submitted_classwork.sw_user_id
-    where submitted_classwork.sw_classwork_id = ?
+    where submitted_classwork.sw_classwork_id = ? AND submitted_classwork.sw_status=1
     ";
 
     $stmt = $this->conn->prepare($query);
