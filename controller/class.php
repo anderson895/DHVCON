@@ -899,6 +899,22 @@ public function joinRoom($user_id, $roomCode) {
 
 
 
+// In your DB class
+public function CloseMeeting($meeting_id)
+{
+    $query = "UPDATE meeting SET meeting_status = 0 WHERE meeting_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param("i", $meeting_id);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result; // true if updated, false if failed
+}
+
 
 
 

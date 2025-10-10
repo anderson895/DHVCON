@@ -180,11 +180,13 @@ function fetchMeetings() {
                       let creatorButtons = '';
                       if (response.user_id === meeting.meeting_creator_user_id) {
                           // Determine if the Close Meeting button should be disabled
-                          const closeDisabled = meeting.meeting_status == 0 ? 'disabled cursor-not-allowed opacity-50' : '';
+                          const closeDisabled = meeting.meeting_status == 0 ? 'disabled cursor-not-allowed opacity-50' : 'cursor-pointer btnCloseMeeting';
 
                           creatorButtons = `
                               <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
-                              <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition ${closeDisabled}">
+                              <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition ${closeDisabled}"
+                              data-meeting-id="${meeting.meeting_id}"
+                              >
                                   Close Meeting
                               </button>
                               <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
@@ -260,6 +262,70 @@ function fetchMeetings() {
     });
 }
 
+
+
+// Inside fetchMeetings(), after appending all cards
+$(document).on('click', '.btnCloseMeeting', function() {
+    const button = $(this);
+
+    console.log('click');
+
+    // Prevent clicking if disabled
+    if (button.prop("disabled")) return;
+
+    // Optionally, confirm with user
+    Swal.fire({
+        title: 'Close Meeting?',
+        text: "Are you sure you want to close this meeting?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, close it',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+           
+            const meetingId = $(this).data("meeting-id"); 
+
+            // Send AJAX request to update status
+            $.ajax({
+                url: '../controller/end-points/controller.php',
+                type: 'POST',
+                data: {
+                    requestType: 'closeMeeting',
+                    meeting_id: meetingId
+                },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.status === 200) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Meeting Closed',
+                            timer: 1000,
+                            showConfirmButton: false
+                        });
+
+                        // Disable the button immediately
+                        button.prop("disabled", true).addClass("cursor-not-allowed opacity-50").removeClass("hover:bg-red-300");
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: res.message || 'Something went wrong.'
+                        });
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error(error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Unable to close the meeting.'
+                    });
+                }
+            });
+        }
+    });
+});
 
 
 

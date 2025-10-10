@@ -238,6 +238,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => 'Failed to create classwork.'
                 ]);
             }
+        }else if ($_POST['requestType'] == 'closeMeeting') {
+            $meeting_id = $_POST['meeting_id'];
+
+            $insertedId = $db->CloseMeeting($meeting_id);
+
+            if ($insertedId) {
+                echo json_encode(['status' => 200]);
+            } else {
+                echo json_encode(['status' => 500, 'message' => 'Failed to close meeting.']);
+            }
+            exit;
+            
         }else{
             echo "404";
         }
