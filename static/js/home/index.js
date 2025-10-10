@@ -187,11 +187,36 @@ $("#btnCreateRoom").click(() => {
 $("#closeCreateModal").click(() => $("#createRoomModal").fadeOut(200));
 $("#createRoomModal").click(function(e){ if(e.target === this) $(this).fadeOut(200); });
 
-// Submit create form
+
+
+
+// Submit create form with validation
 $("#createRoomForm").submit(function(e){
     e.preventDefault();
+
+    // Get input values
+    let roomName = $("input[name='roomName']").val().trim();
+    let roomDescription = $("textarea[name='roomDescription']").val().trim();
+    let roomBanner = $("input[name='roomBanner']")[0].files[0];
+
+    // Validate inputs
+    if (!roomName) {
+        Swal.fire("Warning", "Please enter a room name.", "warning");
+        return;
+    }
+    if (!roomDescription) {
+        Swal.fire("Warning", "Please enter a room description.", "warning");
+        return;
+    }
+    if (!roomBanner) {
+        Swal.fire("Warning", "Please select a room banner image.", "warning");
+        return;
+    }
+
+    // All validations passed, submit form
     let formData = new FormData(this);
     formData.append("requestType", "createRoom");
+
     $("#spinnerCreate").show();
 
     $.ajax({
@@ -203,10 +228,10 @@ $("#createRoomForm").submit(function(e){
         success: function(res){
             let response = JSON.parse(res);
             if(response.status === 200){
-              Swal.fire("Success", response.message, "success");
+                Swal.fire("Success", response.message, "success");
                 $("#createRoomModal").fadeOut(200);
 
-                // Refresh rooms after 1 second (1000ms)
+                // Refresh rooms after 1 second
                 setTimeout(function() {
                     location.reload();
                 }, 1000);
@@ -215,9 +240,12 @@ $("#createRoomForm").submit(function(e){
                 Swal.fire("Error", response.message || "Failed to create room", "error");
             }
         },
-        complete: function(){ $("#spinnerCreate").hide(); }
+        complete: function(){ 
+            $("#spinnerCreate").hide(); 
+        }
     });
 });
+
 
 // ---------------- UPDATE ROOM ----------------
 
