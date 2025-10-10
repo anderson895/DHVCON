@@ -122,6 +122,9 @@ function fetchRoomsDetails() {
 }
 
 
+
+
+
   // Fetch pending works
   function fetchAllWorksPending(room_name) {
     if (!room_id) return;
@@ -184,6 +187,87 @@ function fetchRoomsDetails() {
       }
     });
   }
+
+
+
+
+
+
+
+
+
+
+
+  function fetchAllWorks_TurnIn(room_name) {
+    if (!room_id) return;
+    $('#pendingWorksContainer').html(spinner);
+
+    $.ajax({
+      url: `../controller/end-points/controller.php?requestType=getAllPendingClasswork&room_id=${room_id}`,
+      type: "GET",
+      dataType: "json",
+      success: function(response) {
+        console.log("Pending Works:", response);
+
+        const container = $('#pendingWorksContainer');
+        container.empty();
+
+        if (response.status === 200 && response.data.length > 0) {
+          response.data.forEach((work, index) => {
+            const flexClass = index % 2 === 1 ? 'flex-row-reverse' : '';
+            const date = new Date(work.created_at || Date.now()).toLocaleDateString('en-US', {
+              month: 'short', day: 'numeric', year: 'numeric'
+            });
+
+            const post = `
+              <a href="view_task?classwork_id=${work.classwork_id}&&room_name=${room_name}" 
+                 class="block relative flex gap-6 ${flexClass} items-start cursor-pointer no-underline">
+                <div class="bg-[#1e1f22] rounded-2xl p-6 w-full hover:bg-[#2f3150] transition">
+                  <div class="flex justify-between items-center">
+                    <h3 class="text-xl font-semibold text-white">${work.classwork_title}</h3>
+                    <span class="text-gray-400 text-sm flex items-center gap-1">
+                      <span class="material-icons-round text-gray-400 text-sm">calendar_today</span>
+                      ${date}
+                    </span>
+                  </div>
+                    <p class="text-gray-300 text-sm mt-3">
+                    ${work.classwork_instruction 
+                        ? (work.classwork_instruction.length > 200 
+                            ? work.classwork_instruction.substring(0, 220) + '...' 
+                            : work.classwork_instruction)
+                        : 'No instructions provided.'}
+                    </p>
+
+                </div>
+              </a>`;
+            container.append(post);
+          });
+        } else {
+          const banner = `
+            <div class="col-span-full flex flex-col items-center justify-center min-h-[40vh] text-center animate-fadeIn w-full">
+              <img src="../static/image/no_rooms_banner.png" 
+                   alt="No Pending Works" 
+                   class="w-full max-w-3xl h-auto object-cover mb-8 rounded-2xl">
+              <h2 class="text-2xl font-bold text-white mb-3">No Pending Works Available</h2>
+              <p class="text-gray-400 text-lg">You currently have no pending classworks in this room.</p>
+            </div>`;
+          container.html(banner);
+        }
+      },
+      error: function() {
+        $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load pending works.</p>');
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
 
   // Fetch room members
   function fetchRoomMembers(roomId) {

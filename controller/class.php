@@ -356,7 +356,7 @@ public function getAllPendingClasswork($user_id, $room_id) {
             ON cw.classwork_id = sw.sw_classwork_id 
             AND sw.sw_user_id = ?
         WHERE cw.classwork_room_id = ?
-            AND sw.sw_id IS NULL
+            AND (sw.sw_id IS NULL OR sw.sw_status=0)
             AND cw.classwork_status = 1
     ";
 
