@@ -88,7 +88,7 @@ include "../plugins/PageSpinner.php";
     <!-- User Section -->
     <div class="mt-auto pt-4 border-t border-gray-700 relative">
       <div class="flex items-center gap-3 px-3 py-2">
-        <div class="w-8 h-8 rounded-full bg-green-600"></div>
+        
         <div>
           <p class="text-sm font-medium"><?=ucfirst($On_Session[0]['user_fullname']);?></p>
         </div>
