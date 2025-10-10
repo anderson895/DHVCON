@@ -3,7 +3,7 @@ include "../src/components/home/header.php";
 ?>
 
 <!-- Main Content -->
-<main class="flex-1 bg-[#1e1f22] min-h-screen py-10 px-4 sm:px-6">
+  <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
     <!-- LEFT: Created Works Table Card -->

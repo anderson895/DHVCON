@@ -8,7 +8,7 @@ include "../src/components/home/header.php";
 
 
 <!-- Main Content -->
-<main class="flex-1 flex items-center justify-center bg-[#1e1f22] min-h-screen py-10 px-4 sm:px-6">
+  <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
 
   <!-- Main Container -->
   <div class="max-w-4xl w-full bg-[#2b2d31] shadow-xl rounded-2xl p-4 sm:p-6 md:p-8 flex flex-col gap-8 border border-[#3a3b40]">

@@ -3,7 +3,7 @@ include "../src/components/home/header.php";
 ?>
 
   <!-- Main Content -->
-  <main class="flex-1 flex flex-col bg-[#1e1f22]">
+   <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
 
     <!-- Banner -->
    <section class="p-6 bg-gradient-to-r ">

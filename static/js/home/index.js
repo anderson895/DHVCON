@@ -294,13 +294,9 @@ $("#updateRoomForm").submit(function(e){
         success: function(res){
             let response = JSON.parse(res);
             if(response.status === 200){
-                Swal.fire("Success", response.message, "success");
-                $("#updateRoomModal").fadeOut(200);
-
-                // Refresh rooms after 1 second (1000ms)
-                setTimeout(function() {
-                   location.reload();
-                }, 1000);
+             Swal.fire("Success", response.message, "success").then(() => {
+                location.reload();
+            });
 
             } else {
                 Swal.fire("Error", response.message || "Failed to update room", "error");

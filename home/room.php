@@ -5,7 +5,7 @@ $code=$_GET['code'];
 ?>
 
 <!-- Main Content -->
-<main class="flex-1 flex flex-col bg-[#1e1f22]">
+  <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
   <!-- Top Tabs -->
   <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
     <div class="flex items-center gap-6">
