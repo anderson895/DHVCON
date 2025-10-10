@@ -60,7 +60,7 @@ $(document).ready(function() {
         }
 
         // After getting room details, fetch pending works & members
-        fetchAllWorksPending();
+        fetchAllWorksPending(data.room_name);
         fetchRoomMembers(room_id);
       },
       error: function() {
@@ -70,7 +70,7 @@ $(document).ready(function() {
   }
 
   // 🧩 Fetch pending works
-  function fetchAllWorksPending() {
+  function fetchAllWorksPending(room_name) {
     if (!room_id) return;
     $('#pendingWorksContainer').html(spinner);
 
@@ -92,7 +92,7 @@ $(document).ready(function() {
             });
 
             const post = `
-              <a href="view_task?classwork_id=${work.classwork_id}" 
+              <a href="view_task?classwork_id=${work.classwork_id}&&room_name=${room_name}" 
                  class="block relative flex gap-6 ${flexClass} items-start cursor-pointer no-underline">
                 <div class="bg-[#1e1f22] rounded-2xl p-6 w-full hover:bg-[#2f3150] transition">
                   <div class="flex justify-between items-center">
@@ -104,7 +104,7 @@ $(document).ready(function() {
                   </div>
                     <p class="text-gray-300 text-sm mt-3">
                     ${work.classwork_instruction 
-                        ? (work.classwork_instruction.length > 220 
+                        ? (work.classwork_instruction.length > 200 
                             ? work.classwork_instruction.substring(0, 220) + '...' 
                             : work.classwork_instruction)
                         : 'No instructions provided.'}
