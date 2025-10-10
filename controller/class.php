@@ -570,7 +570,7 @@ public function getAllSubmittedClasswork_Joiner($user_id, $room_id) {
             SELECT r.room_name, r.room_code
             FROM room_members rm
             JOIN room r ON rm.room_id = r.room_id
-            WHERE rm.user_id = ?
+            WHERE rm.user_id = ? AND room_status='1'
         ";
 
         $stmt = $this->conn->prepare($query);
@@ -607,7 +607,7 @@ public function getCreatedRooms($user_id) {
     $query = "
         SELECT room_id, room_name, room_code, room_banner, room_description, room_date_created
         FROM room
-        WHERE room_creator_user_id = ?
+        WHERE room_creator_user_id = ? AND room_status='1'
         ORDER BY room_date_created DESC
     ";
 
