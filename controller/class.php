@@ -185,16 +185,6 @@ public function getAllRooms($user_id) {
 
 
 
-
-
-
-
-
-
-
-
-
-
 public function get_rooms_members($room_id) {
     $query = "
         SELECT 
@@ -222,6 +212,44 @@ public function get_rooms_members($room_id) {
 
     return $members;
 }
+
+
+
+
+
+
+
+
+
+public function getClassworkDetails($id) {
+    $sql = "
+        SELECT 
+            c.classwork_id,
+            c.classwork_title,
+            c.classwork_instruction,
+            c.classwork_file,
+            u.user_fullname AS posted_by,
+            DATE_FORMAT(c.created_at, '%M %e, %Y %h:%i %p') AS posted_time,
+            r.room_name
+        FROM classwork c
+        JOIN user u ON c.classwork_by_user_id = u.user_id
+        JOIN room r ON c.classwork_room_id = r.room_id
+        WHERE c.classwork_id = ?
+        LIMIT 1
+    ";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        return $result->fetch_assoc();
+    } else {
+        return false;
+    }
+}
+
 
 
 

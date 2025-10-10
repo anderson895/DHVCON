@@ -291,6 +291,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             }
 
+        }else if ($_GET['requestType'] === 'getClassworkDetails') {
+                    $id = intval($_GET['classwork_id']);
+
+
+
+                    $response = $db->getClassworkDetails($id);
+
+                    if ($response) {
+                        echo json_encode([
+                            'status' => 200,
+                            'data' => $response
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'status' => 500,
+                            'message' => $response
+                        ]);
+                    }
+                    exit;
+
+                    $query = $conn->prepare("
+                        SELECT 
+                            c.classwork_id,
+                            c.classwork_title,
+                            c.classwork_instruction,
+                            c.classwork_file,
+                            u.fullname AS posted_by,
+                            DATE_FORMAT(c.created_at, '%h:%i %p') AS posted_time
+                        FROM classwork c
+                        JOIN user u ON c.classwork_by_user_id = u.user_id
+                        WHERE c.classwork_id = ?
+                    ");
+                    $query->bind_param("i", $id);
+                    $query->execute();
+                    $result = $query->get_result();
+
+                    if ($result->num_rows > 0) {
+                        echo json_encode([
+                            "status" => 200,
+                            "data" => $result->fetch_assoc()
+                        ]);
+                    } else {
+                        echo json_encode(["status" => 404, "message" => "Classwork not found"]);
+                    }
         } else{
             echo "404";
         }

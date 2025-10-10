@@ -23,6 +23,11 @@ include "../src/components/home/header.php";
 
 </style>
 
+
+<!-- http://localhost/DHVCON/home/view_task?classwork_id=8 -->
+
+
+
 <!-- Main Content -->
 <main class="flex-1 flex items-center justify-center bg-[#1e1f22] min-h-screen py-10 px-4 sm:px-6">
 
@@ -44,25 +49,17 @@ include "../src/components/home/header.php";
 
       <!-- Description Card -->
       <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] mb-6 md:mb-0 flex-1 hover:border-[#5865f2] transition flex flex-col">
-        <p class="text-gray-300 mb-4 md:mb-5 leading-relaxed text-sm md:text-base">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur sit amet lacus vel nulla gravida commodo.
-        </p>
 
-        <!-- Attachment -->
-        <div class="border border-[#3a3b40] rounded-lg overflow-hidden w-full md:max-w-xs bg-[#2b2d31] hover:scale-[1.02] transition mx-auto md:mx-0">
-          <img src="#" alt="Attachment" class="object-cover w-full h-auto">
-          <div class="p-3 text-sm text-gray-400 border-t border-[#3a3b40] bg-[#1e1f22]">
-            <span class="truncate block text-gray-200 font-medium">494579798_69337385341559.png</span>
-            <p class="text-xs text-gray-500">Image Attachment</p>
-          </div>
-        </div>
+        <p class="classwork_instruction text-gray-300 mb-4 md:mb-5 leading-relaxed text-sm md:text-base"></p>
+
+        <!-- Attachment (hidden by default) -->
+        <div class="attachement-creator hidden border border-[#3a3b40] rounded-lg overflow-hidden w-full md:max-w-xs bg-[#2b2d31] hover:scale-[1.02] transition mx-auto md:mx-0"></div>
+
       </div>
     </div>
 
     <!-- Right Section: Your Work -->
     <div class="w-full md:w-80 flex flex-col gap-4 md:gap-5">
-
-      <!-- Your Work Card -->
       <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] shadow-md flex flex-col gap-3 flex-1">
 
         <div class="flex items-center justify-between mb-2 md:mb-4">
@@ -70,31 +67,108 @@ include "../src/components/home/header.php";
           <span class="text-xs md:text-sm text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Assigned</span>
         </div>
 
-        <!-- Hidden file input -->
         <input type="file" id="fileInput" multiple class="hidden">
 
-        <!-- Add or create button -->
-        <button id="addFilesBtn" class="cursor-pointer w-full border border-[#3a3b40] rounded-md py-2 text-gray-300 hover:bg-[#2f3150] hover:border-[#5865f2] transition mb-2 md:mb-4 text-sm md:text-base">
+        <button id="addFilesBtn"
+          class="cursor-pointer w-full border border-[#3a3b40] rounded-md py-2 text-gray-300 hover:bg-[#2f3150] hover:border-[#5865f2] transition mb-2 md:mb-4 text-sm md:text-base">
           + Add or create
         </button>
 
-     <!-- Preview container -->
         <div id="filePreview" class="flex flex-col gap-2 max-h-48 overflow-y-auto p-1 custom-scrollbar"></div>
 
-
-        <button class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base mt-2">
+        <button
+          class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base mt-2">
           Mark as done
         </button>
       </div>
-
     </div>
   </div>
-
 </main>
+
 
 <?php 
 include "../src/components/home/footer.php";
 ?>
+
+
+
+<script>
+$(document).ready(function () {
+  const urlParams = new URLSearchParams(window.location.search);
+  const classworkId = urlParams.get('classwork_id');
+  if (!classworkId) return console.error("Missing classwork_id in URL");
+
+  $.ajax({
+    url: "../controller/end-points/controller.php",
+    type: "GET",
+    data: {
+      requestType: "getClassworkDetails",
+      classwork_id: classworkId
+    },
+    dataType: "json",
+    success: function (res) {
+      if (res.status === 200 && res.data) {
+        const cw = res.data;
+
+        // Title and details
+        $("h1").text(cw.classwork_title);
+        $(".text-sm.text-gray-400.mb-4").html(
+          `Posted by <span class="font-medium text-gray-300">${cw.posted_by}</span> • ${cw.posted_time}`
+        );
+
+        // Instruction text with preserved spacing
+        $(".classwork_instruction").html(
+          cw.classwork_instruction.replace(/\r?\n/g, "<br>")
+        );
+
+        // Attachment display logic
+        const attachmentContainer = $(".attachement-creator");
+        if (cw.classwork_file && cw.classwork_file.trim() !== "") {
+          const filePath = `../static/upload/${cw.classwork_file}`;
+          const ext = cw.classwork_file.split(".").pop().toLowerCase();
+
+          let fileHTML = "";
+
+          if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) {
+            fileHTML = `
+              <img src="${filePath}" alt="Attachment" class="object-cover w-full h-auto">
+              <div class="p-3 text-sm text-gray-400 border-t border-[#3a3b40] bg-[#1e1f22]">
+                <span class="truncate block text-gray-200 font-medium">${cw.classwork_file}</span>
+                <p class="text-xs text-gray-500">Image Attachment</p>
+              </div>
+            `;
+          } else {
+            fileHTML = `
+              <div class="text-center p-3">
+                <span class="material-icons-round text-[#5865f2] text-4xl mb-2">description</span>
+                <div class="text-sm text-gray-400">
+                  <span class="truncate block text-gray-200 font-medium">${cw.classwork_file}</span>
+                  <a href="${filePath}" target="_blank" class="text-[#5865f2] hover:underline text-xs">Download</a>
+                </div>
+              </div>
+            `;
+          }
+
+          attachmentContainer.html(fileHTML).removeClass("hidden");
+        } else {
+          attachmentContainer.remove();
+        }
+
+      } else {
+        console.warn("No classwork details found");
+      }
+    },
+    error: function (xhr, status, error) {
+      console.error("AJAX error:", error);
+    }
+  });
+});
+</script>
+
+
+
+
+
 
 <script>
 $(document).ready(function(){

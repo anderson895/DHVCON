@@ -87,7 +87,7 @@ $(document).ready(function() {
         if (response.status === 200 && response.data.length > 0) {
           response.data.forEach((work, index) => {
             const flexClass = index % 2 === 1 ? 'flex-row-reverse' : '';
-            const date = new Date(work.classwork_date_start || Date.now()).toLocaleDateString('en-US', {
+            const date = new Date(work.created_at || Date.now()).toLocaleDateString('en-US', {
               month: 'short', day: 'numeric', year: 'numeric'
             });
 
