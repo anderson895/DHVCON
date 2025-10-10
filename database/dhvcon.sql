@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 09, 2025 at 06:15 PM
+-- Generation Time: Oct 10, 2025 at 08:02 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,17 +34,16 @@ CREATE TABLE `classwork` (
   `classwork_file` varchar(255) DEFAULT NULL,
   `classwork_by_user_id` int(11) NOT NULL,
   `classwork_room_id` int(11) NOT NULL,
-  `classwork_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=archived,1=active'
+  `classwork_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=archived,1=active',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `classwork`
 --
 
-INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`) VALUES
-(4, 'assignment 1', 'awdawd', 'classwork_68e7c2dfa75215.91300019.pdf', 3, 10, 1),
-(5, 'assignment 2', 'awdaw', 'classwork_68e7c916a3f775.14889696.jpg', 3, 10, 1),
-(6, 'assignment for today', 'aawdfesfsefrsgg', 'classwork_68e7d874ce3e57.46174445.pdf', 6, 15, 1);
+INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
+(10, 'assignment 1', 'Objective:\r\n\r\nThis assignment is designed to help you develop skills in critical reading, analytical thinking, and academic writing. You will analyze a selected text and present a well-structured, evidence-based argument in response to a prompt.\r\n\r\nInstructions:\r\n\r\nChoose a Text\r\nSelect one of the assigned readings from Weeks 4–6. You may not use outside sources for this paper.\r\n\r\nWrite a Critical Analysis\r\nYour paper should focus on how the author uses rhetorical strategies to achieve their purpose. Consider elements such as tone, word choice, structure, and use of evidence.\r\n\r\nDevelop a Thesis Statement\r\nYour analysis should be guided by a clear, arguable thesis that reflects your interpretation of the text.\r\n\r\nSupport Your Argument\r\nUse direct quotes and specific examples from the text to support your points. Make sure to analyze—not just summarize—the content.\r\n\r\nFormatting Requirements\r\n\r\nLength: 1,000–1,200 words\r\n\r\nFont: Times New Roman, 12 pt\r\n\r\nSpacing: Double-spaced\r\n\r\nCitations: MLA format\r\n\r\nFile Type: Submit as a .docx or .pdf file\r\n\r\nSubmission Guidelines\r\nUpload your final paper to the course LMS under the \"Assignments\" tab. Late submissions will receive a 10% deduction per day late unless prior arrangements are made.', NULL, 2, 16, 1, '2025-10-10 05:51:24');
 
 -- --------------------------------------------------------
 
@@ -73,7 +72,8 @@ INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code
 (12, 3, 'room_68e7b150e50f32.70005846.png', 'UOKQFX', 'room 103', 'Where players unite! This room is built for gaming enthusiasts — featuring competitive challenges, tournaments, and friendly banter. Grab your controller and join the fun.', '2025-10-09 13:27:47'),
 (13, 3, 'room_68e7b17648be30.74494203.jpg', 'QN4CF2', 'room 104', 'A focused, distraction-free room for students and professionals alike. With access to shared notes, project discussions, and helpful resources, productivity comes naturally here.', '2025-10-09 13:27:53'),
 (14, 3, 'room_68e7b1888a2761.92219144.webp', 'WD1CB3', 'room 105', 'A community space for artists, designers, and content creators to share ideas, showcase projects, and collaborate on creative ventures. Inspiration starts the moment you join.', '2025-10-09 13:27:59'),
-(15, 6, 'room_68e7d8423f3f13.17165375.jpg', '30HERQ', 'my own room', 'sawdwadawdawd', '2025-10-09 15:44:02');
+(15, 6, 'room_68e7d8423f3f13.17165375.jpg', '30HERQ', 'my own room', 'sawdwadawdawd', '2025-10-09 15:44:02'),
+(16, 2, 'room_68e8758c42f8c0.98404491.jpg', 'YN5OTA', 'room ni john', 'awdawdaw', '2025-10-10 02:55:08');
 
 -- --------------------------------------------------------
 
@@ -84,15 +84,21 @@ INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code
 CREATE TABLE `room_members` (
   `id` int(11) NOT NULL,
   `room_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
+  `user_id` int(11) NOT NULL,
+  `date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room_members`
 --
 
-INSERT INTO `room_members` (`id`, `room_id`, `user_id`) VALUES
-(12, 9, 6);
+INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
+(12, 9, 6, '2025-10-10 03:21:44'),
+(13, 10, 3, '2025-10-10 03:21:44'),
+(14, 15, 3, '2025-10-10 03:21:44'),
+(15, 9, 3, '2025-10-10 03:21:44'),
+(16, 16, 3, '2025-10-10 03:21:44'),
+(17, 12, 2, '2025-10-10 03:39:05');
 
 -- --------------------------------------------------------
 
@@ -104,6 +110,7 @@ CREATE TABLE `submitted_classwork` (
   `sw_id` int(11) NOT NULL,
   `sw_classwork_id` int(11) NOT NULL,
   `sw_user_id` int(11) NOT NULL,
+  `sw_files` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`sw_files`)),
   `sw_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=undone,1=done'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -182,19 +189,19 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`

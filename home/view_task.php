@@ -36,26 +36,29 @@ include "../src/components/home/header.php";
 
     <!-- Your Work Section -->
     <section class="flex flex-col mt-3">
-      <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] shadow-md flex flex-col gap-4">
-        <div class="flex items-center justify-between">
-          <h2 class="text-base md:text-lg font-semibold text-white">Your Work</h2>
-          <span class="text-xs md:text-sm text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Assigned</span>
+      <form id="frmSubmittedWorks" class="flex flex-col mt-3">
+        <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] shadow-md flex flex-col gap-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base md:text-lg font-semibold text-white">Your Work</h2>
+            <span class="text-xs md:text-sm text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Assigned</span>
+          </div>
+
+          <input type="file" id="fileInput" name="files[]" multiple class="hidden">
+
+          <button type="button" id="addFilesBtn"
+            class="cursor-pointer w-full border border-[#3a3b40] rounded-md py-2 text-gray-300 hover:bg-[#2f3150] hover:border-[#5865f2] transition text-sm md:text-base">
+            + Add or create
+          </button>
+
+          <div id="filePreview" class="flex flex-col gap-2 max-h-48 overflow-y-auto p-1 custom-scrollbar"></div>
+
+          <button type="submit"
+            class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base">
+            Mark as done
+          </button>
         </div>
+      </form>
 
-        <input type="file" id="fileInput" multiple class="hidden">
-
-        <button id="addFilesBtn"
-          class="cursor-pointer w-full border border-[#3a3b40] rounded-md py-2 text-gray-300 hover:bg-[#2f3150] hover:border-[#5865f2] transition text-sm md:text-base">
-          + Add or create
-        </button>
-
-        <div id="filePreview" class="flex flex-col gap-2 max-h-48 overflow-y-auto p-1 custom-scrollbar"></div>
-
-        <button
-          class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base">
-          Mark as done
-        </button>
-      </div>
     </section>
 
   </div>
