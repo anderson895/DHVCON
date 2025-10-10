@@ -383,6 +383,41 @@ public function getAllPendingClasswork($user_id, $room_id) {
 
 
 
+public function getAllSubmittedClasswork_Joiner($user_id, $room_id) {
+    $query = "
+        SELECT cw.*
+        FROM classwork cw
+        LEFT JOIN submitted_classwork sw 
+            ON cw.classwork_id = sw.sw_classwork_id 
+            AND sw.sw_user_id = ?
+        WHERE cw.classwork_room_id = ?
+            AND (sw.sw_status=1)
+            AND cw.classwork_status = 1
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die('Prepare failed: ' . $this->conn->error);
+    }
+
+    $stmt->bind_param('ii', $user_id, $room_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $classworks = [];
+    while ($row = $result->fetch_assoc()) {
+        $classworks[] = $row;
+    }
+
+    $stmt->close();
+    return $classworks;
+}
+
+
+
+
+
+
     public function getJoinedRooms($user_id) {
         $query = "
             SELECT r.room_name, r.room_code

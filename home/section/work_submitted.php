@@ -4,7 +4,7 @@
       Work Submitted
     </h2>
 
-    <div class="relative  space-y-10">
+    <div id="submittedWorksContainer" class="relative  space-y-10">
 
       <!-- Post 1 -->
       <a href="view_task" class="block relative flex gap-6 items-start cursor-pointer no-underline">

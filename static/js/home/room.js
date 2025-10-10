@@ -114,6 +114,7 @@ function fetchRoomsDetails() {
       fetchAllWorksPending(data.room_name);
       fetchRoomMembers(room_id);
       fetchAllCreatedWorks(room_id);
+      fetchAllWorks_TurnIn(room_id);
     },
     error: function () {
       $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
@@ -200,16 +201,16 @@ function fetchRoomsDetails() {
 
   function fetchAllWorks_TurnIn(room_name) {
     if (!room_id) return;
-    $('#pendingWorksContainer').html(spinner);
+    $('#submittedWorksContainer').html(spinner);
 
     $.ajax({
-      url: `../controller/end-points/controller.php?requestType=getAllPendingClasswork&room_id=${room_id}`,
+      url: `../controller/end-points/controller.php?requestType=getAllSubmittedClasswork_Joiner&room_id=${room_id}`,
       type: "GET",
       dataType: "json",
       success: function(response) {
         console.log("Pending Works:", response);
 
-        const container = $('#pendingWorksContainer');
+        const container = $('#submittedWorksContainer');
         container.empty();
 
         if (response.status === 200 && response.data.length > 0) {
@@ -255,7 +256,7 @@ function fetchRoomsDetails() {
         }
       },
       error: function() {
-        $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load pending works.</p>');
+        $('#submittedWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load pending works.</p>');
       }
     });
   }
@@ -318,7 +319,7 @@ function fetchAllCreatedWorks(roomId) {
           });
 
           const fileDisplay = work.classwork_file
-            ? `<a href="../uploads/${work.classwork_file}" target="_blank" class="text-blue-400 underline cursor-pointer">${work.classwork_file}</a>`
+            ? `<a href="../static/upload/${work.classwork_file}" target="_blank" class="text-blue-400 underline cursor-pointer">${work.classwork_file}</a>`
             : `<span class="text-gray-500 italic">No file</span>`;
 
           const row = `

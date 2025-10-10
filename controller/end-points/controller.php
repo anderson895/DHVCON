@@ -304,7 +304,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         }else if ($_GET['requestType'] == 'getAllPendingClasswork') {
 
-
             $user_id = $_SESSION['user_id'];
             $room_id = $_GET['room_id'];
 
@@ -316,6 +315,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
             }
             $response = $db->getAllPendingClasswork($user_id,$room_id);
+
+            if ($response) {
+                echo json_encode([
+                    'status' => 200,
+                    'data' => $response
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 500,
+                    'message' => $response
+                ]);
+            }
+
+        }else if ($_GET['requestType'] == 'getAllSubmittedClasswork_Joiner') {
+            
+            $user_id = $_SESSION['user_id'];
+            $room_id = $_GET['room_id'];
+
+            if (!$room_id) {
+                echo json_encode([
+                    'status' => 400,
+                    'message' => 'Missing room id'
+                ]);
+                exit;
+            }
+            $response = $db->getAllSubmittedClasswork_Joiner($user_id,$room_id);
 
             if ($response) {
                 echo json_encode([

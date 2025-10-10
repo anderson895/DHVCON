@@ -259,7 +259,7 @@ function updateTurnInStatus(status) {
         if(res.status==="success"){
           fetchClasswork();
           // alertify.success(requestType==="SubmittedWorks" ? "Marked as Turned In" : "Marked as Not Turned In");
-        } else alertify.error(res.message);
+        }
       },
       "json"
     );
