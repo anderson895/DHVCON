@@ -149,7 +149,6 @@ public function CreateClasswork($title, $instructions, $fileName, $user_id, $roo
 
 
 
-
 public function getAllRooms($user_id) {
     $query = "
         SELECT * 
@@ -157,6 +156,7 @@ public function getAllRooms($user_id) {
         WHERE room_id NOT IN (
             SELECT room_id FROM room_members WHERE user_id = ?
         )
+        ORDER BY room_id DESC
     ";
 
     $stmt = $this->conn->prepare($query);
@@ -176,6 +176,7 @@ public function getAllRooms($user_id) {
     $stmt->close();
     return $rooms;
 }
+
 
 
 
