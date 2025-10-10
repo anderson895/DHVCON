@@ -32,6 +32,7 @@ if (isset($_SESSION['user_id'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>DHVCON</title>
   <link href="../src/output.css" rel="stylesheet" />
+  <link href="../src/scrollbar.css" rel="stylesheet" />
   <!-- ✅ Google Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
  

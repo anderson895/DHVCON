@@ -1,27 +1,6 @@
 <?php 
 include "../src/components/home/header.php";
 ?>
-<style>
-  /* Custom dark scrollbar */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #2b2d31; /* track color */
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #5865f2; /* thumb color */
-  border-radius: 9999px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #4752c4;
-}
-
-</style>
 
 
 <!-- http://localhost/DHVCON/home/view_task?classwork_id=8 -->
