@@ -225,7 +225,7 @@ function updateTurnInStatus(status) {
       success: function(res){
         spinner.hide();
         if(res.status === "success"){
-          alertify.success("Files uploaded successfully");
+          // alertify.success("Files uploaded successfully");
           fetchClasswork(); // refresh file preview
         } else alertify.error(res.message);
       },

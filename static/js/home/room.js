@@ -334,17 +334,17 @@ function fetchAllCreatedWorks(roomId) {
               <td class="px-4 py-3 text-center">
                   <div class="flex justify-center items-center gap-2">
                     <button 
-                      class="cursor-pointer edit-btn bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                      class="cursor-pointer edit-btn bg-blue-500 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
                       data-id="${work.classwork_id}">
                       Edit
                     </button>
                     <button 
-                      class="view-response-btn cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                      class="view-response-btn cursor-pointer bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
                       data-id="${work.classwork_id}">
                       Response
                     </button>
                     <button 
-                      class="delete-btn bg-red-600 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                      class="delete-btn bg-red-500 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
                       data-id="${work.classwork_id}">
                       Delete
                     </button>
