@@ -40,7 +40,7 @@
     <!-- Right Side (Logo + Sign In) -->
     <div class="flex items-center space-x-4">
       <a href="signin">
-        <button class="flex items-center space-x-1 text-gray-300 hover:text-white transition">
+        <button class="cursor-pointer flex items-center space-x-1 text-gray-300 hover:text-white transition">
           <span class="material-icons-outlined text-lg">person</span>
           <span class="font-medium">Sign in</span>
         </button>
