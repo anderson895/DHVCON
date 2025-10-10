@@ -208,7 +208,7 @@ $("#createRoomForm").submit(function(e){
 
                 // Refresh rooms after 1 second (1000ms)
                 setTimeout(function() {
-                    fetchRooms();
+                    location.reload();
                 }, 1000);
 
             } else {
@@ -271,7 +271,7 @@ $("#updateRoomForm").submit(function(e){
 
                 // Refresh rooms after 1 second (1000ms)
                 setTimeout(function() {
-                    fetchRooms();
+                   location.reload();
                 }, 1000);
 
             } else {
