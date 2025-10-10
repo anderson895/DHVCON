@@ -102,8 +102,14 @@ $(document).ready(function() {
                       ${date}
                     </span>
                   </div>
-                  <p class="text-gray-400 text-sm mt-1">By User ${work.classwork_by_user_id}</p>
-                  <p class="text-gray-300 text-sm mt-3">${work.classwork_instruction || 'No instructions provided.'}</p>
+                    <p class="text-gray-300 text-sm mt-3">
+                    ${work.classwork_instruction 
+                        ? (work.classwork_instruction.length > 220 
+                            ? work.classwork_instruction.substring(0, 220) + '...' 
+                            : work.classwork_instruction)
+                        : 'No instructions provided.'}
+                    </p>
+
                 </div>
               </a>`;
             container.append(post);
