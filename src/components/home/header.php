@@ -16,9 +16,14 @@ if (isset($_SESSION['user_id'])) {
    header('location: ../signin');
 }
 
-
+// print_r($On_Session);
 
 ?>
+
+
+
+
+
 
 <!doctype html>
 <html lang="en">
@@ -84,8 +89,7 @@ include "../plugins/PageSpinner.php";
       <div class="flex items-center gap-3 px-3 py-2">
         <div class="w-8 h-8 rounded-full bg-green-600"></div>
         <div>
-          <p class="text-sm font-medium">joshua padilla</p>
-          <p class="text-xs text-gray-400">Online</p>
+          <p class="text-sm font-medium"><?=ucfirst($On_Session[0]['user_fullname']);?></p>
         </div>
         <span id="settings-btn" class="material-icons-outlined text-gray-400 text-xl cursor-pointer ml-auto hover:text-white">settings</span>
       </div>
