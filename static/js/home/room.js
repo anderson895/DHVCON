@@ -28,48 +28,101 @@ $(document).ready(function() {
   $('head').append(spinnerStyle);
 
   // 🧩 Fetch room details
-  function fetchRoomsDetails() {
-    $('#pendingWorksContainer').html(spinner);
+function fetchRoomsDetails() {
+  $('#pendingWorksContainer').html(spinner);
 
-    $.ajax({
-      url: `../controller/end-points/controller.php?requestType=getRoomDetails&code=${code}`,
-      type: "GET",
-      dataType: "json",
-      success: function(response) {
-        console.log("Room Details:", response);
+  $.ajax({
+    url: `../controller/end-points/controller.php?requestType=getRoomDetails&code=${code}`,
+    type: "GET",
+    dataType: "json",
+    success: function (response) {
+      console.log("Room Details:", response);
 
-        if (response.status !== 200 || !response.data) {
-          $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Room not found.</p>');
+      if (response.status !== 200 || !response.data) {
+        $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Room not found.</p>');
+        return;
+      }
+
+      const data = response.data;
+      room_id = data.room_id;
+      const isCreator = response.user_id === data.creator_id;
+
+      $(".roomName").text(data.room_name || 'Unnamed Room');
+      $(".roomDescription").text(data.room_description || 'No description provided.');
+      $(".roomBanner").attr("src", data.room_banner || "../static/image/default_banner.png");
+
+      // 🔒 Role-based tab visibility
+      if (isCreator) {
+        $('.creator-only').show();
+        $('.joiner-only').hide();
+      } else {
+        $('.creator-only').hide();
+        $('.joiner-only').show();
+      }
+
+      // ✅ Load last active tab only if allowed
+      const savedTab = localStorage.getItem("activeTab");
+      if (savedTab && isTabAllowed(savedTab, isCreator)) {
+        showTab(savedTab);
+      } else {
+        // Default tab based on role
+        const defaultTab = isCreator
+          ? $(".creator-only.tab-btn").first().data("tab") || "feed"
+          : $(".joiner-only.tab-btn").first().data("tab") || "feed";
+        showTab(defaultTab);
+      }
+
+      // ✅ Tab click handler with access control
+      $(".tab-btn").off("click").on("click", function () {
+        const tab = $(this).data("tab");
+        if (!isTabAllowed(tab, isCreator)) {
+          alert("You don’t have permission to access this section.");
           return;
         }
 
-        const data = response.data;
-        room_id = data.room_id;
+        localStorage.setItem("activeTab", tab);
+        showTab(tab);
+      });
 
-        $(".roomName").text(data.room_name || 'Unnamed Room');
-        $(".roomDescription").text(data.room_description || 'No description provided.');
-        $(".roomBanner").attr("src", data.room_banner || "../static/image/default_banner.png");
+      // ✅ Tab switch logic
+      function showTab(tab) {
+        $(".tab-section").hide();
+        $("#" + tab).show();
 
-        // Show or hide creator/joiner sections
-        if (response.user_id !== data.creator_id) {
-          $('.creator-only').hide();
-          $('.joiner-only').show();
-        } else {
-          $('.creator-only').show();
-          $('.joiner-only').hide();
-        }
+        $(".tab-btn")
+          .removeClass("text-white font-semibold border-b-2 border-white pb-1")
+          .addClass("text-gray-400");
 
-        // After getting room details, fetch pending works & members
-        fetchAllWorksPending(data.room_name);
-        fetchRoomMembers(room_id);
-      },
-      error: function() {
-        $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
+        $(`.tab-btn[data-tab='${tab}']`)
+          .removeClass("text-gray-400")
+          .addClass("text-white font-semibold border-b-2 border-white pb-1");
       }
-    });
-  }
 
-  // 🧩 Fetch pending works
+      // ✅ Role-based access checker
+      function isTabAllowed(tab, isCreator) {
+        const creatorTabs = ["classwork", "members"];
+        const joinerTabs = ["worksubmitted", "certificate"];
+        const publicTabs = ["feed", "meeting"];
+
+        if (publicTabs.includes(tab)) return true;
+        if (isCreator && creatorTabs.includes(tab)) return true;
+        if (!isCreator && joinerTabs.includes(tab)) return true;
+        return false;
+      }
+
+      // Fetch other data after setup
+      fetchAllWorksPending(data.room_name);
+      fetchRoomMembers(room_id);
+      fetchAllCreatedWorks(room_id);
+    },
+    error: function () {
+      $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
+    },
+  });
+}
+
+
+  // Fetch pending works
   function fetchAllWorksPending(room_name) {
     if (!room_id) return;
     $('#pendingWorksContainer').html(spinner);
@@ -132,7 +185,7 @@ $(document).ready(function() {
     });
   }
 
-  // 🧩 Fetch room members
+  // Fetch room members
   function fetchRoomMembers(roomId) {
     $.ajax({
       url: `../controller/end-points/controller.php`,
@@ -155,6 +208,94 @@ $(document).ready(function() {
       }
     });
   }
+
+
+
+
+function fetchAllCreatedWorks(roomId) {
+  $.ajax({
+    url: `../controller/end-points/controller.php`,
+    type: 'GET',
+    data: {
+      requestType: 'get_all_created_works',
+      room_id: roomId
+    },
+    dataType: 'json',
+    success: function(response) {
+      const tbody = $('#classworkTableBody');
+      tbody.empty(); // clear existing rows
+
+      if (response.status === 200 && response.data.length > 0) {
+        response.data.forEach((work, index) => {
+          const formattedDate = new Date(work.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+
+          const fileDisplay = work.classwork_file
+            ? `<a href="../uploads/${work.classwork_file}" target="_blank" class="text-blue-400 underline cursor-pointer">${work.classwork_file}</a>`
+            : `<span class="text-gray-500 italic">No file</span>`;
+
+          const row = `
+            <tr class="hover:bg-[#3a3b3f]/50 transition">
+              <td class="px-4 py-3 text-sm text-gray-300">${index + 1}</td>
+              <td class="px-4 py-3 text-sm text-gray-300">${work.classwork_title}</td>
+              <td class="px-4 py-3 text-sm text-gray-400 line-clamp-1">
+                ${work.classwork_instruction || 'No instructions provided.'}
+              </td>
+              <td class="px-4 py-3 text-sm">${fileDisplay}</td>
+              <td class="px-4 py-3 text-sm text-gray-400">${formattedDate}</td>
+              <td class="px-4 py-3 text-center">
+                  <div class="flex justify-center items-center gap-2">
+                    <button 
+                      class="cursor-pointer edit-btn bg-blue-600 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                      data-id="${work.classwork_id}">
+                      Edit
+                    </button>
+                    <button 
+                      class="view-response-btn cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                      data-id="${work.classwork_id}">
+                      Response
+                    </button>
+                    <button 
+                      class="delete-btn bg-red-600 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                      data-id="${work.classwork_id}">
+                      Delete
+                    </button>
+                  </div>
+                </td>
+
+            </tr>
+          `;
+          tbody.append(row);
+        });
+      } else {
+        tbody.html(`
+          <tr>
+            <td colspan="6" class="text-center text-gray-400 py-4">
+              No created works found.
+            </td>
+          </tr>
+        `);
+      }
+    },
+    error: function() {
+      $('#classworkTableBody').html(`
+        <tr>
+          <td colspan="6" class="text-center text-red-400 py-4">
+            Failed to fetch classworks.
+          </td>
+        </tr>
+      `);
+    }
+  });
+}
+
+
+
+
+
 
   // 🧩 Render members
 function renderMembers(members) {
@@ -219,45 +360,7 @@ function renderMembers(members) {
 
 
 $(document).ready(function () {
-  // ✅ Load last active tab (if any)
-  const savedTab = localStorage.getItem("activeTab");
-  if (savedTab) {
-    showTab(savedTab);
-  } else {
-    // Default: show first tab if nothing saved
-    const firstTab = $(".tab-btn").first().data("tab");
-    showTab(firstTab);
-  }
-
-  // ✅ On tab click
-  $(".tab-btn").click(function () {
-    const tab = $(this).data("tab");
-    // Save the active tab to localStorage
-    localStorage.setItem("activeTab", tab);
-
-    // Show the clicked tab
-    showTab(tab);
-  });
-
-  // ✅ Function to handle tab switching
-  function showTab(tab) {
-    // Hide all tab sections
-    $(".tab-section").hide();
-
-    // Show selected section
-    $("#" + tab).show();
-
-    // Reset all tab styles
-    $(".tab-btn")
-      .removeClass("text-white font-semibold border-b-2 border-white pb-1")
-      .addClass("text-gray-400");
-
-    // Highlight active tab
-    $(`.tab-btn[data-tab='${tab}']`)
-      .removeClass("text-gray-400")
-      .addClass("text-white font-semibold border-b-2 border-white pb-1");
-  }
-
+  
 
 
   

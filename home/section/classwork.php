@@ -1,3 +1,26 @@
+<style>
+  /* Custom dark scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2b2d31; /* track color */
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #868686ff; /* thumb color */
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6f6f72ff;
+}
+
+</style>
+
+
 <section id="classwork" class="tab-section hidden p-6 text-white">
   <div class="bg-[#2b2d31] rounded-2xl shadow-lg p-8">
 
@@ -13,8 +36,8 @@
       <div>
         <h3 class="text-xl font-semibold mb-4">All Created Works</h3>
 
-        <div class="overflow-x-auto border border-[#3a3b3f] rounded-lg">
-          <table class="min-w-full rounded-lg overflow-hidden">
+        <div class="overflow-x-auto border border-[#3a3b3f] rounded-lg custom-scrollbar">
+          <table class="min-w-full rounded-lg overflow-hidden ">
             <thead class="bg-[#3a3b3f]">
               <tr>
                 <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">#</th>
@@ -25,7 +48,7 @@
                 <th class="px-4 py-3 text-center text-sm font-medium text-gray-300">Actions</th>
               </tr>
             </thead>
-            <tbody id="classworkTableBody" class="divide-y divide-[#3a3b3f]">
+            <tbody id="classworkTableBody" class="divide-y divide-[#3a3b3f] ">
               <!-- Dynamically inserted rows -->
               <!-- Example static row -->
               <!--

@@ -2,7 +2,7 @@ $(document).ready(function() {
 
   function getRoomNameFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('room_name'); // Get the room_name from URL
+    return urlParams.get('room_name'); 
   }
 
   function markActiveRoom() {
@@ -97,3 +97,5 @@ $(document).ready(function() {
   load_getCreatedRooms();
 
 });
+
+

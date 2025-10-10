@@ -256,6 +256,31 @@ public function getClassworkDetails($id) {
 
 
 
+
+public function get_all_created_works($room_id, $user_id) {
+    $sql = "SELECT * FROM classwork 
+            WHERE classwork_room_id = ? 
+              AND classwork_by_user_id = ?
+              AND classwork_status = 1
+            ORDER BY created_at DESC";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("ii", $room_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Return all rows as an array
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        return [];
+    }
+}
+
+
+
+
+
 public function getAllPendingClasswork($user_id, $room_id) {
     $query = "
         SELECT cw.*
