@@ -430,7 +430,7 @@ function renderMembers(members) {
       : 'Date not available';
 
     const memberItem = `
-      <div class="flex items-center justify-between bg-[#1f2024] p-4 rounded-xl shadow hover:bg-[#292b30] transition cursor-pointer">
+      <div class="flex items-center justify-between bg-[#1f2024] p-4 rounded-xl shadow transition">
         <!-- Left side: name & email -->
         <div class="flex items-center gap-4">
           <div>
