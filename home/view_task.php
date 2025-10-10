@@ -133,14 +133,16 @@ $(document).ready(function () {
           // Existing user files with Remove button
           filePreview.empty();
           if(cw.sw_files){
-            JSON.parse(cw.sw_files).forEach(f=>{
+            const files = JSON.parse(cw.sw_files);
+            files.forEach(f=>{
+              const showRemove = cw.sw_status !== 1; 
               filePreview.append(`
                 <div class="flex items-center justify-between gap-2 text-gray-300 text-sm bg-[#2a2b2e] p-1 rounded">
                   <div class="flex items-center gap-2">
                     <i class="uil uil-file-alt"></i>
                     <a href="../../static/upload/${f}" target="_blank" class="truncate hover:text-blue-400">${f}</a>
                   </div>
-                  <button type="button" class="removeFileBtn cursor-pointer text-red-500 hover:text-red-400 text-xs" data-filename="${f}">Remove</button>
+                  ${showRemove ? `<button type="button" class="removeFileBtn cursor-pointer text-red-500 hover:text-red-400 text-xs" data-filename="${f}">Remove</button>` : ''}
                 </div>
               `);
             });

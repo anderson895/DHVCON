@@ -165,9 +165,9 @@ function fetchAll_SubmittedClasswork() {
           }
 
           const row = `
-            <tr class="hover:bg-[#3a3b40] transition">
+            <tr >
               <td class="px-4 py-3 text-gray-300">${index + 1}</td>
-              <td class="px-4 py-3 text-gray-300">${item.user_fullname}</td>
+              <td class="px-4 py-3 text-gray-300 capitalize">${item.user_fullname}</td>
               <td class="px-4 py-3 text-gray-300">${item.user_email}</td>
               <td class="px-4 py-3 text-center">${fileLinks}</td>
               <td class="px-4 py-3 text-center text-gray-300">${formattedDate}</td>
