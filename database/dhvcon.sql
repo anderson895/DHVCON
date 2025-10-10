@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2025 at 01:33 PM
+-- Generation Time: Oct 10, 2025 at 02:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -71,6 +71,52 @@ CREATE TABLE `meeting` (
 
 INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
 (4, 'https://meet.google.com/nkb-qyek-uui', 'Java programming lesson 1', '', '2025-10-10 18:00:00', '2025-10-10 19:00:00', 16, 2, 'bc80f41f', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meeting_logs`
+--
+
+CREATE TABLE `meeting_logs` (
+  `ml_id` int(11) NOT NULL,
+  `ml_user_id` int(11) NOT NULL,
+  `ml_date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `ml_meeting_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_logs`
+--
+
+INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
+(1, 6, '2025-10-10 11:53:28', 4),
+(2, 6, '2025-10-10 11:53:28', 4),
+(3, 6, '2025-10-10 11:53:28', 4),
+(4, 6, '2025-10-10 11:53:28', 4),
+(5, 6, '2025-10-10 11:53:28', 4),
+(6, 6, '2025-10-10 11:53:28', 4),
+(7, 6, '2025-10-10 11:53:28', 4),
+(8, 6, '2025-10-10 11:53:28', 4),
+(9, 6, '2025-10-10 11:53:28', 4),
+(10, 6, '2025-10-10 11:53:28', 4),
+(11, 6, '2025-10-10 11:53:28', 4),
+(12, 6, '2025-10-10 11:53:28', 4),
+(13, 6, '2025-10-10 11:53:28', 4),
+(14, 6, '2025-10-10 11:53:28', 4),
+(15, 6, '2025-10-10 11:53:28', 4),
+(16, 6, '2025-10-10 11:53:28', 4),
+(17, 6, '2025-10-10 11:53:28', 4),
+(18, 6, '2025-10-10 11:53:28', 4),
+(19, 6, '2025-10-10 11:53:28', 4),
+(20, 6, '2025-10-10 11:53:28', 4),
+(21, 6, '2025-10-10 11:53:28', 4),
+(22, 6, '2025-10-10 11:53:28', 4),
+(23, 6, '2025-10-10 11:53:28', 4),
+(24, 6, '2025-10-10 11:53:28', 4),
+(25, 6, '2025-10-10 11:53:28', 4),
+(26, 6, '2025-10-10 11:53:28', 4),
+(27, 6, '2025-10-10 11:53:28', 4);
 
 -- --------------------------------------------------------
 
@@ -198,6 +244,14 @@ ALTER TABLE `meeting`
   ADD KEY `meeting_creator_user_id` (`meeting_creator_user_id`);
 
 --
+-- Indexes for table `meeting_logs`
+--
+ALTER TABLE `meeting_logs`
+  ADD PRIMARY KEY (`ml_id`),
+  ADD KEY `ml_meeting_id` (`ml_meeting_id`),
+  ADD KEY `ml_user_id` (`ml_user_id`);
+
+--
 -- Indexes for table `room`
 --
 ALTER TABLE `room`
@@ -243,6 +297,12 @@ ALTER TABLE `meeting`
   MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `meeting_logs`
+--
+ALTER TABLE `meeting_logs`
+  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+
+--
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
@@ -283,6 +343,13 @@ ALTER TABLE `classwork`
 ALTER TABLE `meeting`
   ADD CONSTRAINT `meeting_ibfk_1` FOREIGN KEY (`meeting_room_id`) REFERENCES `room` (`room_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `meeting_ibfk_2` FOREIGN KEY (`meeting_creator_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `meeting_logs`
+--
+ALTER TABLE `meeting_logs`
+  ADD CONSTRAINT `meeting_logs_ibfk_1` FOREIGN KEY (`ml_meeting_id`) REFERENCES `meeting` (`meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `meeting_logs_ibfk_2` FOREIGN KEY (`ml_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `room`

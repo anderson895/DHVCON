@@ -167,6 +167,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'message' => $loginResult['message']
                 ]);
             }
+        }else if ($_POST['requestType'] == 'recordMeetingLog') {
+                    $user_id = $_SESSION['user_id'];
+                    $meeting_id = $_POST['meeting_id'];
+                     $result = $db->recordMeetingLog($meeting_id, $user_id);
+
+                    if ($result === 'exists') {
+                        echo json_encode(['status' => 409, 'message' => 'Already logged']);
+                    } elseif ($result) {
+                        echo json_encode(['status' => 200, 'message' => 'Log recorded']);
+                    } else {
+                        echo json_encode(['status' => 500, 'message' => 'Error recording log']);
+                    }
         }else if ($_POST['requestType'] == 'CreateClasswork') {
             $user_id = $_SESSION['user_id'];
             $title = $_POST['title'];
@@ -496,7 +508,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                     }
                     
-        } else{
+        }else if ($_GET['requestType'] === 'viewMeetingLogs') {
+               $meeting_id = intval($_GET['meeting_id']);
+                $response = $db->viewMeetingLogs($meeting_id);
+
+                if ($response && count($response) > 0) {
+                    echo json_encode(['status' => 200, 'data' => $response]);
+                } elseif ($response && count($response) === 0) {
+                    echo json_encode(['status' => 404, 'message' => 'No logs found.']);
+                } else {
+                    echo json_encode(['status' => 500, 'message' => 'Error fetching meeting logs.']);
+                }
+                exit;
+        }else{
             echo "404";
         }
     }else {

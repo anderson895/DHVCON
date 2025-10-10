@@ -893,13 +893,6 @@ public function joinRoom($user_id, $roomCode) {
 
 
 
-
-
-
-
-
-
-// In your DB class
 public function CloseMeeting($meeting_id)
 {
     $query = "UPDATE meeting SET meeting_status = 0 WHERE meeting_id = ?";
@@ -912,10 +905,77 @@ public function CloseMeeting($meeting_id)
     $result = $stmt->execute();
     $stmt->close();
 
-    return $result; // true if updated, false if failed
+    return $result; 
 }
 
 
+
+
+public function recordMeetingLog($meeting_id, $user_id)
+{
+    // Check if record already exists
+    $checkQuery = "SELECT ml_id FROM meeting_logs WHERE ml_meeting_id = ? AND ml_user_id = ?";
+    $checkStmt = $this->conn->prepare($checkQuery);
+    if (!$checkStmt) return false;
+
+    $checkStmt->bind_param("ii", $meeting_id, $user_id);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+
+    if ($checkStmt->num_rows > 0) {
+        $checkStmt->close();
+        return "exists";
+    }
+    $checkStmt->close();
+
+    // Insert new record
+    $insertQuery = "INSERT INTO meeting_logs (ml_meeting_id, ml_user_id) VALUES (?, ?)";
+    $insertStmt = $this->conn->prepare($insertQuery);
+    if (!$insertStmt) return false;
+
+    $insertStmt->bind_param("ii", $meeting_id, $user_id);
+    $result = $insertStmt->execute();
+    $insertStmt->close();
+
+    return $result ? "inserted" : false;
+}
+
+
+
+
+
+
+
+public function viewMeetingLogs($meeting_id)
+{
+    $query = "
+        SELECT 
+            ml.ml_id,
+            ml.ml_date_joined,
+            u.user_id,
+            u.user_fullname,
+            u.user_email
+        FROM meeting_logs AS ml
+        INNER JOIN user AS u ON ml.ml_user_id = u.user_id
+        WHERE ml.ml_meeting_id = ?
+        ORDER BY ml.ml_date_joined DESC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return false;
+
+    $stmt->bind_param("i", $meeting_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $logs = [];
+    while ($row = $result->fetch_assoc()) {
+        $logs[] = $row;
+    }
+
+    $stmt->close();
+    return $logs;
+}
 
 
 
