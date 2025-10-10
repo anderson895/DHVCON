@@ -152,17 +152,29 @@ $(document).ready(function () {
   }
 
   // Function to update Turn In / Not Turned In UI
-  function updateTurnInStatus(status) {
-    if(status == 1){
-      $(".taskStatus").html('<span class="text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Turned in</span>');
-      $("#btnSubmitWorks").text("Not turned in").attr("data-status","1")
-        .removeClass("bg-[#5865f2] hover:bg-[#4752c4]").addClass("bg-gray-500 hover:bg-gray-600");
-    } else {
-      $(".taskStatus").html('<span class="text-gray-400 font-medium bg-[#2a2b2e] px-2 py-1 rounded-md">Not turned in</span>');
-      $("#btnSubmitWorks").text("Mark as done").attr("data-status","0")
-        .removeClass("bg-gray-500 hover:bg-gray-600").addClass("bg-[#5865f2] hover:bg-[#4752c4]");
-    }
+function updateTurnInStatus(status) {
+  if(status == 1){
+    $(".taskStatus").html('<span class="text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Turned in</span>');
+    $("#btnSubmitWorks").text("Not turned in").attr("data-status","1")
+      .removeClass("bg-[#5865f2] hover:bg-[#4752c4]").addClass("bg-gray-500 hover:bg-gray-600");
+    
+    // Disable file upload
+    $("#addFilesBtn").prop("disabled", true).addClass("opacity-50 cursor-not-allowed");
+    $("#fileInput").prop("disabled", true);
+    $(".removeFileBtn").prop("disabled", true).addClass("opacity-50 cursor-not-allowed");
+
+  } else {
+    $(".taskStatus").html('<span class="text-gray-400 font-medium bg-[#2a2b2e] px-2 py-1 rounded-md">Not turned in</span>');
+    $("#btnSubmitWorks").text("Mark as done").attr("data-status","0")
+      .removeClass("bg-gray-500 hover:bg-gray-600").addClass("bg-[#5865f2] hover:bg-[#4752c4]");
+    
+    // Enable file upload
+    $("#addFilesBtn").prop("disabled", false).removeClass("opacity-50 cursor-not-allowed");
+    $("#fileInput").prop("disabled", false);
+    $(".removeFileBtn").prop("disabled", false).removeClass("opacity-50 cursor-not-allowed");
   }
+}
+
 
   // Remove file handler — bind only once
   filePreview.on("click", ".removeFileBtn", function(){
