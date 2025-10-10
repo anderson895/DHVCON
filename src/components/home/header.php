@@ -67,7 +67,7 @@ include "../plugins/PageSpinner.php";
       <a href="../home/" class="flex items-center gap-3 px-3 py-2 rounded-md 
         text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
         <span class="material-icons-outlined text-xl">groups</span>
-        <span>Rooms</span>
+        <span>All Rooms</span>
       </a>
 
       <hr class="my-3 border-gray-600">
