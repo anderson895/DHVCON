@@ -9,9 +9,9 @@ $code=$_GET['code'];
   <!-- Top Tabs -->
   <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
     <div class="flex items-center gap-6">
-      <button class="tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
+      <button class="joiner-only tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
       <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="meeting">Meeting</button>
-      <button class=" tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
+      <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
       <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
       <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
       <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="members">Members</button>
