@@ -7,17 +7,25 @@ $(document).ready(function() {
 
   function markActiveRoom() {
     const roomName = getRoomNameFromURL();
-    if (!roomName) return;
 
-    // Remove active from all first
+    // Remove previous active styles from rooms
     $("#joinedRooms a, #createdRooms a").removeClass("bg-[#56585d] font-bold");
 
-    // Add active to the matching room
-    $(`#joinedRooms a span:contains("${roomName}"), #createdRooms a span:contains("${roomName}")`).each(function() {
-      if ($(this).text() === roomName) {
-        $(this).closest('a').addClass("bg-[#56585d] font-bold");
+    // Highlight the room if room_name exists in URL
+    if (roomName) {
+      $(`#joinedRooms a span:contains("${roomName}"), #createdRooms a span:contains("${roomName}")`).each(function() {
+        if ($(this).text() === roomName) {
+          $(this).closest('a').addClass("bg-[#56585d] font-bold");
+        }
+      });
+    } 
+    // Otherwise, highlight the "Rooms" link if we're on /home/
+    else {
+      const path = window.location.pathname;
+      if (path.endsWith("/home/")) {
+        $('a[href="../home/"]').addClass('bg-gray-700 text-white font-semibold');
       }
-    });
+    }
   }
 
   // Load rooms the user has joined
