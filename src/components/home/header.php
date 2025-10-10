@@ -95,7 +95,7 @@ include "../plugins/PageSpinner.php";
 
       <!-- Dropdown Menu -->
       <div id="settings-menu" class="hidden absolute bottom-14 left-0 right-0 bg-[#2b2d31] border-t border-gray-700 shadow-lg">
-        <a href="settings" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition">Settings</a>
+        <!-- <a href="settings" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition">Settings</a> -->
         <a href="logout.php" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition text-red-400">Logout</a>
       </div>
     </div>
