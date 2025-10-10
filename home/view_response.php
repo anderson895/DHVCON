@@ -19,10 +19,9 @@ include "../src/components/home/header.php";
               <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Email</th>
               <th class="px-4 py-3 text-left text-sm font-medium text-gray-300">Submitted</th>
               <th class="px-4 py-3 text-center text-sm font-medium text-gray-300">Date</th>
-              <th class="px-4 py-3 text-center text-sm font-medium text-gray-300">Actions</th>
             </tr>
           </thead>
-          <tbody id="classworkTableBody" class="divide-y divide-gray-700">
+          <tbody id="responseTableBody" class="divide-y divide-gray-700">
             <!-- Response rows will be appended here via JS -->
           </tbody>
         </table>
@@ -116,7 +115,80 @@ $(document).ready(function () {
     });
   }
 
+
+
+
+
+
+
+
+
+
+
+function fetchAll_SubmittedClasswork() {
+  $.ajax({
+    url: "../controller/end-points/controller.php",
+    type: "GET",
+    data: { requestType: "getWorkResponses", classwork_id: classworkId },
+    dataType: "json",
+    success: function(res) {
+      const tbody = $("#responseTableBody");
+      tbody.empty();
+
+      if(res.status === 200 && res.data && res.data.data.length > 0){
+        res.data.data.forEach((item, index) => {
+          // Parse the sw_files JSON string
+          let files = [];
+          try {
+            files = JSON.parse(item.sw_files);
+          } catch(e) {
+            console.error("Failed to parse sw_files:", e);
+          }
+
+          // Generate file links
+          let fileLinks = files.length 
+            ? files.map(f => `<a href="../static/upload/${f}" target="_blank" class="text-[#5865f2] hover:underline text-sm">${f}</a>`).join("<br>") 
+            : `<span class="text-gray-500 text-sm">No File</span>`;
+
+          // Format the date
+          let formattedDate = '';
+          if(item.created_at){
+            const date = new Date(item.created_at);
+            formattedDate = date.toLocaleString('en-US', { 
+              month: 'long', 
+              day: 'numeric', 
+              year: 'numeric', 
+              hour: 'numeric', 
+              minute: '2-digit', 
+              hour12: true 
+            });
+          }
+
+          const row = `
+            <tr class="hover:bg-[#3a3b40] transition">
+              <td class="px-4 py-3 text-gray-300">${index + 1}</td>
+              <td class="px-4 py-3 text-gray-300">${item.user_fullname}</td>
+              <td class="px-4 py-3 text-gray-300">${item.user_email}</td>
+              <td class="px-4 py-3 text-center">${fileLinks}</td>
+              <td class="px-4 py-3 text-center text-gray-300">${formattedDate}</td>
+            </tr>
+          `;
+          tbody.append(row);
+        });
+      } else {
+        tbody.append(`<tr><td colspan="6" class="text-center py-4 text-gray-500">No responses yet.</td></tr>`);
+      }
+    },
+    error: function(e){ console.error(e); }
+  });
+}
+
+
+
+
+
   fetchClasswork();
+  fetchAll_SubmittedClasswork();
 
 
 });

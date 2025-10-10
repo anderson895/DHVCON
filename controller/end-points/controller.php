@@ -388,6 +388,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         ]);
                     }
                     
+        }else if ($_GET['requestType'] === 'getWorkResponses') {
+                    $id = intval($_GET['classwork_id']);
+                    $response = $db->getWorkResponses($id);
+
+                    if ($response) {
+                        echo json_encode([
+                            'status' => 200,
+                            'data' => $response
+                        ]);
+                    } else {
+                        echo json_encode([
+                            'status' => 500,
+                            'message' => $response
+                        ]);
+                    }
+                    
         }else if ($_GET['requestType'] === 'get_all_created_works') {
                     $room_id = intval($_GET['room_id']);
                     $user_id = $_SESSION['user_id'];

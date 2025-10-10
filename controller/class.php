@@ -55,7 +55,7 @@ class global_class extends db_connect
      */
     public function updateSwStatus($status, $user_id, $classwork_id) {
         $stmt = $this->conn->prepare("UPDATE submitted_classwork SET sw_status=? WHERE sw_classwork_id=? AND sw_user_id=?");
-        $stmt->bind_param("iii", $status, $classwork_id, $user_id); // <-- use the method parameters
+        $stmt->bind_param("iii", $status, $classwork_id, $user_id);
         $stmt->execute();
 
         $affectedRows = $stmt->affected_rows;
@@ -491,6 +491,40 @@ public function getCreatedRooms($user_id) {
 
 
 
+
+
+
+
+
+
+public function getWorkResponses($classwork_id) {
+    $query = "SELECT * from submitted_classwork
+    LEFT JOIN classwork
+    ON classwork.classwork_id = submitted_classwork.sw_classwork_id 
+    LEFT JOIN user
+    ON user.user_id = submitted_classwork.sw_user_id
+    where submitted_classwork.sw_classwork_id = ?
+    ";
+
+    $stmt = $this->conn->prepare($query);
+   
+
+    $stmt->bind_param("i", $classwork_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $rooms = [];
+    while ($row = $result->fetch_assoc()) {
+        $rooms[] = $row;
+    }
+
+    $stmt->close();
+
+    return [
+        'success' => true,
+        'data' => $rooms
+    ];
+}
 
 
 
