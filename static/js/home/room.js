@@ -1055,3 +1055,76 @@ $(document).ready(function() {
         }
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+// LEAVE ROOM 
+
+$(document).ready(function() {
+    $('#btnLeaveRoom').on('click', function(e) {
+        e.preventDefault(); 
+
+        let room_code = $(this).data("code");
+
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to leave the room!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, leave',
+            cancelButtonText: 'Cancel',
+            background: '#2b2d31',  // Dark background
+            color: '#fff',           // White text
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            customClass: {
+                popup: 'swal-dark-popup',
+                title: 'swal-dark-title',
+                content: 'swal-dark-content',
+                confirmButton: 'swal-dark-confirm',
+                cancelButton: 'swal-dark-cancel'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "../controller/end-points/controller.php",
+                    type: 'POST',
+                    data: {
+                        room_code: room_code,
+                        requestType: "LeaveRoom"
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: 'Left!',
+                            text: 'You have left the room.',
+                            icon: 'success',
+                            background: '#2b2d31',
+                            color: '#fff',
+                            confirmButtonColor: '#3085d6'
+                        }).then(() => {
+                            window.location.href = '../home/';
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Please try again.',
+                            icon: 'error',
+                            background: '#2b2d31',
+                            color: '#fff',
+                            confirmButtonColor: '#d33'
+                        });
+                    }
+                });
+            }
+        });
+    });
+});

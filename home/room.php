@@ -5,19 +5,27 @@ $code=$_GET['code'];
 ?>
 
 <!-- Main Content -->
-  <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
-  <!-- Top Tabs -->
-  <div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
-    <div class="flex items-center gap-6">
-      <button class="joiner-only tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
-      <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="meeting">Meeting</button>
-      <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
-      <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
-      <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
-      <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="members">Members</button>
-      
-    </div>
+<main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
+<!-- Top Tabs -->
+<div class="flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-[#2b2d31]">
+  
+  <!-- Left Tabs -->
+  <div class="flex items-center gap-6">
+    <button class="joiner-only tab-btn cursor-pointer text-white font-semibold border-b-2 border-white pb-1" data-tab="feed">Feed</button>
+    <button class="tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="meeting">Meeting</button>
+    <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="worksubmitted">Work Submitted</button>
+    <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="classwork">Classwork</button>
+    <button class="joiner-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="certificate">Claimed Certificate</button>
+    <button class="creator-only tab-btn cursor-pointer text-gray-400 hover:text-white" data-tab="members">Members</button>
   </div>
+  
+  <!-- Right Leave Button -->
+  <button id="btnLeaveRoom" data-code="<?=$code?>" class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white">
+    Leave Room
+    <span class="material-icons">exit_to_app</span>
+  </button>
+  
+</div>
 
 
 

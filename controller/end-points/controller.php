@@ -230,8 +230,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 exit;
             }
-
-            // ✅ Insert into database (adjust your method to accept room_id)
+            
             $insertedId = $db->CreateClasswork($title, $instructions, $fileName, $user_id, $room_id);
 
             if ($insertedId) {
@@ -275,6 +274,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertedId = $db->CloseMeeting($meeting_id);
 
             if ($insertedId) {
+                echo json_encode(['status' => 200]);
+            } else {
+                echo json_encode(['status' => 500, 'message' => 'Failed to close meeting.']);
+            }
+            exit;
+            
+        }else if ($_POST['requestType'] == 'LeaveRoom') {
+            $room_code = $_POST['room_code'];
+            $user_id = $_SESSION['user_id'];
+            $result = $db->LeaveRoom($room_code,$user_id );
+
+            if ($result) {
                 echo json_encode(['status' => 200]);
             } else {
                 echo json_encode(['status' => 500, 'message' => 'Failed to close meeting.']);

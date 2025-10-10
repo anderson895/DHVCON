@@ -990,6 +990,47 @@ public function CloseMeeting($meeting_id)
 
 
 
+
+
+public function LeaveRoom($room_code, $user_id)
+{
+    // 1. Get room_id from room_code
+    $query = "SELECT room_id FROM room WHERE room_code = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param("s", $room_code); 
+    $stmt->execute();
+    $stmt->bind_result($room_id);
+    $stmt->fetch();
+    $stmt->close();
+
+    if (!$room_id) {
+        return false;
+    }
+
+    // 2. Delete the user from room_members
+    $query = "DELETE FROM room_members WHERE room_id = ? AND user_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param("ii", $room_id, $user_id);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result;
+}
+
+
+
+
+
+
+
 public function deleteRoom($room_id)
 {
     $query = "UPDATE room SET room_status = 0 WHERE room_id = ?";
