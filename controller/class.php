@@ -127,13 +127,11 @@ private function generateUniqueRoomCode($length = 6) {
 }
 
 
-
-
 public function createRoom($roomName, $roomDescription, $roomImageFileName, $user_id) {
-    $room_code = $this->generateUniqueRoomCode(); 
+    $room_code = $this->generateUniqueRoomCode();
 
-    // Use ? placeholders for prepared statements
-    $query = "INSERT INTO `room` (`room_creator_user_id`, `room_banner`, `room_name`, `room_description`, `room_code`) 
+    $query = "INSERT INTO `room` 
+              (`room_creator_user_id`, `room_banner`, `room_name`, `room_description`, `room_code`) 
               VALUES (?, ?, ?, ?, ?)";
 
     $stmt = $this->conn->prepare($query);
@@ -143,18 +141,39 @@ public function createRoom($roomName, $roomDescription, $roomImageFileName, $use
 
     $stmt->bind_param("issss", $user_id, $roomImageFileName, $roomName, $roomDescription, $room_code);
 
-    $result = $stmt->execute();
-
-    if (!$result) {
+    if ($stmt->execute()) {
+        $inserted_id = $this->conn->insert_id;
+        $stmt->close();
+        return $inserted_id;
+    } else {
         $stmt->close();
         return false;
     }
+}
 
-    $inserted_id = $this->conn->insert_id; 
+public function updateRoom($roomId, $roomName, $roomDescription, $roomImageFileName, $user_id) {
+    if ($roomImageFileName) {
+        $query = "UPDATE `room` SET `room_name` = ?, `room_description` = ?, `room_banner` = ? 
+                  WHERE `room_id` = ? AND `room_creator_user_id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("sssii", $roomName, $roomDescription, $roomImageFileName, $roomId, $user_id);
+    } else {
+        $query = "UPDATE `room` SET `room_name` = ?, `room_description` = ? 
+                  WHERE `room_id` = ? AND `room_creator_user_id` = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("ssii", $roomName, $roomDescription, $roomId, $user_id);
+    }
+
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $result = $stmt->execute();
     $stmt->close();
 
-    return $inserted_id; 
+    return $result; // true on success, false on failure
 }
+
 
 
 
@@ -311,7 +330,7 @@ public function getAllRooms($user_id) {
         FROM `room`
         WHERE room_id NOT IN (
             SELECT room_id FROM room_members WHERE user_id = ?
-        )
+        ) AND room_status=1
         ORDER BY room_id DESC
     ";
 
@@ -760,6 +779,64 @@ public function getRoomDetails($code)
 
 
 
+
+public function getRoomById($room_id)
+{
+    $query = "
+        SELECT 
+            r.room_id,
+            r.room_code,
+            r.room_name,
+            r.room_description,
+            r.room_banner,
+            r.room_date_created,
+            u.user_id AS creator_id,
+            u.user_fullname AS creator_name,
+            u.user_email AS creator_email
+        FROM room r
+        INNER JOIN user u ON r.room_creator_user_id = u.user_id
+        WHERE r.room_id = ?
+        LIMIT 1
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return [
+            "success" => false,
+            "message" => "Prepare failed: " . $this->conn->error
+        ];
+    }
+
+    $stmt->bind_param("i", $room_id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $room = $result->fetch_assoc();
+
+    if ($room) {
+        return [
+            "success" => true,
+            "data" => $room
+        ];
+    } else {
+        return [
+            "success" => false,
+            "message" => "Room not found"
+        ];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
     
     
     public function Login($email, $password)
@@ -907,6 +984,28 @@ public function CloseMeeting($meeting_id)
 
     return $result; 
 }
+
+
+
+
+
+
+public function deleteRoom($room_id)
+{
+    $query = "UPDATE room SET room_status = 0 WHERE room_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param("i", $room_id);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result; 
+}
+
+
 
 
 

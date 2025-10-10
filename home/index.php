@@ -40,39 +40,49 @@ include "../src/components/home/header.php";
 
 
 
-
-
-
 <!-- Create Room Modal -->
 <div id="createRoomModal" class="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50" style="display:none;">
   <div class="bg-[#2b2d31] p-8 rounded-2xl w-full max-w-md shadow-lg relative">
     <h2 class="text-2xl font-bold mb-4 text-white">Create a New Room</h2>
 
-    <!-- Spinner Overlay -->
-    <div id="spinner" class="absolute inset-0 flex items-center justify-center z-50 bg-[#1e1f22]/70" style="display:none;">
+    <div id="spinnerCreate" class="absolute inset-0 flex items-center justify-center z-50 bg-[#1e1f22]/70" style="display:none;">
       <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
     </div>
 
     <form id="createRoomForm" class="space-y-4">
-      <!-- Room Name -->
       <input type="text" name="roomName" placeholder="Room Name" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
-
-      <!-- Room Description -->
       <textarea name="roomDescription" placeholder="Room Description" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600"></textarea>
-
-      <!-- Single File Input (Room Banner) -->
       <label class="block text-white">Room Banner:</label>
-      <input type="file" name="roomBanner" id="roomBanner" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
-
-      <!-- Action Buttons -->
+      <input type="file" name="roomBanner" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
       <div class="flex justify-end gap-2">
-        <button type="button" id="closeModal" class="cursor-pointer px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
-        <button type="submit" id="btnCreateRoom" class="cursor-pointer px-4 py-2 bg-[#5865f2] text-white rounded-md hover:bg-[#4752c4]">Create</button>
+        <button type="button" id="closeCreateModal" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-[#5865f2] text-white rounded-md hover:bg-[#4752c4]">Create</button>
       </div>
     </form>
   </div>
 </div>
 
+<!-- Update Room Modal -->
+<div id="updateRoomModal" class="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50" style="display:none;">
+  <div class="bg-[#2b2d31] p-8 rounded-2xl w-full max-w-md shadow-lg relative">
+    <h2 class="text-2xl font-bold mb-4 text-white">Update Room</h2>
+
+    <div id="spinnerUpdate" class="absolute inset-0 flex items-center justify-center z-50 bg-[#1e1f22]/70" style="display:none;">
+      <div class="w-12 h-12 border-4 border-[#3c3f44] border-t-transparent rounded-full animate-spin"></div>
+    </div>
+
+    <form id="updateRoomForm" class="space-y-4">
+      <input type="text" name="roomName" placeholder="Room Name" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
+      <textarea name="roomDescription" placeholder="Room Description" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600"></textarea>
+      <label class="block text-white">Room Banner:</label>
+      <input type="file" name="roomBanner" class="w-full p-2 rounded-md bg-[#1e1f22] text-white border border-gray-600">
+      <div class="flex justify-end gap-2">
+        <button type="button" id="closeUpdateModal" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-[#5865f2] text-white rounded-md hover:bg-[#4752c4]">Update</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 
 
