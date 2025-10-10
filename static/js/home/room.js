@@ -125,8 +125,6 @@ function fetchRoomsDetails() {
 
 
 
-
-
 function fetchMeetings() {
     $.ajax({
         url: `../controller/end-points/controller.php`,
@@ -146,27 +144,27 @@ function fetchMeetings() {
                     const startDate = new Date(meeting.meeting_start);
                     const endDate = new Date(meeting.meeting_end);
                     const formattedStart = startDate.toLocaleString('en-PH', { 
-                      year: 'numeric', month: 'short', day: 'numeric', 
-                      hour: '2-digit', minute: '2-digit', hour12: true 
+                        year: 'numeric', month: 'short', day: 'numeric', 
+                        hour: '2-digit', minute: '2-digit', hour12: true 
                     });
                     const formattedEnd = endDate.toLocaleString('en-PH', { 
                         year: 'numeric', month: 'short', day: 'numeric', 
                         hour: '2-digit', minute: '2-digit', hour12: true 
                     });
 
-                    // Display with labels
                     const dateInfo = `
                         <p class="text-gray-400 text-sm"><span class="font-medium">Start:</span> ${formattedStart}</p>
                         <p class="text-gray-400 text-sm"><span class="font-medium">End:</span> ${formattedEnd}</p>
                     `;
-
 
                     // Determine action button
                     let actionButton = "";
                     if (meeting.meeting_status == 0) {
                         actionButton = `
                             <button 
-                                class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                                class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer generate-cert"
+                                data-meeting-pass="${meeting.meeting_pass}"
+                                data-meeting-id="${meeting.meeting_id}">
                                 Generate Certificate
                             </button>
                         `;
@@ -178,28 +176,29 @@ function fetchMeetings() {
                             </a>
                         `;
                     }
+                      // Check if current user is the creator
+                      let creatorButtons = '';
+                      if (response.user_id === meeting.meeting_creator_user_id) {
+                          // Determine if the Close Meeting button should be disabled
+                          const closeDisabled = meeting.meeting_status == 0 ? 'disabled cursor-not-allowed opacity-50' : '';
 
-                    // Check if current user is the creator
-                    let creatorButtons = '';
-                    if (response.user_id === meeting.meeting_creator_user_id) {
-                        creatorButtons = `
-                            <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
-                            <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition cursor-pointer">
-                                Close Meeting
-                            </button>
-                            <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
-                                Meeting Logs
-                            </button>
-                        `;
-                    }
+                          creatorButtons = `
+                              <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
+                              <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition ${closeDisabled}">
+                                  Close Meeting
+                              </button>
+                              <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer">
+                                  Meeting Logs
+                              </button>
+                          `;
+                      }
+
 
                     const card = `
                         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
                             <div class="p-4 space-y-3">
                                 <h3 class="font-semibold text-lg text-white">${meeting.meeting_title}</h3>
-                                <p class="text-gray-400 text-sm">
-                                    ${dateInfo}
-                                </p>
+                                ${dateInfo}
                                 <p class="text-sm text-gray-300">${meeting.meeting_description}</p>
                                 ${creatorButtons || actionButton}
                             </div>
@@ -207,6 +206,49 @@ function fetchMeetings() {
                     `;
                     container.append(card);
                 });
+
+                $(".generate-cert").click(function() {
+                    const meetingPass = $(this).data("meeting-pass");
+                    const meetingId = $(this).data("meeting-id");
+
+                    Swal.fire({
+                        title: 'Enter Meeting Pass',
+                        input: 'password',
+                        inputLabel: 'Meeting Pass',
+                        inputPlaceholder: 'Enter the meeting pass',
+                        showCancelButton: true,
+                        confirmButtonText: 'Submit',
+                        cancelButtonText: 'Cancel',
+                        inputValidator: (value) => {
+                            if (!value) return 'Meeting pass cannot be empty!';
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            if (result.value === meetingPass) {
+                                // Show processing Swal for 1 second
+                                Swal.fire({
+                                    title: 'Processing...',
+                                    timer: 1000,
+                                    didOpen: () => {
+                                        Swal.showLoading();
+                                    },
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then(() => {
+                                    // Redirect to certificate.php after 1 second
+                                    window.location.href = `certificate.php?meeting_id=${meetingId}`;
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Invalid Pass',
+                                    text: 'The meeting pass you entered is incorrect.'
+                                });
+                            }
+                        }
+                    });
+                });
+
 
             } else {
                 container.append('<p class="text-gray-400 col-span-full text-center">No meetings scheduled.</p>');
@@ -217,6 +259,8 @@ function fetchMeetings() {
         }
     });
 }
+
+
 
 
 
