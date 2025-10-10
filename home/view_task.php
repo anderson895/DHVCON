@@ -32,13 +32,12 @@ include "../src/components/home/header.php";
 <main class="flex-1 flex items-center justify-center bg-[#1e1f22] min-h-screen py-10 px-4 sm:px-6">
 
   <!-- Main Container -->
-  <div class="max-w-6xl w-full bg-[#2b2d31] shadow-xl rounded-2xl p-4 sm:p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 border border-[#3a3b40]">
+  <div class="max-w-4xl w-full bg-[#2b2d31] shadow-xl rounded-2xl p-4 sm:p-6 md:p-8 flex flex-col gap-8 border border-[#3a3b40]">
 
-    <!-- Left Section: Assignment Details -->
-    <div class="flex-1 flex flex-col">
-
+    <!-- Assignment Details Section -->
+    <section class="flex flex-col">
       <!-- Header -->
-      <div class="flex items-center gap-3 mb-4 md:mb-6 justify-center md:justify-start">
+      <div class="flex items-center gap-3 mb-4 justify-center md:justify-start">
         <span class="material-icons-round text-[#5865f2] text-3xl">assignment</span>
         <h1 class="text-xl md:text-2xl font-bold text-white">Assignment Task</h1>
       </div>
@@ -48,21 +47,18 @@ include "../src/components/home/header.php";
       </p>
 
       <!-- Description Card -->
-      <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] mb-6 md:mb-0 flex-1 hover:border-[#5865f2] transition flex flex-col">
+      <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] hover:border-[#5865f2] transition flex flex-col">
+        <p class="classwork_instruction text-gray-300 mb-5 leading-relaxed text-sm md:text-base"></p>
 
-        <p class="classwork_instruction text-gray-300 mb-4 md:mb-5 leading-relaxed text-sm md:text-base"></p>
-
-        <!-- Attachment (hidden by default) -->
-        <div class="attachement-creator hidden border border-[#3a3b40] rounded-lg overflow-hidden w-full md:max-w-xs bg-[#2b2d31] hover:scale-[1.02] transition mx-auto md:mx-0"></div>
-
+        <!-- Attachment (hidden if empty) -->
+        <div class="attachement-creator hidden border border-[#3a3b40] rounded-lg overflow-hidden w-full md:max-w-sm bg-[#2b2d31] hover:scale-[1.02] transition mx-auto md:mx-0"></div>
       </div>
-    </div>
+    </section>
 
-    <!-- Right Section: Your Work -->
-    <div class="w-full md:w-80 flex flex-col gap-4 md:gap-5">
-      <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] shadow-md flex flex-col gap-3 flex-1">
-
-        <div class="flex items-center justify-between mb-2 md:mb-4">
+    <!-- Your Work Section -->
+    <section class="flex flex-col mt-3">
+      <div class="border border-[#3a3b40] rounded-xl p-4 md:p-6 bg-[#1e1f22] shadow-md flex flex-col gap-4">
+        <div class="flex items-center justify-between">
           <h2 class="text-base md:text-lg font-semibold text-white">Your Work</h2>
           <span class="text-xs md:text-sm text-green-400 font-medium bg-[#263230] px-2 py-1 rounded-md">Assigned</span>
         </div>
@@ -70,20 +66,22 @@ include "../src/components/home/header.php";
         <input type="file" id="fileInput" multiple class="hidden">
 
         <button id="addFilesBtn"
-          class="cursor-pointer w-full border border-[#3a3b40] rounded-md py-2 text-gray-300 hover:bg-[#2f3150] hover:border-[#5865f2] transition mb-2 md:mb-4 text-sm md:text-base">
+          class="cursor-pointer w-full border border-[#3a3b40] rounded-md py-2 text-gray-300 hover:bg-[#2f3150] hover:border-[#5865f2] transition text-sm md:text-base">
           + Add or create
         </button>
 
         <div id="filePreview" class="flex flex-col gap-2 max-h-48 overflow-y-auto p-1 custom-scrollbar"></div>
 
         <button
-          class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base mt-2">
+          class="w-full cursor-pointer bg-[#5865f2] hover:bg-[#4752c4] text-white font-semibold py-2 rounded-md transition text-sm md:text-base">
           Mark as done
         </button>
       </div>
-    </div>
+    </section>
+
   </div>
 </main>
+
 
 
 <?php 
