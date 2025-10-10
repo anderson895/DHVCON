@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2025 at 08:02 AM
+-- Generation Time: Oct 10, 2025 at 09:49 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -111,8 +111,15 @@ CREATE TABLE `submitted_classwork` (
   `sw_classwork_id` int(11) NOT NULL,
   `sw_user_id` int(11) NOT NULL,
   `sw_files` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`sw_files`)),
-  `sw_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=undone,1=done'
+  `sw_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=not-turnin,1=turnin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `submitted_classwork`
+--
+
+INSERT INTO `submitted_classwork` (`sw_id`, `sw_classwork_id`, `sw_user_id`, `sw_files`, `sw_status`) VALUES
+(6, 10, 3, '[\"submission_68e8ba834d7471.60521323.png\"]', 1);
 
 -- --------------------------------------------------------
 
@@ -207,7 +214,7 @@ ALTER TABLE `room_members`
 -- AUTO_INCREMENT for table `submitted_classwork`
 --
 ALTER TABLE `submitted_classwork`
-  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `user`
