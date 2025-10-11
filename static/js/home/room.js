@@ -146,55 +146,66 @@ function fetchRoomsDetails() {
 
 
 
-
-
-
 function fetchClaimedCertificates(room_id) {
-    $.ajax({
-      url: `../controller/end-points/controller.php`,
-      type: 'GET',
-      data: {
-        requestType: 'fetchAllClaimedCertificates',
-        room_id: room_id
-      },
-      dataType: 'json',
-      success: function(response) {
-        const certList = $('#certList');
-        const noCertMsg = $('#noCertMsg');
-        certList.empty(); // clear previous entries
+  $.ajax({
+    url: `../controller/end-points/controller.php`,
+    type: 'GET',
+    data: {
+      requestType: 'fetchAllClaimedCertificates',
+      room_id: room_id
+    },
+    dataType: 'json',
+    success: function(response) {
+      const certList = $('#certList');
+      const certContainer = $('#certificate > div'); // 🎯 target the background div
+      certList.empty(); // clear previous entries
 
-        if (response.status === 200 && response.data.length > 0) {
-          noCertMsg.hide(); // hide default message
+      if (response.status === 200 && response.data.length > 0) {
+        // ✅ Show background
+        certContainer.addClass('bg-[#2b2d31] p-6 shadow-lg rounded-xl');
 
-          response.data.forEach(cert => {
-            const certCard = `
-              <div class="bg-[#1e1f22] p-4 rounded-lg shadow-md flex justify-between items-center">
-                <div>
-                  <h3 class="text-lg font-semibold capitalize">${cert.meeting_title}</h3>
-                  <p class="text-gray-400 text-sm">Date Claimed: ${cert.claimed_date}</p>
-                  <p class="text-gray-400 text-sm">Meeting Ended: ${cert.meeting_end}</p>
-                </div>
-                <a href="certificate.php?meeting_id=${cert.claimed_meeting_id}&meeting_pass=${cert.meeting_pass}" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  class="bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] text-white px-4 py-2 rounded-lg text-sm transition">
-                  View Certificate
-                </a>
-
+        // 🪪 Render certificates
+        response.data.forEach(cert => {
+          const certCard = `
+            <div class="bg-[#1e1f22] p-4 rounded-lg shadow-md flex justify-between items-center">
+              <div>
+                <h3 class="text-lg font-semibold capitalize">${cert.meeting_title}</h3>
+                <p class="text-gray-400 text-sm">Date Claimed: ${cert.claimed_date}</p>
+                <p class="text-gray-400 text-sm">Meeting Ended: ${cert.meeting_end}</p>
               </div>
-            `;
-            certList.append(certCard);
-          });
+              <a href="certificate.php?meeting_id=${cert.claimed_meeting_id}&meeting_pass=${cert.meeting_pass}" 
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-lg text-sm transition">
+                 View Certificate
+              </a>
+            </div>
+          `;
+          certList.append(certCard);
+        });
 
-        } else {
-          noCertMsg.show();
-        }
-      },
-      error: function() {
-        alert('Failed to fetch certificates.');
+      } else {
+        // 🚫 No certificates — remove background
+        certContainer.removeClass('bg-[#2b2d31] p-6 shadow-lg rounded-xl');
+
+        // 🖼️ Display "No Certificate" banner
+        const noCertBanner = `
+          <div class="flex flex-col items-center justify-center text-center py-16 w-full">
+            <img src="../static/image/no_certificate.png" 
+                 alt="No Certificate" 
+                 class="w-72 h-auto object-contain mb-6 opacity-90">
+            <h2 class="text-2xl font-semibold text-gray-200">No Certificates Found</h2>
+            <p class="text-gray-400 mt-2 text-base">You currently You haven’t claimed any certificates yet.</p>
+          </div>
+        `;
+        certList.append(noCertBanner);
       }
-    });
-  }
+    },
+    error: function() {
+      alert('Failed to fetch certificates.');
+    }
+  });
+}
 
 
 
@@ -716,70 +727,78 @@ $(document).on('click', '.btnCloseMeeting', function() {
 
 
 
+function fetchAllWorks_TurnIn(room_name) {
+  if (!room_id) return;
+  $('#submittedWorksContainer').html(spinner);
 
+  $.ajax({
+    url: `../controller/end-points/controller.php?requestType=getAllSubmittedClasswork_Joiner&room_id=${room_id}`,
+    type: "GET",
+    dataType: "json",
+    success: function(response) {
+      console.log("Pending Works:", response);
 
+      const container = $('#submittedWorksContainer');
+      const workBox = $('#worksubmitted > div'); // 🎯 target yung div na may background
 
-  function fetchAllWorks_TurnIn(room_name) {
-    if (!room_id) return;
-    $('#submittedWorksContainer').html(spinner);
+      container.empty();
 
-    $.ajax({
-      url: `../controller/end-points/controller.php?requestType=getAllSubmittedClasswork_Joiner&room_id=${room_id}`,
-      type: "GET",
-      dataType: "json",
-      success: function(response) {
-        console.log("Pending Works:", response);
+      if (response.status === 200 && response.data.length > 0) {
+        // ✅ show background kapag may laman
+        workBox.addClass('bg-[#2b2d31] rounded-2xl shadow-lg p-8');
 
-        const container = $('#submittedWorksContainer');
-        container.empty();
-
-        if (response.status === 200 && response.data.length > 0) {
-          response.data.forEach((work, index) => {
-            const flexClass = index % 2 === 1 ? 'flex-row-reverse' : '';
-            const date = new Date(work.created_at || Date.now()).toLocaleDateString('en-US', {
-              month: 'short', day: 'numeric', year: 'numeric'
-            });
-
-            const post = `
-              <a href="view_task?classwork_id=${work.classwork_id}&&room_name=${room_name}" 
-                 class="block relative flex gap-6 ${flexClass} items-start cursor-pointer no-underline">
-                <div class="bg-[#1e1f22] rounded-2xl p-6 w-full hover:bg-[#2f3150] transition">
-                  <div class="flex justify-between items-center">
-                    <h3 class="capitalize text-xl font-semibold text-white">${work.classwork_title}</h3>
-                    <span class="text-gray-400 text-sm flex items-center gap-1">
-                      <span class="material-icons-round text-gray-400 text-sm">calendar_today</span>
-                      ${date}
-                    </span>
-                  </div>
-                    <p class="text-gray-300 text-sm mt-3">
-                    ${work.classwork_instruction 
-                        ? (work.classwork_instruction.length > 200 
-                            ? work.classwork_instruction.substring(0, 220) + '...' 
-                            : work.classwork_instruction)
-                        : 'No instructions provided.'}
-                    </p>
-
-                </div>
-              </a>`;
-            container.append(post);
+        // 🪪 render submitted works
+        response.data.forEach((work, index) => {
+          const flexClass = index % 2 === 1 ? 'flex-row-reverse' : '';
+          const date = new Date(work.created_at || Date.now()).toLocaleDateString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric'
           });
-        } else {
-          const banner = `
-            <div class="col-span-full flex flex-col items-center justify-center min-h-[40vh] text-center animate-fadeIn w-full">
-              <img src="../static/image/no_rooms_banner.png" 
-                   alt="No Pending Works" 
-                   class="w-full max-w-3xl h-auto object-cover mb-8 rounded-2xl">
-              <h2 class="text-2xl font-bold text-white mb-3">No Pending Works Available</h2>
-              <p class="text-gray-400 text-lg">You currently have no pending classworks in this room.</p>
-            </div>`;
-          container.html(banner);
-        }
-      },
-      error: function() {
-        $('#submittedWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load pending works.</p>');
+
+          const post = `
+            <a href="view_task?classwork_id=${work.classwork_id}&&room_name=${room_name}" 
+               class="block relative flex gap-6 ${flexClass} items-start cursor-pointer no-underline">
+              <div class="bg-[#1e1f22] rounded-2xl p-6 w-full hover:bg-[#2f3150] transition">
+                <div class="flex justify-between items-center">
+                  <h3 class="capitalize text-xl font-semibold text-white">${work.classwork_title}</h3>
+                  <span class="text-gray-400 text-sm flex items-center gap-1">
+                    <span class="material-icons-round text-gray-400 text-sm">calendar_today</span>
+                    ${date}
+                  </span>
+                </div>
+                <p class="text-gray-300 text-sm mt-3">
+                  ${work.classwork_instruction 
+                    ? (work.classwork_instruction.length > 200 
+                        ? work.classwork_instruction.substring(0, 220) + '...' 
+                        : work.classwork_instruction)
+                    : 'No instructions provided.'}
+                </p>
+              </div>
+            </a>`;
+          container.append(post);
+        });
+
+      } else {
+        // 🚫 No submitted works — remove background
+        workBox.removeClass('bg-[#2b2d31] rounded-2xl shadow-lg p-8');
+
+        // 🖼️ Display banner
+        const banner = `
+          <div class="flex flex-col items-center justify-center text-center py-16 w-full">
+            <img src="../static/image/no_rooms_banner.png" 
+                 alt="No Submitted Works" 
+                 class="w-72 h-auto object-contain mb-6 opacity-90">
+            <h2 class="text-2xl font-semibold text-gray-200">No Submitted Works</h2>
+            <p class="text-gray-400 mt-2 text-base">You haven't submitted any classwork yet.</p>
+          </div>`;
+        container.html(banner);
       }
-    });
-  }
+    },
+    error: function() {
+      $('#submittedWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load submitted works.</p>');
+    }
+  });
+}
+
 
 
 
