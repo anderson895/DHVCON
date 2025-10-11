@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 10, 2025 at 08:31 PM
+-- Generation Time: Oct 11, 2025 at 12:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -24,6 +24,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `claimed_certificate`
+--
+
+CREATE TABLE `claimed_certificate` (
+  `claimed_id` int(11) NOT NULL,
+  `claimed_meeting_id` int(11) NOT NULL,
+  `claimed_user_id` int(11) NOT NULL,
+  `claimed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `claimed_certificate`
+--
+
+INSERT INTO `claimed_certificate` (`claimed_id`, `claimed_meeting_id`, `claimed_user_id`, `claimed_date`) VALUES
+(1, 6, 3, '2025-10-11 10:07:41');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `classwork`
 --
 
@@ -37,6 +57,13 @@ CREATE TABLE `classwork` (
   `classwork_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=archived,1=active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `classwork`
+--
+
+INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
+(13, 'assignment 1', 'Overview\r\nThis assignment is a piece of directed writing in response to a text or texts chosen by your teacher (or by you with your teacher’s approval). The assignment is assessed equally for both reading and writing, and to achieve top marks the examiners are looking for the following:\r\n\r\nReading (15 marks):\r\n\r\nYour ability to select, put together and evaluate facts, opinions and arguments to give a developed and sophisticated response\r\n\r\nYour ability to successfully evaluate both explicit and implicit ideas and opinions from your chosen text(s)\r\n\r\nWriting (15 marks):\r\n\r\nYour ability to display a highly effective style of writing capable of conveying subtle meaning\r\n\r\nYour ability to use effective language and to structure a response carefully\r\n\r\nA high degree of technical accuracy (spelling, grammar and punctuation are accurate)\r\n\r\nDepending on the choice of reading material, a typical Assignment 1 response would be to reply to the author of your chosen text(s) in the form of a letter. However, a speech or an article in which you are able to argue ideas are equally permissible. Whatever the form, you should be able to give an overview of the argument as a whole and demonstrate your understanding by commenting on specific ideas presented by the author of your chosen text or texts. This should include an explanation of any ideas of interest and an argument for or against them, as well as an examination of inconsistencies and the recognition of bias.\r\n\r\nA copy of all texts used for Assignment 1 must be included in your portfolio.', NULL, 2, 23, 1, '2025-10-10 18:33:13');
 
 -- --------------------------------------------------------
 
@@ -57,6 +84,13 @@ CREATE TABLE `meeting` (
   `meeting_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=close,1=open'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `meeting`
+--
+
+INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
+(6, 'https://meet.google.com/msk-azgz-pek', 'java programming introduction', '', '2025-10-11 16:00:00', '2025-10-11 17:00:00', 23, 2, '2a8cd4ba', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -69,6 +103,13 @@ CREATE TABLE `meeting_logs` (
   `ml_date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ml_meeting_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_logs`
+--
+
+INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
+(30, 3, '2025-10-11 08:44:33', 6);
 
 -- --------------------------------------------------------
 
@@ -112,7 +153,8 @@ CREATE TABLE `room_members` (
 --
 
 INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
-(19, 23, 3, '2025-10-10 18:29:25');
+(22, 23, 6, '2025-10-10 18:51:02'),
+(23, 23, 3, '2025-10-11 08:38:41');
 
 -- --------------------------------------------------------
 
@@ -127,6 +169,14 @@ CREATE TABLE `submitted_classwork` (
   `sw_files` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`sw_files`)),
   `sw_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=not-turnin,1=turnin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `submitted_classwork`
+--
+
+INSERT INTO `submitted_classwork` (`sw_id`, `sw_classwork_id`, `sw_user_id`, `sw_files`, `sw_status`) VALUES
+(12, 13, 3, '[\"submission_68e951833c9f61.87182974.pdf\"]', 1),
+(13, 13, 6, '[\"submission_68e95a29808448.04659162.webp\"]', 1);
 
 -- --------------------------------------------------------
 
@@ -157,6 +207,14 @@ INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `claimed_certificate`
+--
+ALTER TABLE `claimed_certificate`
+  ADD PRIMARY KEY (`claimed_id`),
+  ADD KEY `claimed_meeting_id` (`claimed_meeting_id`),
+  ADD KEY `claimed_user_id` (`claimed_user_id`);
 
 --
 -- Indexes for table `classwork`
@@ -216,22 +274,28 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `claimed_certificate`
+--
+ALTER TABLE `claimed_certificate`
+  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `meeting`
 --
 ALTER TABLE `meeting`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `meeting_logs`
 --
 ALTER TABLE `meeting_logs`
-  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `room`
@@ -243,13 +307,13 @@ ALTER TABLE `room`
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`
 --
 ALTER TABLE `submitted_classwork`
-  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `user`
@@ -260,6 +324,13 @@ ALTER TABLE `user`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `claimed_certificate`
+--
+ALTER TABLE `claimed_certificate`
+  ADD CONSTRAINT `claimed_certificate_ibfk_1` FOREIGN KEY (`claimed_meeting_id`) REFERENCES `meeting` (`meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `claimed_certificate_ibfk_2` FOREIGN KEY (`claimed_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `classwork`
