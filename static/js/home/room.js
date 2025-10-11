@@ -365,7 +365,7 @@ $(document).on("click", ".view-logs", function () {
                     confirmButtonText: "Close",
                     scrollbarPadding: false,
                     didOpen: () => {
-                        // 🔍 Add live search functionality
+                      
                         const searchInput = document.getElementById("searchLogInput");
                         const rows = document.querySelectorAll(".log-row");
 

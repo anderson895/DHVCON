@@ -551,17 +551,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                     
         }else if ($_GET['requestType'] === 'viewMeetingLogs') {
-               $meeting_id = intval($_GET['meeting_id']);
+                $meeting_id = intval($_GET['meeting_id']);
                 $response = $db->viewMeetingLogs($meeting_id);
 
-                if ($response && count($response) > 0) {
-                    echo json_encode(['status' => 200, 'data' => $response]);
-                } elseif ($response && count($response) === 0) {
+                if ($response === false) {
+                    echo json_encode(['status' => 500, 'message' => 'Error fetching meeting logs.']);
+                } elseif (empty($response)) {
                     echo json_encode(['status' => 404, 'message' => 'No logs found.']);
                 } else {
-                    echo json_encode(['status' => 500, 'message' => 'Error fetching meeting logs.']);
+                    echo json_encode(['status' => 200, 'data' => $response]);
                 }
                 exit;
+
         }else if ($_GET['requestType'] == 'getRoomById') {
 
             $room_id = $_GET['room_id'];
