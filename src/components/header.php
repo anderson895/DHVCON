@@ -33,7 +33,7 @@
     <!-- Left Side -->
     <div class="flex items-center space-x-3">
       <!-- Logo -->
-      <img src="static/image/logo.jpg" alt="Logo" class="h-10 w-10 rounded-full border-2 border-[#3c3f44] shadow-lg" />
+      <img src="static/image/logo1.png" alt="Logo" class="h-10 w-10 rounded-full border-2 border-[#3c3f44] shadow-lg" />
       <h1 class="text-xl font-semibold text-white tracking-wide">DHVCON</h1>
     </div>
 
