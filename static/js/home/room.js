@@ -241,8 +241,10 @@ function fetchMeetings() {
                                     allowOutsideClick: false,
                                     allowEscapeKey: false
                                 }).then(() => {
-                                    // Redirect to certificate.php after 1 second
-                                    window.location.href = `certificate.php?meeting_id=${meetingId}`;
+
+                                    window.open(`certificate?meeting_id=${meetingId}&&meeting_pass=${meetingPass}`, '_blank');
+                                     
+
                                 });
                             } else {
                                 Swal.fire({
