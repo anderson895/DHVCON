@@ -31,6 +31,7 @@ if (isset($_SESSION['user_id'])) {
   <title>DHVCON</title>
   <link href="../src/output.css" rel="stylesheet" />
   <link href="../src/scrollbar.css" rel="stylesheet" />
+  <link href="../src/alertifyconfig.css" rel="stylesheet" />
 
 
   
