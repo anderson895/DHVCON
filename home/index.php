@@ -2,6 +2,21 @@
 include "../src/components/home/header.php";
 ?>
 
+<style>
+  /* Custom scroll for see-more content */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: rgba(150, 150, 150, 0.4);
+      border-radius: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(150, 150, 150, 0.6);
+    }
+</style>
+
+
   <!-- Main Content -->
    <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
 

@@ -36,63 +36,108 @@ $(document).ready(function() {
                     container.removeClass("flex flex-col items-center justify-center min-h-[80vh]")
                              .addClass("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6");
 
-                    response.data.forEach(room => {
-                        let bannerUrl = room.room_banner 
-                            ? "../static/upload/" + room.room_banner 
-                            : "../static/image/no_image.jpg";
+                   response.data.forEach(room => {
+                    let bannerUrl = room.room_banner 
+                        ? "../static/upload/" + room.room_banner 
+                        : "../static/image/no_image.jpg";
 
-                        let card = "";
+                    // ✂️ Limit the description length
+                    const maxLength = 100;
+                    const fullDesc = room.room_description || "";
+                    const shortDesc = fullDesc.length > maxLength 
+                        ? fullDesc.substring(0, maxLength) + "..." 
+                        : fullDesc;
 
-                        if (room.room_creator_user_id == response.user_id) {
-                            card = `
-                                <div class="bg-white text-black rounded-xl overflow-hidden shadow-md animate-fadeIn relative">
-                                    <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
-                                  
-                                    <div class="absolute top-2 right-2 flex gap-1">
-                                        <button class="edit-room cursor-pointer w-6 h-6 flex items-center justify-center bg-gray-500 rounded-full hover:bg-gray-400 transition"
-                                                data-room_id="${room.room_id}" title="Edit Room">
-                                            <span class="material-icons text-white text-xs">edit</span>
-                                        </button>
-                                        <button class="delete-room cursor-pointer w-6 h-6 flex items-center justify-center bg-red-500 rounded-full hover:bg-red-600 transition"
-                                                data-room_id="${room.room_id}" title="Delete Room">
-                                            <span class="material-icons text-white text-xs">close</span>
-                                        </button>
+                    const hasLongText = fullDesc.length > maxLength;
+
+                    // Generate card
+                    let card = "";
+
+                    if (room.room_creator_user_id == response.user_id) {
+                        card = `
+                            <div class="bg-white text-black rounded-xl overflow-hidden shadow-md animate-fadeIn relative flex flex-col h-[26rem]">
+                                <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
+                                
+                                <div class="absolute top-2 right-2 flex gap-1">
+                                    <button class="edit-room cursor-pointer w-6 h-6 flex items-center justify-center bg-gray-500 rounded-full hover:bg-gray-400 transition"
+                                            data-room_id="${room.room_id}" title="Edit Room">
+                                        <span class="material-icons text-white text-xs">edit</span>
+                                    </button>
+                                    <button class="delete-room cursor-pointer w-6 h-6 flex items-center justify-center bg-red-500 rounded-full hover:bg-red-600 transition"
+                                            data-room_id="${room.room_id}" title="Delete Room">
+                                        <span class="material-icons text-white text-xs">close</span>
+                                    </button>
+                                </div>
+
+                                <div class="p-4 flex flex-col justify-between flex-grow">
+                                    <div>
+                                        <h3 class="uppercase font-semibold text-lg mb-2">${room.room_name}</h3>
+                                        <div class="desc-wrapper text-gray-700 text-sm">
+                                            <span class="desc-text" data-full="${fullDesc}">
+                                                ${shortDesc}
+                                            </span>
+                                            ${hasLongText ? `<span class="text-blue-600 cursor-pointer see-more hover:underline ml-1">See more</span>` : ""}
+                                        </div>
+                                        <p class="text-gray-700 text-sm mt-1">CODE: ${room.room_code}</p>
                                     </div>
-
-                                    <div class="p-4 space-y-3">
-                                        <h3 class="uppercase font-semibold text-lg flex items-center gap-2">
-                                            ${room.room_name}
-                                        </h3>
-                                        <p class="text-gray-700 text-sm">${room.room_description}</p>
-                                        <p class="text-gray-700 text-sm">CODE: ${room.room_code}</p>
-                                        <a href="room?code=${room.room_code}&&room_name=${room.room_name}" 
+                                    <a href="room?code=${room.room_code}&&room_name=${room.room_name}" 
                                         class="block text-center bg-black text-white font-semibold py-2 rounded-md hover:bg-gray-800 transition">
                                         My Room
-                                        </a>
-                                    </div>
+                                    </a>
                                 </div>
-                            `;
-                        } else {
-                            card = `
-                                <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md animate-fadeIn">
-                                    <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
-                                    <div class="p-4 space-y-3">
-                                        <h3 class="uppercase font-semibold text-lg flex items-center gap-2">
-                                            ${room.room_name}
-                                        </h3>
-                                        <p class="text-gray-400 text-sm">${room.room_description}</p>
-                                        <p class="text-gray-400 text-sm">CODE: ${room.room_code}</p>
-                                        <button class="btnJoinRoom cursor-pointer w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition"
-                                                data-code='${room.room_code}'>
-                                            Join Room
-                                        </button>
+                            </div>
+                        `;
+                    } else {
+                        card = `
+                            <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md animate-fadeIn flex flex-col h-[26rem]">
+                                <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
+                                <div class="p-4 flex flex-col justify-between flex-grow">
+                                    <div>
+                                        <h3 class="uppercase font-semibold text-lg mb-2">${room.room_name}</h3>
+                                        <div class="desc-wrapper text-gray-400 text-sm">
+                                            <span class="desc-text" data-full="${fullDesc}">
+                                                ${shortDesc}
+                                            </span>
+                                            ${hasLongText ? `<span class="text-blue-400 cursor-pointer see-more hover:underline ml-1">See more</span>` : ""}
+                                        </div>
+                                        <p class="text-gray-400 text-sm mt-1">CODE: ${room.room_code}</p>
                                     </div>
+                                    <button class="btnJoinRoom cursor-pointer w-full bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition"
+                                            data-code='${room.room_code}'>
+                                        Join Room
+                                    </button>
                                 </div>
-                            `;
-                        }
+                            </div>
+                        `;
+                    }
 
-                        container.append(card);
-                    });
+                    container.append(card);
+                });
+
+                // 🔽 Toggle See More / See Less (preserve text color + scrollable)
+                $(document).on("click", ".see-more", function() {
+                    const wrapper = $(this).closest(".desc-wrapper");
+                    const textBox = wrapper.find(".desc-text");
+                    const fullText = textBox.data("full");
+                    const shortText = fullText.substring(0, 100) + "...";
+
+                    if ($(this).text() === "See more") {
+                        textBox.html(`
+                            <div class="max-h-24 overflow-y-auto pr-1 custom-scroll">
+                                ${fullText}
+                            </div>
+                        `);
+                        $(this).text("See less");
+                    } else {
+                        textBox.text(shortText);
+                        $(this).text("See more");
+                    }
+                });
+
+
+
+
+                
 
                     // ✅ Attach click event for delete buttons after rendering
                  $(".delete-room").click(function() {
@@ -178,6 +223,7 @@ $(document).ready(function() {
     // Initial fetch
     fetchRooms();
 });
+
 
 
 
