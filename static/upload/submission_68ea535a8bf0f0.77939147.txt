@@ -1,0 +1,468 @@
+using C++ code create program 
+
+Explanation Chatbot Project (Tech Advisor Chatbot)
+
+Ang project pong ito ay isang Tech Advisor Chatbot na gagamit ng 3 or more data structures (bawal gamitin bilang main data structure ang arrays at linked lists, pero puwede silang gamitin bilang suporta sa loob ng code).
+
+Limitations:
+
+Nakafocus lang po ang chatbot sa 5 specific categories:
+
+Smartphones
+Laptops
+Tablets
+Gaming Consoles
+
+
+Wearables
+
+
+Per categories, meron dapat 10 brands.
+Per brands meron tayong 10 or more na models.
+
+Sample Output
+
+----------------WELCOME TO TECH ADVISOR! --------------- 
+
+ 
+
+[TechBot]: Hello! I'm TechBot, your personal technology advisor.   May I know your name? 
+
+ 
+
+[User]: Carlo 
+
+ 
+
+[TechBot]: Nice to meet you, Carlo! Let's find the perfect tech device for you.  To begin, what type of technology are you currently looking for or interested in? 
+
+ 
+
+[User]: I’m looking for a new smartphone. 
+
+ 
+
+[TechBot]: Great! Let me gather more details so I can give you the best recommendations. Please answer the following questions: 
+
+ 
+
+What is your budget range? (e.g., under ₱20,000, ₱25,000 to ₱30,000, above ₱50,000) 
+
+
+[User]: Around ₱25,000 
+
+ 
+
+Do you have a preferred brand or brands? 
+
+
+[User]: Samsung 
+
+ 
+
+What amount of RAM do you need for your device? 
+
+
+[User]: At least 8GB 
+
+ 
+
+What type of display would you prefer? (e.g., AMOLED, LCD, high refresh rate, etc.) 
+
+
+[User]: AMOLED with 120Hz refresh rate 
+
+ 
+
+How important is camera quality to you? 
+
+
+[User]: Very important, I take lots of photos 
+
+ 
+
+How long do you expect the battery to last? (e.g., more than a day, fast charging, etc.) 
+
+
+[User]: I want a long battery life and fast charging 
+
+ 
+
+Do you prefer a phone with a sleek design or a more rugged build? 
+
+
+[User]: Sleek design 
+
+ 
+
+Is gaming performance important to you? 
+
+
+[User]: A little bit, but not a priority 
+
+ 
+
+Do you need 5G connectivity? 
+
+
+[User]: Yes, I’d like to have 5G 
+
+ 
+
+Are there any special features you want? (e.g., wireless charging, expandable storage, waterproof) 
+
+
+[User]: Expandable storage and good low-light camera 
+
+ 
+
+[TechBot]: Thank you, Carlo! Based on your answers, here are the smartphones that match your preferences: 
+
+ 
+
+[1] Samsung Galaxy A55   
+[2] Samsung Galaxy S21 FE   
+[3] Samsung Galaxy M54 5G   
+[4] Samsung Galaxy A73 5G   
+[5] Samsung Galaxy M33 5G   
+
+ 
+
+Which model would you like to view first? (Just type the number) 
+
+ 
+
+[User]: 1 
+
+ 
+
+[TechBot]:  
+
+-------- Model Details: ------------- 
+
+Model Name: Samsung Galaxy A55   
+
+Year Released: 2024   
+
+Specs: 8GB RAM, 6.6” AMOLED 120Hz Display, Exynos 1480, 5000mAh, 25W Fast Charging, 50MP Main Camera, 5G   
+
+Pros: Sleek design, vibrant display, long battery life, expandable storage   
+
+Cons: No wireless charging, no IP rating   
+
+Price: ₱23,990   
+
+Purchase Link: www.samsung.com/ph/galaxy-a55   
+
+Reviews: 4.4
+
+--------------------------------------------- 
+
+[TechBot]: Are you interested in this model? (Yes/No) 
+
+ 
+
+[User]: Yes 
+
+ 
+
+[TechBot]: Samsung Galaxy A55 has been added to your Favorites under Smartphones. 
+
+ 
+
+Would you like to: 
+
+[A] View another model   
+
+[B]  Go back to main menu                                                        
+
+[C] View your Favorites   
+
+[D] View Top Picks   
+
+[X] Exit 
+
+ 
+
+[User]: C 
+
+ 
+
+ 
+
+ 
+
+[TechBot]:   
+
+--------- Favorites List --------- 
+
+Please choose a category: 
+
+Smartphones   
+
+
+Laptops   
+
+
+Tablets   
+
+
+Gaming Consoles   
+
+
+Wearables 
+
+
+ 
+
+[User]: 1 
+
+ 
+
+ Smartphones: 
+
+Samsung Galaxy A55 
+
+
+ 
+
+What would you like to do next? 
+
+[1] Delete a model  
+
+[2] Favorites Category Selection  
+
+[3] Back to options   
+
+[4] Back to main menu 
+
+ 
+
+ 
+
+[User]: 4 
+
+ 
+
+[TechBot]: You're now back at the main menu. What category would you like to explore next? 
+
+ 
+
+[User]: Tablets 
+
+ 
+
+(...continues like previous flow...) 
+
+(it depends ang questions per category) 
+
+ 
+
+[TechBot]: 
+
+Would you like to: 
+
+[A] View another model   
+
+[B]  Go back to main menu                                                        
+
+[C] View your Favorites   
+
+[D] View Top Picks   
+
+[X] Exit 
+
+ 
+
+[User]: D 
+
+ 
+
+ 
+
+ 
+
+ 
+
+[TechBot]:  
+
+------------- Welcome to your Top Picks! ---------------- 
+
+Please choose a category: 
+
+Smartphones   
+
+
+Laptops   
+
+
+Tablets   
+
+
+Gaming Consoles   
+
+
+Wearables 
+
+
+ 
+
+ 
+
+ [User]: 1 
+
+ 
+
+[TechBot]:  You've selected: Smartphones. 
+
+Here are your favorite models: 
+
+ 
+
+Samsung Galaxy A55   
+
+
+Samsung Galaxy S21 FE   
+
+
+Samsung Galaxy M54   
+
+
+Samsung Galaxy A73 5G   
+
+
+Samsung Galaxy A35 
+
+
+ 
+
+[TechBot]: Let's begin ranking your Top Picks. 
+
+You can rank up to 10 models.  
+
+ 
+
+Type the number of the model you'd like to rank first: 
+
+ 
+
+[User]: 4 
+
+ 
+
+[TechBot]: What rank do you want to assign to Samsung Galaxy A73 5G? (1–10): 
+
+ 
+
+[User]: 1 
+
+ 
+
+[TechBot]:  Samsung Galaxy A73 5G is now ranked #1! 
+
+ 
+
+[TechBot]: Next model to rank? (Type the number from favorites, or 0 to finish ranking): 
+
+ 
+
+[User]: 2 
+
+ 
+
+[TechBot]: What rank do you want to assign to Samsung Galaxy S21 FE? (1–10): 
+
+ 
+
+[User]: 2 
+
+ 
+
+[TechBot]:  Samsung Galaxy S21 FE is now ranked #2! 
+
+ 
+
+[TechBot]: Next model to rank? (Type the number from favorites, or 0 to finish ranking): 
+
+ 
+
+[User]: 0 
+
+ 
+
+[TechBot]:  
+
+ Your Top Picks for Smartphones (max 10): 
+
+ 
+
+Samsung Galaxy A73 5G   
+
+
+Samsung Galaxy S21 FE   
+
+
+ 
+
+What would you like to do next? 
+
+ 
+
+[1] Add more to ranking   
+
+[2] Replace a ranked model   
+
+[3] Change a model's rank   
+
+[4] Delete a ranked model   
+
+[5] Top Picks Category Selection 
+
+[6] Back to option 
+
+[7] Back to Main Menu 
+
+ 
+
+ 
+
+[User]: 6 
+
+ 
+
+[TechBot]:  
+
+Would you like to: 
+
+[A] View another model   
+
+[B]  Go back to main menu                                                        
+
+[C] View your Favorites   
+
+[D] View Top Picks   
+
+[X] Exit 
+
+ 
+
+[User]: X 
+
+ 
+
+ 
+
+[TechBot]: Are you sure you want to exit, Carlo? (Yes/No) 
+
+ 
+
+[User]: Yes 
+
+ 
+
+[TechBot]:  Thank you, Carlo! Hope to assist you again soon! 
+
+
+
+
+

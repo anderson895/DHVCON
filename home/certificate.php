@@ -139,15 +139,20 @@ if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
 
       <!-- Dates -->
       <div class="flex justify-center gap-20 text-sm text-gray-400 mb-10">
-        <div class="text-center">
-          <p class="font-medium text-white"><?=date('F d, Y', strtotime($certificate_data[0]['meeting_start']))?></p>
-          <p class="text-xs text-gray-400">Start Date</p>
+          <div class="text-center">
+            <p class="font-medium text-white">
+              <?= date('F d, Y h:i A', strtotime($certificate_data[0]['meeting_start'])) ?>
+            </p>
+            <p class="text-xs text-gray-400">Start Date</p>
+          </div>
+          <div class="text-center">
+            <p class="font-medium text-white">
+              <?= date('F d, Y h:i A', strtotime($certificate_data[0]['meeting_end'])) ?>
+            </p>
+            <p class="text-xs text-gray-400">End Date</p>
+          </div>
         </div>
-        <div class="text-center">
-          <p class="font-medium text-white"><?=date('F d, Y', strtotime($certificate_data[0]['meeting_end']))?></p>
-          <p class="text-xs text-gray-400">End Date</p>
-        </div>
-      </div>
+
     </div>
 
     <!-- Signatures -->
