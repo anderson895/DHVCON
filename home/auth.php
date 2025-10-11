@@ -40,8 +40,9 @@ class certificate_class extends db_connect
         $this->connect();
     }
 
-        public function meeting_certificate($meeting_id, $meeting_pass, $user_id)
+     public function meeting_certificate($meeting_id, $meeting_pass, $user_id)
     {
+        // Step 1: Validate if the user belongs to the meeting
         $query = "
             SELECT * FROM meeting
             LEFT JOIN room_members AS rm ON rm.room_id = meeting.meeting_room_id 
@@ -62,8 +63,43 @@ class certificate_class extends db_connect
             $items[] = $row;
         }
 
+        // Step 2: If meeting + user is valid, check if certificate already claimed
+        if (!empty($items)) {
+            $checkQuery = "
+                SELECT claimed_id FROM claimed_certificate 
+                WHERE claimed_meeting_id = ? AND claimed_user_id = ?
+            ";
+            $checkStmt = $this->conn->prepare($checkQuery);
+            $checkStmt->bind_param("ii", $meeting_id, $user_id);
+            $checkStmt->execute();
+            $checkResult = $checkStmt->get_result();
+
+            if ($checkResult->num_rows === 0) {
+                // Step 3: Not yet claimed → insert record
+                $insertQuery = "
+                    INSERT INTO claimed_certificate (claimed_meeting_id, claimed_user_id)
+                    VALUES (?, ?)
+                ";
+                $insertStmt = $this->conn->prepare($insertQuery);
+                $insertStmt->bind_param("ii", $meeting_id, $user_id);
+                $insertStmt->execute();
+
+                $items[0]['certificate_status'] = 'inserted';
+            } else {
+                // Step 4: Already claimed
+                $items[0]['certificate_status'] = 'already_exists';
+            }
+        } else {
+            // Step 5: Meeting or access invalid
+            return [
+                'status' => 'error',
+                'message' => 'Invalid meeting or user not authorized.'
+            ];
+        }
+
         return $items;
     }
+
 
 
 }
