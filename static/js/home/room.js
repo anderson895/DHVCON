@@ -973,7 +973,7 @@ function renderMembers(members) {
         <!-- Left side: name & email -->
         <div class="flex items-center gap-4">
           <div>
-            <h3 class="text-white font-semibold">${fullName}</h3>
+            <h3 class="capitalize text-white font-semibold">${fullName}</h3>
             <p class="text-gray-400 text-sm">${email}</p>
           </div>
         </div>
