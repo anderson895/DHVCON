@@ -191,6 +191,11 @@ function fetchAll_SubmittedClasswork() {
   fetchAll_SubmittedClasswork();
 
 
+  setInterval(() => {
+  fetchClasswork();
+  fetchAll_SubmittedClasswork();
+}, 2000);
+
 });
 
 

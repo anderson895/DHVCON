@@ -1013,8 +1013,14 @@ function renderMembers(members) {
 
 
 
-  // Start initial fetch
-  fetchRoomsDetails();
+// Initial fetch
+fetchRoomsDetails();
+
+// Refresh every 5 seconds (5000 ms)
+// setInterval(fetchRoomsDetails, 5000);
+
+
+  
 
 });
 
