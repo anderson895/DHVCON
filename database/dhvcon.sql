@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2025 at 12:08 PM
+-- Generation Time: Oct 11, 2025 at 01:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -133,7 +133,8 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code`, `room_name`, `room_description`, `room_status`, `room_date_created`) VALUES
-(23, 2, 'room_68e94fc5925d84.46376038.png', 'W0YQUF', 'room 101', 'When it comes to renting out a property, whether it\'s a single room, an entire house, or an apartment, the way you describe the space can make a huge difference in attracting the right tenants. Below are several examples and tips on how to write compelling rental descriptions that highlight the property’s best features while keeping it informative and clear.', 1, '2025-10-10 18:26:13');
+(23, 2, 'room_68e94fc5925d84.46376038.png', 'W0YQUF', 'room 101', 'When it comes to renting out a property, whether it\'s a single room, an entire house, or an apartment, the way you describe the space can make a huge difference in attracting the right tenants. Below are several examples and tips on how to write compelling rental descriptions that highlight the property’s best features while keeping it informative and clear.', 1, '2025-10-10 18:26:13'),
+(24, 7, 'room_68ea3905713579.96145396.png', 'WPG0HV', 'bsit world', 'The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.', 1, '2025-10-11 11:01:37');
 
 -- --------------------------------------------------------
 
@@ -202,7 +203,8 @@ INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `
 (3, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$rxa/yT1Cx9EhWyRhnB8l1O213zkUBiaaNw/qaoaHo5H2Np/MCFmv6', 1),
 (4, 'samantha flores', 'samantha123@gmail.com', '$2y$10$f9XLVW/ETL/uMDZ2z/YIHOlRwqFm7.ajG6Yf3kWngyPiBYLDa8BNS', 1),
 (5, 'john doe', 'jdoe@gmail.com', '$2y$10$xVtSGeRcTRn8wAg.2VLXXOxCGL9wCDWFkxkOZM41xPCscqnU7/GxC', 1),
-(6, 'juan san pedro', 'juandelacruz@gmail.com', '$2y$10$f27OSMOB/ychFOaG3yLwkeFco/0S8tJLSnbqTX3dpW72d7dptMbh2', 1);
+(6, 'juan san pedro', 'juandelacruz@gmail.com', '$2y$10$f27OSMOB/ychFOaG3yLwkeFco/0S8tJLSnbqTX3dpW72d7dptMbh2', 1),
+(7, 'bong bong', 'bbm@gmail.com', '$2y$10$o2xqvB.YoI9Ut6TCq.6wVOLDnypV03tgSPQN7qQV/llE2W2cD1uUa', 1);
 
 --
 -- Indexes for dumped tables
@@ -301,13 +303,13 @@ ALTER TABLE `meeting_logs`
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`
@@ -319,7 +321,7 @@ ALTER TABLE `submitted_classwork`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
