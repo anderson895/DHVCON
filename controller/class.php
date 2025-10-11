@@ -1121,4 +1121,63 @@ public function viewMeetingLogs($meeting_id)
 
 
 
+
+
+
+
+
+
+
+
+public function fetchAllClaimedCertificates($user_id, $room_id)
+{
+    $query = "
+        SELECT 
+            cc.claimed_id,
+            cc.claimed_meeting_id,
+            cc.claimed_user_id,
+            cc.claimed_date,
+            m.meeting_title,
+            m.meeting_pass,
+            m.meeting_end,
+            r.room_name,
+            u.user_fullname,
+            u.user_email
+        FROM claimed_certificate AS cc
+        INNER JOIN meeting AS m ON cc.claimed_meeting_id = m.meeting_id
+        INNER JOIN room AS r ON m.meeting_room_id = r.room_id
+        INNER JOIN user AS u ON cc.claimed_user_id = u.user_id
+        WHERE r.room_id = ? AND cc.claimed_user_id = ?
+        ORDER BY cc.claimed_date DESC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("ii", $room_id, $user_id);
+
+    if (!$stmt->execute()) {
+        return [
+            'success' => false,
+            'message' => 'Database query failed.'
+        ];
+    }
+
+    $result = $stmt->get_result();
+    $data = $result->fetch_all(MYSQLI_ASSOC);
+
+    return [
+        'success' => true,
+        'status' => 200,
+        'count' => count($data),
+        'data' => $data
+    ];
+}
+
+
+
+
+
+
+
+
+
 }

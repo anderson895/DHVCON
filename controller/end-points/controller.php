@@ -581,6 +581,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
 
+        }else if ($_GET['requestType'] == 'fetchAllClaimedCertificates') {
+
+            $room_id = $_GET['room_id'];
+            $user_id = $_SESSION['user_id'];
+            
+            $response = $db->fetchAllClaimedCertificates($user_id, $room_id);
+
+            if ($response['status'] === 200) {
+                echo json_encode([
+                    'status' => 200,
+                    'data' => $response['data']
+                ]);
+            } else {
+                echo json_encode([
+                    'status' => 500,
+                    'message' => 'Something went wrong'
+                ]);
+            }
+
+
         }else{
             echo "404";
         }

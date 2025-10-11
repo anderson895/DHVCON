@@ -114,14 +114,118 @@ function fetchRoomsDetails() {
       fetchAllWorksPending(data.room_name);
       fetchRoomMembers(room_id);
       fetchAllCreatedWorks(room_id,data.room_name);
+
+      fetchAllClaimedCertificates(room_id, data.room_name);
+
       fetchAllWorks_TurnIn(room_id);
       fetchMeetings(room_id);
+
+
+      fetchClaimedCertificates(room_id);
+
     },
     error: function () {
       $('#pendingWorksContainer').html('<p class="text-red-500 text-center mt-10">Failed to load room details.</p>');
     },
   });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function fetchClaimedCertificates(room_id) {
+    $.ajax({
+      url: `../controller/end-points/controller.php`,
+      type: 'GET',
+      data: {
+        requestType: 'fetchAllClaimedCertificates',
+        room_id: room_id
+      },
+      dataType: 'json',
+      success: function(response) {
+        const certList = $('#certList');
+        const noCertMsg = $('#noCertMsg');
+        certList.empty(); // clear previous entries
+
+        if (response.status === 200 && response.data.length > 0) {
+          noCertMsg.hide(); // hide default message
+
+          response.data.forEach(cert => {
+            const certCard = `
+              <div class="bg-[#1e1f22] p-4 rounded-lg shadow-md flex justify-between items-center">
+                <div>
+                  <h3 class="text-lg font-semibold capitalize">${cert.meeting_title}</h3>
+                  <p class="text-gray-400 text-sm">Date Claimed: ${cert.claimed_date}</p>
+                  <p class="text-gray-400 text-sm">Meeting Ended: ${cert.meeting_end}</p>
+                </div>
+                <a href="certificate.php?meeting_id=${cert.claimed_meeting_id}&meeting_pass=${cert.meeting_pass}" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                  View Certificate
+                </a>
+
+              </div>
+            `;
+            certList.append(certCard);
+          });
+
+        } else {
+          noCertMsg.show();
+        }
+      },
+      error: function() {
+        alert('Failed to fetch certificates.');
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
+function fetchAllClaimedCertificates(roomId, room_name) {
+  $.ajax({
+    url: `../controller/end-points/controller.php`,
+    type: 'GET',
+    data: {
+      requestType: 'fetchAllClaimedCertificates',
+      room_id: roomId
+    },
+    dataType: 'json',
+    success: function(response) {
+      
+    }
+  });
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -638,7 +742,7 @@ $(document).on('click', '.btnCloseMeeting', function() {
                  class="block relative flex gap-6 ${flexClass} items-start cursor-pointer no-underline">
                 <div class="bg-[#1e1f22] rounded-2xl p-6 w-full hover:bg-[#2f3150] transition">
                   <div class="flex justify-between items-center">
-                    <h3 class="text-xl font-semibold text-white">${work.classwork_title}</h3>
+                    <h3 class="capitalize text-xl font-semibold text-white">${work.classwork_title}</h3>
                     <span class="text-gray-400 text-sm flex items-center gap-1">
                       <span class="material-icons-round text-gray-400 text-sm">calendar_today</span>
                       ${date}

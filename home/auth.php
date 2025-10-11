@@ -40,7 +40,8 @@ class certificate_class extends db_connect
         $this->connect();
     }
 
-     public function meeting_certificate($meeting_id, $meeting_pass, $user_id)
+    
+    public function meeting_certificate($meeting_id, $meeting_pass, $user_id)
     {
         // Step 1: Validate if the user belongs to the meeting
         $query = "
@@ -99,6 +100,15 @@ class certificate_class extends db_connect
 
         return $items;
     }
+
+
+
+
+
+
+       
+
+
 
 
 
