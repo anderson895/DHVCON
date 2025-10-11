@@ -14,10 +14,13 @@ if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
 
     if (!empty($On_Session)) {
         $certificate_data = $cert->meeting_certificate($meeting_id, $meeting_pass, $user_id);
-        if (empty($certificate_data)) {
+
+        if ($certificate_data === false) {
+          
             header('Location: ../404');
             exit;
         }
+
     } else {
         header('Location: ../404');
         exit;
@@ -27,6 +30,7 @@ if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
     exit;
 }
 ?>
+
 
 <!doctype html>
 <html lang="en">

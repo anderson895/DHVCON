@@ -27,7 +27,10 @@ $(document).ready(function() {
   `;
   $('head').append(spinnerStyle);
 
-  // 🧩 Fetch room details
+
+
+
+
 function fetchRoomsDetails() {
   $('#pendingWorksContainer').html(spinner);
 
@@ -111,7 +114,7 @@ function fetchRoomsDetails() {
       }
 
       // Fetch other data after setup
-      fetchAllWorksPending(data.room_name);
+      fetchAllWorksPending(data.room_name); 
       fetchRoomMembers(room_id);
       fetchAllCreatedWorks(room_id,data.room_name);
 
@@ -174,7 +177,7 @@ function fetchClaimedCertificates(room_id) {
                 <a href="certificate.php?meeting_id=${cert.claimed_meeting_id}&meeting_pass=${cert.meeting_pass}" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition">
+                  class="bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] text-white px-4 py-2 rounded-lg text-sm transition">
                   View Certificate
                 </a>
 
