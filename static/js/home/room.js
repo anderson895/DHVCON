@@ -203,7 +203,7 @@ function fetchMeetings() {
                     const card = `
                         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
                             <div class="p-4 space-y-3">
-                                <h3 class="font-semibold text-lg text-white">${meeting.meeting_title}</h3>
+                                <h3 class="font-semibold text-lg text-white uppercase">${meeting.meeting_title}</h3>
                                 ${dateInfo}
                                 <p class="text-sm text-gray-300">${meeting.meeting_description}</p>
                                 ${creatorButtons || actionButton}
