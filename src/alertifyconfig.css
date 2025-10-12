@@ -27,3 +27,8 @@
   font-weight: 700 !important;
   z-index: 99999 !important;
 }
+.alertify-notifier {
+  position: fixed !important; /* ensure fixed positioning */
+
+  z-index: 99999 !important;
+}

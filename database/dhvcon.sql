@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2025 at 09:38 AM
+-- Generation Time: Oct 12, 2025 at 09:50 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -146,7 +146,8 @@ INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code
 (27, 2, 'room_68eb5982658417.60246736.webp', 'DRAV61', 'Graphics & Animation', 'When looking into your dream creative pursuits, you may have wondered: exactly what is the difference between animation and motion graphics? We get it – the two are often used interchangeably. But they have distinct differences, and each can delight and inspire in their own way.\r\n\r\nTo help you get clearer on your aspirations, this guide will break down the essentials of both animation and motion graphics so you can understand the key differences between the two disciplines.', 1, '2025-10-12 07:32:18'),
 (28, 2, 'room_68eb59bb71a806.34018976.jpg', 'BT2S0I', 'java programming', 'Java Introduction\r\nJava is a simple, secure, portable, robust, object-oriented, multithreaded, architecture-neutral, interpreted, high-performance, distributed and dynamic programming language. Java is also known as write-once, run-anywhere programming language.', 1, '2025-10-12 07:33:15'),
 (29, 2, 'room_68eb5a2271a0a1.13236267.webp', 'X0PCDU', 'Data Analytics', 'Data analysts are among several professionals who navigate information each day. They turn raw data into actionable insights, helping organizations make data-driven decisions about their products, services, customers, and overall performance.', 1, '2025-10-12 07:34:58'),
-(30, 2, 'room_68eb5a4a827024.21636802.jpg', 'D7WBGS', 'Web Development', 'The world of web development has seen massive growth over the past decade. As more businesses move online and consumers increasingly rely on websites and apps, demand for skilled web developers continues to rise. However, with coding bootcamps churning out new graduates, and resources like YouTube making it easier than ever to learn, some speculate that the web development job market has become oversaturated.', 1, '2025-10-12 07:35:38');
+(30, 2, 'room_68eb5a4a827024.21636802.jpg', 'D7WBGS', 'Web Development', 'The world of web development has seen massive growth over the past decade. As more businesses move online and consumers increasingly rely on websites and apps, demand for skilled web developers continues to rise. However, with coding bootcamps churning out new graduates, and resources like YouTube making it easier than ever to learn, some speculate that the web development job market has become oversaturated.', 1, '2025-10-12 07:35:38'),
+(31, 1, 'room_68eb5d944d6685.57757154.jpg', 'WXZ1E5', 'Mobile Development', 'Mobile apps have taken a remarkable rise in the tech market. App stores are overflowing with various kinds of applications. Several businesses have stepped forward in developing their mobile applications to expand their business and achieve success. Mobile applications have become an integral part of people’s lives, which has inspired enterprises to come up with their apps to satisfy their customers’ requirements.\r\n\r\nWhen you plan to develop your mobile app, it is important that you integrate unique features and functionality to make it stand out in the market. Also, it is significant to see that it does not become a common app similar to others. Your mobile app has to have the potential to attract new customers and retain the existing ones as well.', 1, '2025-10-12 07:49:40');
 
 -- --------------------------------------------------------
 
@@ -167,7 +168,8 @@ CREATE TABLE `room_members` (
 
 INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
 (25, 24, 6, '2025-10-11 11:20:25'),
-(28, 25, 8, '2025-10-11 13:02:08');
+(28, 25, 8, '2025-10-11 13:02:08'),
+(30, 30, 1, '2025-10-12 07:49:49');
 
 -- --------------------------------------------------------
 
@@ -318,13 +320,13 @@ ALTER TABLE `meeting_logs`
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`

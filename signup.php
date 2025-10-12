@@ -17,9 +17,10 @@
 
   
    <!-- Fullscreen Spinner Overlay -->
-<div id="spinner" class="fixed inset-0 flex items-center justify-center z-[9999] bg-black/60 backdrop-blur-sm" style="display:none;">
+<div id="spinner" class="fixed inset-0 flex items-center justify-center z-[9998] bg-black/60 backdrop-blur-sm" style="display:none;">
   <div class="w-16 h-16 border-4 border-gray-600 border-t-indigo-500 rounded-full animate-spin"></div>
 </div>
+
 
 
   <!-- Sign Up Card -->
