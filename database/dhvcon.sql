@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2025 at 01:12 PM
+-- Generation Time: Oct 12, 2025 at 09:38 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -39,7 +39,8 @@ CREATE TABLE `claimed_certificate` (
 --
 
 INSERT INTO `claimed_certificate` (`claimed_id`, `claimed_meeting_id`, `claimed_user_id`, `claimed_date`) VALUES
-(1, 6, 3, '2025-10-11 10:07:41');
+(1, 6, 3, '2025-10-11 10:07:41'),
+(2, 7, 8, '2025-10-11 12:58:44');
 
 -- --------------------------------------------------------
 
@@ -63,7 +64,10 @@ CREATE TABLE `classwork` (
 --
 
 INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
-(13, 'assignment 1', 'Overview\r\nThis assignment is a piece of directed writing in response to a text or texts chosen by your teacher (or by you with your teacher’s approval). The assignment is assessed equally for both reading and writing, and to achieve top marks the examiners are looking for the following:\r\n\r\nReading (15 marks):\r\n\r\nYour ability to select, put together and evaluate facts, opinions and arguments to give a developed and sophisticated response\r\n\r\nYour ability to successfully evaluate both explicit and implicit ideas and opinions from your chosen text(s)\r\n\r\nWriting (15 marks):\r\n\r\nYour ability to display a highly effective style of writing capable of conveying subtle meaning\r\n\r\nYour ability to use effective language and to structure a response carefully\r\n\r\nA high degree of technical accuracy (spelling, grammar and punctuation are accurate)\r\n\r\nDepending on the choice of reading material, a typical Assignment 1 response would be to reply to the author of your chosen text(s) in the form of a letter. However, a speech or an article in which you are able to argue ideas are equally permissible. Whatever the form, you should be able to give an overview of the argument as a whole and demonstrate your understanding by commenting on specific ideas presented by the author of your chosen text or texts. This should include an explanation of any ideas of interest and an argument for or against them, as well as an examination of inconsistencies and the recognition of bias.\r\n\r\nA copy of all texts used for Assignment 1 must be included in your portfolio.', NULL, 2, 23, 1, '2025-10-10 18:33:13');
+(13, 'assignment 1', 'Overview\r\nThis assignment is a piece of directed writing in response to a text or texts chosen by your teacher (or by you with your teacher’s approval). The assignment is assessed equally for both reading and writing, and to achieve top marks the examiners are looking for the following:\r\n\r\nReading (15 marks):\r\n\r\nYour ability to select, put together and evaluate facts, opinions and arguments to give a developed and sophisticated response\r\n\r\nYour ability to successfully evaluate both explicit and implicit ideas and opinions from your chosen text(s)\r\n\r\nWriting (15 marks):\r\n\r\nYour ability to display a highly effective style of writing capable of conveying subtle meaning\r\n\r\nYour ability to use effective language and to structure a response carefully\r\n\r\nA high degree of technical accuracy (spelling, grammar and punctuation are accurate)\r\n\r\nDepending on the choice of reading material, a typical Assignment 1 response would be to reply to the author of your chosen text(s) in the form of a letter. However, a speech or an article in which you are able to argue ideas are equally permissible. Whatever the form, you should be able to give an overview of the argument as a whole and demonstrate your understanding by commenting on specific ideas presented by the author of your chosen text or texts. This should include an explanation of any ideas of interest and an argument for or against them, as well as an examination of inconsistencies and the recognition of bias.\r\n\r\nA copy of all texts used for Assignment 1 must be included in your portfolio.', NULL, 2, 23, 1, '2025-10-10 18:33:13'),
+(14, 'python lesson 1', 'create python program  for grading system', 'classwork_68ea52f919d5a6.77692051.pdf', 3, 25, 1, '2025-10-11 12:52:09'),
+(15, 'test', 'awdawdaw', NULL, 2, 23, 1, '2025-10-11 13:18:24'),
+(16, 'assignment 2', 'awdawd', 'classwork_68ea5a7ae53b48.50847092.png', 2, 23, 1, '2025-10-11 13:24:10');
 
 -- --------------------------------------------------------
 
@@ -89,7 +93,8 @@ CREATE TABLE `meeting` (
 --
 
 INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
-(6, 'https://meet.google.com/msk-azgz-pek', 'java programming introduction', '', '2025-10-11 16:00:00', '2025-10-11 17:00:00', 23, 2, '2a8cd4ba', 0);
+(6, 'https://meet.google.com/msk-azgz-pek', 'java programming introduction', '', '2025-10-11 16:00:00', '2025-10-11 17:00:00', 23, 2, '2a8cd4ba', 0),
+(7, 'https://meet.google.com/hbf-oori-kru?fbclid=IwY2xjawNXMRdleHRuA2FlbQIxMABicmlkETFaN09kZmozaVU2dDJGemJoAR6RrlCxl0uqhLaAT4wFx8Eh2TE41qyOMCDjX2kjNKjR3gK3vvM5ioOi4zX8uQ_aem_2qmX1fMbCZkHOzlpCMv0WQ&pli=1&authuser=2', 'Introduction To Python Fundamentals', 'Learn Python. Python is a popular programming language. Python can be used on a server to create web applications. Start learning Python now.\r\n', '2025-10-11 20:55:00', '2025-10-11 21:56:00', 25, 3, 'f05c121d', 0);
 
 -- --------------------------------------------------------
 
@@ -109,7 +114,8 @@ CREATE TABLE `meeting_logs` (
 --
 
 INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
-(30, 3, '2025-10-11 08:44:33', 6);
+(30, 3, '2025-10-11 08:44:33', 6),
+(31, 8, '2025-10-11 12:57:05', 7);
 
 -- --------------------------------------------------------
 
@@ -134,7 +140,13 @@ CREATE TABLE `room` (
 
 INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code`, `room_name`, `room_description`, `room_status`, `room_date_created`) VALUES
 (23, 2, 'room_68e94fc5925d84.46376038.png', 'W0YQUF', 'room 101', 'When it comes to renting out a property, whether it\'s a single room, an entire house, or an apartment, the way you describe the space can make a huge difference in attracting the right tenants. Below are several examples and tips on how to write compelling rental descriptions that highlight the property’s best features while keeping it informative and clear.', 1, '2025-10-10 18:26:13'),
-(24, 7, 'room_68ea3905713579.96145396.png', 'WPG0HV', 'bsit world', 'The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.', 1, '2025-10-11 11:01:37');
+(24, 7, 'room_68ea3905713579.96145396.png', 'WPG0HV', 'bsit world', 'The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.', 1, '2025-10-11 11:01:37'),
+(25, 3, 'room_68ea527fc6ccd4.00151234.webp', 'F509O6', 'BSCS', 'Bachelor of Science in Computer Science (BSCS) is a four-year program that includes the study of computing concepts and theories, algorithmic foundations, and new developments in computing. The program prepares its students to design and create algorithmically complex software and develop new and effective', 1, '2025-10-12 07:27:59'),
+(26, 2, 'room_68eb592192fda9.48281875.avif', 'TBWRFC', 'Python Programming', 'Python is a high-level, general-purpose programming language known for its readability and versatility. Developed by Guido van Rossum and first released in 1991, its design philosophy emphasizes code readability through the use of significant indentation.', 1, '2025-10-12 07:30:41'),
+(27, 2, 'room_68eb5982658417.60246736.webp', 'DRAV61', 'Graphics & Animation', 'When looking into your dream creative pursuits, you may have wondered: exactly what is the difference between animation and motion graphics? We get it – the two are often used interchangeably. But they have distinct differences, and each can delight and inspire in their own way.\r\n\r\nTo help you get clearer on your aspirations, this guide will break down the essentials of both animation and motion graphics so you can understand the key differences between the two disciplines.', 1, '2025-10-12 07:32:18'),
+(28, 2, 'room_68eb59bb71a806.34018976.jpg', 'BT2S0I', 'java programming', 'Java Introduction\r\nJava is a simple, secure, portable, robust, object-oriented, multithreaded, architecture-neutral, interpreted, high-performance, distributed and dynamic programming language. Java is also known as write-once, run-anywhere programming language.', 1, '2025-10-12 07:33:15'),
+(29, 2, 'room_68eb5a2271a0a1.13236267.webp', 'X0PCDU', 'Data Analytics', 'Data analysts are among several professionals who navigate information each day. They turn raw data into actionable insights, helping organizations make data-driven decisions about their products, services, customers, and overall performance.', 1, '2025-10-12 07:34:58'),
+(30, 2, 'room_68eb5a4a827024.21636802.jpg', 'D7WBGS', 'Web Development', 'The world of web development has seen massive growth over the past decade. As more businesses move online and consumers increasingly rely on websites and apps, demand for skilled web developers continues to rise. However, with coding bootcamps churning out new graduates, and resources like YouTube making it easier than ever to learn, some speculate that the web development job market has become oversaturated.', 1, '2025-10-12 07:35:38');
 
 -- --------------------------------------------------------
 
@@ -154,8 +166,8 @@ CREATE TABLE `room_members` (
 --
 
 INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
-(22, 23, 6, '2025-10-10 18:51:02'),
-(23, 23, 3, '2025-10-11 08:38:41');
+(25, 24, 6, '2025-10-11 11:20:25'),
+(28, 25, 8, '2025-10-11 13:02:08');
 
 -- --------------------------------------------------------
 
@@ -177,7 +189,9 @@ CREATE TABLE `submitted_classwork` (
 
 INSERT INTO `submitted_classwork` (`sw_id`, `sw_classwork_id`, `sw_user_id`, `sw_files`, `sw_status`) VALUES
 (12, 13, 3, '[\"submission_68e951833c9f61.87182974.pdf\"]', 1),
-(13, 13, 6, '[\"submission_68e95a29808448.04659162.webp\"]', 1);
+(13, 13, 6, '[\"submission_68e95a29808448.04659162.webp\"]', 1),
+(14, 14, 8, '[\"submission_68ea535a8bf0f0.77939147.txt\",\"submission_68ea55741ddaf7.71114991.png\"]', 1),
+(15, 15, 3, '[\"submission_68ea5a2740f6e3.19244831.cpp\"]', 1);
 
 -- --------------------------------------------------------
 
@@ -204,7 +218,8 @@ INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `
 (4, 'samantha flores', 'samantha123@gmail.com', '$2y$10$f9XLVW/ETL/uMDZ2z/YIHOlRwqFm7.ajG6Yf3kWngyPiBYLDa8BNS', 1),
 (5, 'john doe', 'jdoe@gmail.com', '$2y$10$xVtSGeRcTRn8wAg.2VLXXOxCGL9wCDWFkxkOZM41xPCscqnU7/GxC', 1),
 (6, 'juan san pedro', 'juandelacruz@gmail.com', '$2y$10$f27OSMOB/ychFOaG3yLwkeFco/0S8tJLSnbqTX3dpW72d7dptMbh2', 1),
-(7, 'bong bong', 'bbm@gmail.com', '$2y$10$o2xqvB.YoI9Ut6TCq.6wVOLDnypV03tgSPQN7qQV/llE2W2cD1uUa', 1);
+(7, 'bong bong', 'bbm@gmail.com', '$2y$10$o2xqvB.YoI9Ut6TCq.6wVOLDnypV03tgSPQN7qQV/llE2W2cD1uUa', 1),
+(8, 'jessbert dela cruz', 'jessbert@gmail.com', '$2y$10$3y0EZNs.g4WWvH6ejp0b5O1BCCpAyyPrkCPmHWZY3MRqtC.SO4pXa', 1);
 
 --
 -- Indexes for dumped tables
@@ -279,49 +294,49 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `claimed_certificate`
 --
 ALTER TABLE `claimed_certificate`
-  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `meeting`
 --
 ALTER TABLE `meeting`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `meeting_logs`
 --
 ALTER TABLE `meeting_logs`
-  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`
 --
 ALTER TABLE `submitted_classwork`
-  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Constraints for dumped tables

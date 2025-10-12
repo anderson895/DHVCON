@@ -42,7 +42,7 @@ $(document).ready(function() {
                         : "../static/image/no_image.jpg";
 
                     // ✂️ Limit the description length
-                    const maxLength = 100;
+                    const maxLength = 255;
                     const fullDesc = room.room_description || "";
                     const shortDesc = fullDesc.length > maxLength 
                         ? fullDesc.substring(0, maxLength) + "..." 
@@ -119,7 +119,7 @@ $(document).ready(function() {
                     const wrapper = $(this).closest(".desc-wrapper");
                     const textBox = wrapper.find(".desc-text");
                     const fullText = textBox.data("full");
-                    const shortText = fullText.substring(0, 100) + "...";
+                    const shortText = fullText.substring(0, 255) + "...";
 
                     if ($(this).text() === "See more") {
                         textBox.html(`
