@@ -33,7 +33,7 @@ if (isset($_SESSION['user_id'])) {
   <link href="../src/scrollbar.css" rel="stylesheet" />
   <link href="../src/alertifyconfig.css" rel="stylesheet" />
 
-
+  <link rel="icon" type="image/x-icon" href="../static/image/favicon.ico">
   
   
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
