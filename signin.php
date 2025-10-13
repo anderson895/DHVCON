@@ -4,17 +4,15 @@
 
 <!-- Import Google Material Icons -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-
-   <!-- Fullscreen Spinner Overlay -->
+<!-- Fullscreen Spinner Overlay -->
 <div id="spinner" class="fixed inset-0 flex items-center justify-center z-[9998] bg-black/60 backdrop-blur-sm" style="display:none;">
   <div class="w-16 h-16 border-4 border-gray-600 border-t-indigo-500 rounded-full animate-spin"></div>
 </div>
 
+  
+
 <!-- Sign In Page -->
 <main class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
-
-
 
 
   <!-- Decorative Background Effects -->
