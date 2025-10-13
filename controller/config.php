@@ -4,11 +4,11 @@
 // define("db_pass", "");
 // define("db_name", "dhvcon");
 
-
 define("db_host", "localhost");
 define("db_user", "u777088444_dhvcon");
 define("db_pass", "Ahvcon123@");
 define("db_name", "u777088444_dhvcon");
+
 
 
 class db_connect
