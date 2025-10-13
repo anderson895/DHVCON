@@ -406,141 +406,6 @@ function fetchMeetings() {
 
 
 
-// Handle View Logs click
-$(document).on("click", ".view-logs", function () {
-    const meetingId = $(this).data("meeting-id");
-
-    $.ajax({
-        url: "../controller/end-points/controller.php",
-        type: "GET",
-        data: {
-            requestType: "viewMeetingLogs",
-            meeting_id: meetingId
-        },
-        dataType: "json",
-        success: function (res) {
-            if (res.status === 200 && res.data.length > 0) {
-                let logRows = "";
-
-                res.data.forEach((log, index) => {
-                    const formattedDate = new Date(log.ml_date_joined).toLocaleString("en-PH", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                        hour12: true
-                    });
-
-                    logRows += `
-                        <tr class="border-b border-gray-700 log-row hover:bg-[#3a3b3f]/40 transition-colors">
-                            <td class="px-2 sm:px-4 py-2 text-center">${index + 1}</td>
-                            <td class="px-2 sm:px-4 py-2 name flex items-center gap-2">
-                                <span class="material-icons text-[#5865f2] text-base">person</span>
-                                <span class="truncate max-w-[150px] sm:max-w-none">${log.user_fullname}</span>
-                            </td>
-                            <td class="px-2 sm:px-4 py-2 email truncate max-w-[150px] sm:max-w-none text-center">${log.user_email}</td>
-                            <td class="px-2 sm:px-4 py-2 text-center whitespace-nowrap">${formattedDate}</td>
-                        </tr>
-                    `;
-                });
-
-                const tableHTML = `
-                    <div class="relative mb-3">
-                        <span class="material-icons absolute left-3 top-2.5 text-gray-400">search</span>
-                        <input 
-                            type="text" 
-                            id="searchLogInput"
-                            placeholder="Search name or email..."
-                            class="w-full pl-10 pr-3 py-2 rounded-md bg-[#1e1f22] text-gray-200 border border-gray-600 focus:outline-none focus:border-[#5865f2] text-sm sm:text-base"
-                        >
-                    </div>
-
-                    <div class="overflow-x-auto overflow-y-auto max-h-[400px] rounded-md border border-gray-700">
-                        <table class="min-w-full text-xs sm:text-sm text-gray-300">
-                            <thead class="bg-[#1e1f22] text-gray-100 uppercase sticky top-0 z-10">
-                                <tr>
-                                    <th class="px-2 sm:px-4 py-3 text-center">#</th>
-                                    <th class="px-2 sm:px-4 py-3 text-left">
-                                        <div class="flex items-center gap-1">
-                                            <span class="material-icons text-[#5865f2] text-sm">people</span>
-                                            Name
-                                        </div>
-                                    </th>
-                                    <th class="px-2 sm:px-4 py-3 text-center">Email</th>
-                                    <th class="px-2 sm:px-4 py-3 text-center">Date Joined</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-[#2b2d31]" id="logsTableBody">
-                                ${logRows}
-                            </tbody>
-                        </table>
-                    </div>
-                `;
-
-                Swal.fire({
-                    title: "Meeting Logs",
-                    html: tableHTML,
-                    width: "95%", // ✅ Responsive modal width
-                    background: "#2b2d31",
-                    color: "#fff",
-                    showConfirmButton: true,
-                    confirmButtonText: "Close",
-                    scrollbarPadding: false,
-                    didOpen: () => {
-                        // 🔍 Search filter
-                        const searchInput = document.getElementById("searchLogInput");
-                        const rows = document.querySelectorAll(".log-row");
-
-                        searchInput.addEventListener("input", function () {
-                            const query = this.value.toLowerCase();
-                            rows.forEach(row => {
-                                const name = row.querySelector(".name").textContent.toLowerCase();
-                                const email = row.querySelector(".email").textContent.toLowerCase();
-                                row.style.display = (name.includes(query) || email.includes(query)) ? "" : "none";
-                            });
-                        });
-                    },
-                    customClass: {
-                        popup: "rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/4 lg:w-2/3"
-                    }
-                });
-            } 
-            else if (res.status === 404) {
-                Swal.fire({
-                    icon: "info",
-                    title: "No Logs Found",
-                    text: "No participants have joined this meeting yet.",
-                    background: "#2b2d31",
-                    color: "#fff"
-                });
-            } 
-            else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Unable to fetch meeting logs.",
-                    background: "#2b2d31",
-                    color: "#fff"
-                });
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error(error);
-            Swal.fire({
-                icon: "error",
-                title: "Request Error",
-                text: "Something went wrong while fetching logs.",
-                background: "#2b2d31",
-                color: "#fff"
-            });
-        }
-    });
-});
-
-
-
-
 
 
 
@@ -1209,6 +1074,138 @@ $(document).ready(function() {
 
 
 
+
+// Handle View Logs click
+$(document).on("click", ".view-logs", function () {
+    const meetingId = $(this).data("meeting-id");
+
+    $.ajax({
+        url: "../controller/end-points/controller.php",
+        type: "GET",
+        data: {
+            requestType: "viewMeetingLogs",
+            meeting_id: meetingId
+        },
+        dataType: "json",
+        success: function (res) {
+            if (res.status === 200 && res.data.length > 0) {
+                let logRows = "";
+
+                res.data.forEach((log, index) => {
+                    const formattedDate = new Date(log.ml_date_joined).toLocaleString("en-PH", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true
+                    });
+
+                    logRows += `
+                        <tr class="border-b border-gray-700 log-row hover:bg-[#3a3b3f]/40 transition-colors">
+                            <td class="px-2 sm:px-4 py-2 text-center">${index + 1}</td>
+                            <td class="px-2 sm:px-4 py-2 name flex items-center gap-2">
+                                <span class="material-icons text-[#5865f2] text-base">person</span>
+                                <span class="truncate max-w-[150px] sm:max-w-none">${log.user_fullname}</span>
+                            </td>
+                            <td class="px-2 sm:px-4 py-2 email truncate max-w-[150px] sm:max-w-none text-center">${log.user_email}</td>
+                            <td class="px-2 sm:px-4 py-2 text-center whitespace-nowrap">${formattedDate}</td>
+                        </tr>
+                    `;
+                });
+
+                const tableHTML = `
+                    <div class="relative mb-3">
+                        <span class="material-icons absolute left-3 top-2.5 text-gray-400">search</span>
+                        <input 
+                            type="text" 
+                            id="searchLogInput"
+                            placeholder="Search name or email..."
+                            class="w-full pl-10 pr-3 py-2 rounded-md bg-[#1e1f22] text-gray-200 border border-gray-600 focus:outline-none focus:border-[#5865f2] text-sm sm:text-base"
+                        >
+                    </div>
+
+                    <div class="overflow-x-auto overflow-y-auto max-h-[400px] rounded-md border border-gray-700">
+                        <table class="min-w-full text-xs sm:text-sm text-gray-300">
+                            <thead class="bg-[#1e1f22] text-gray-100 uppercase sticky top-0 z-10">
+                                <tr>
+                                    <th class="px-2 sm:px-4 py-3 text-center">#</th>
+                                    <th class="px-2 sm:px-4 py-3 text-left">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons text-[#5865f2] text-sm">people</span>
+                                            Name
+                                        </div>
+                                    </th>
+                                    <th class="px-2 sm:px-4 py-3 text-center">Email</th>
+                                    <th class="px-2 sm:px-4 py-3 text-center">Date Joined</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-[#2b2d31]" id="logsTableBody">
+                                ${logRows}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+
+                Swal.fire({
+                    title: "Meeting Logs",
+                    html: tableHTML,
+                    width: "95%", // ✅ Responsive modal width
+                    background: "#2b2d31",
+                    color: "#fff",
+                    showConfirmButton: true,
+                    confirmButtonText: "Close",
+                    scrollbarPadding: false,
+                    didOpen: () => {
+                        // 🔍 Search filter
+                        const searchInput = document.getElementById("searchLogInput");
+                        const rows = document.querySelectorAll(".log-row");
+
+                        searchInput.addEventListener("input", function () {
+                            const query = this.value.toLowerCase();
+                            rows.forEach(row => {
+                                const name = row.querySelector(".name").textContent.toLowerCase();
+                                const email = row.querySelector(".email").textContent.toLowerCase();
+                                row.style.display = (name.includes(query) || email.includes(query)) ? "" : "none";
+                            });
+                        });
+                    },
+                    customClass: {
+                        popup: "rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/4 lg:w-2/3"
+                    }
+                });
+            } 
+            else if (res.status === 404) {
+                Swal.fire({
+                    icon: "info",
+                    title: "No Logs Found",
+                    text: "No participants have joined this meeting yet.",
+                    background: "#2b2d31",
+                    color: "#fff"
+                });
+            } 
+            else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error",
+                    text: "Unable to fetch meeting logs.",
+                    background: "#2b2d31",
+                    color: "#fff"
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error(error);
+            Swal.fire({
+                icon: "error",
+                title: "Request Error",
+                text: "Something went wrong while fetching logs.",
+                background: "#2b2d31",
+                color: "#fff"
+            });
+        }
+    });
+});
 
 
 
