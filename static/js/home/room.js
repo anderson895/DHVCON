@@ -406,7 +406,6 @@ function fetchMeetings() {
 
 
 
-
 // Handle View Logs click
 $(document).on("click", ".view-logs", function () {
     const meetingId = $(this).data("meeting-id");
@@ -434,14 +433,14 @@ $(document).on("click", ".view-logs", function () {
                     });
 
                     logRows += `
-                        <tr class="border-b border-gray-700 log-row">
-                            <td class="px-4 py-2 text-center">${index + 1}</td>
-                            <td class="px-4 py-2 name flex items-center gap-2">
+                        <tr class="border-b border-gray-700 log-row hover:bg-[#3a3b3f]/40 transition-colors">
+                            <td class="px-2 sm:px-4 py-2 text-center">${index + 1}</td>
+                            <td class="px-2 sm:px-4 py-2 name flex items-center gap-2">
                                 <span class="material-icons text-[#5865f2] text-base">person</span>
-                                ${log.user_fullname}
+                                <span class="truncate max-w-[150px] sm:max-w-none">${log.user_fullname}</span>
                             </td>
-                            <td class="px-4 py-2 email">${log.user_email}</td>
-                            <td class="px-4 py-2 text-center">${formattedDate}</td>
+                            <td class="px-2 sm:px-4 py-2 email truncate max-w-[150px] sm:max-w-none text-center">${log.user_email}</td>
+                            <td class="px-2 sm:px-4 py-2 text-center whitespace-nowrap">${formattedDate}</td>
                         </tr>
                     `;
                 });
@@ -453,19 +452,23 @@ $(document).on("click", ".view-logs", function () {
                             type="text" 
                             id="searchLogInput"
                             placeholder="Search name or email..."
-                            class="w-full pl-10 pr-3 py-2 rounded-md bg-[#1e1f22] text-gray-200 border border-gray-600 focus:outline-none focus:border-[#5865f2]"
+                            class="w-full pl-10 pr-3 py-2 rounded-md bg-[#1e1f22] text-gray-200 border border-gray-600 focus:outline-none focus:border-[#5865f2] text-sm sm:text-base"
                         >
                     </div>
-                    <div class="overflow-x-auto max-h-[400px] overflow-y-auto">
-                        <table class="min-w-full text-sm text-gray-300">
-                            <thead class="bg-[#1e1f22] text-gray-100 uppercase sticky top-0">
+
+                    <div class="overflow-x-auto overflow-y-auto max-h-[400px] rounded-md border border-gray-700">
+                        <table class="min-w-full text-xs sm:text-sm text-gray-300">
+                            <thead class="bg-[#1e1f22] text-gray-100 uppercase sticky top-0 z-10">
                                 <tr>
-                                    <th class="px-4 py-3 text-center">#</th>
-                                    <th class="px-4 py-3 text-left flex items-center gap-1"> <span class="material-icons text-[#5865f2] text-sm">people</span>
-                                        Name
+                                    <th class="px-2 sm:px-4 py-3 text-center">#</th>
+                                    <th class="px-2 sm:px-4 py-3 text-left">
+                                        <div class="flex items-center gap-1">
+                                            <span class="material-icons text-[#5865f2] text-sm">people</span>
+                                            Name
+                                        </div>
                                     </th>
-                                    <th class="px-4 py-3 text-center">Email</th>
-                                    <th class="px-4 py-3 text-center">Date Joined</th>
+                                    <th class="px-2 sm:px-4 py-3 text-center">Email</th>
+                                    <th class="px-2 sm:px-4 py-3 text-center">Date Joined</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-[#2b2d31]" id="logsTableBody">
@@ -478,33 +481,32 @@ $(document).on("click", ".view-logs", function () {
                 Swal.fire({
                     title: "Meeting Logs",
                     html: tableHTML,
-                    width: "80%",
+                    width: "95%", // ✅ Responsive modal width
                     background: "#2b2d31",
                     color: "#fff",
                     showConfirmButton: true,
                     confirmButtonText: "Close",
                     scrollbarPadding: false,
                     didOpen: () => {
-                      
+                        // 🔍 Search filter
                         const searchInput = document.getElementById("searchLogInput");
                         const rows = document.querySelectorAll(".log-row");
 
                         searchInput.addEventListener("input", function () {
                             const query = this.value.toLowerCase();
-
                             rows.forEach(row => {
                                 const name = row.querySelector(".name").textContent.toLowerCase();
                                 const email = row.querySelector(".email").textContent.toLowerCase();
-
                                 row.style.display = (name.includes(query) || email.includes(query)) ? "" : "none";
                             });
                         });
                     },
                     customClass: {
-                        popup: "rounded-lg shadow-lg"
+                        popup: "rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/4 lg:w-2/3"
                     }
                 });
-            } else if (res.status === 404) {
+            } 
+            else if (res.status === 404) {
                 Swal.fire({
                     icon: "info",
                     title: "No Logs Found",
@@ -512,7 +514,8 @@ $(document).on("click", ".view-logs", function () {
                     background: "#2b2d31",
                     color: "#fff"
                 });
-            } else {
+            } 
+            else {
                 Swal.fire({
                     icon: "error",
                     title: "Error",
@@ -534,8 +537,6 @@ $(document).on("click", ".view-logs", function () {
         }
     });
 });
-
-
 
 
 
