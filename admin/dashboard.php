@@ -55,7 +55,6 @@ include "../src/components/admin/header.php";
     <h2 class="text-3xl font-bold text-white mb-2" id="total_classworks">0</h2>
     <div class="text-sm text-gray-400 space-y-1">
       <p>Active: <span class="text-green-400 font-bold" id="active_classworks">0</span></p>
-      <p>Archived: <span class="text-gray-400 font-bold" id="archived_classworks">0</span></p>
     </div>
   </div>
 
