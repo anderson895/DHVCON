@@ -76,10 +76,10 @@ if (isset($_SESSION['user_id'])) {
           <span id="deals_dropdownIcon" class="material-icons transition-transform">expand_more</span>
         </button>
         <div id="dealsDropdown" class="ml-8 hidden space-y-2">
-          <a href="pendingPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Pending</a>
-          <a href="pendingPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">All User</a>
-          <a href="teacherPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Teacher</a>
-          <a href="studentPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Student</a>
+          <a href="manageuser?pages=pending&&user_type=all" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Pending</a>
+          <a href="manageuser?pages=all&&user_type=all" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">All User</a>
+          <a href="manageuser?pages=teacher&&user_type=teacher" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Teacher</a>
+          <a href="manageuser?pages=student&&user_type=student" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Student</a>
         </div>
 
         
