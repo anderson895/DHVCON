@@ -14,8 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $password = $_POST['password'];
                 $user_type = $_POST['user_type'];
 
-                // Absolute path for uploaded requirements
-                $uploadDir = __DIR__ . '/../../static/upload/requirements/'; // adjust if needed
+                $uploadDir = __DIR__ . '/../../static/upload/requirements/'; 
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir, 0777, true);
                 }
@@ -28,14 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $fileError = $_FILES['requirements']['error'][$key];
 
                         if ($fileError === UPLOAD_ERR_OK) {
-                            // Sanitize + make unique filename
+                            
                             $cleanFileName = preg_replace("/[^a-zA-Z0-9_\.-]/", "_", basename($fileName));
                             $newFileName = uniqid() . '_' . $cleanFileName;
                             $destPath = $uploadDir . $newFileName;
 
                             // Move uploaded file
                             if (move_uploaded_file($fileTmpPath, $destPath)) {
-                                $uploadedFiles[] = $newFileName; // only filename, not path
+                                $uploadedFiles[] = $newFileName; 
                             } else {
                                 error_log("❌ Failed to move file: $fileTmpPath to $destPath");
                             }
