@@ -91,25 +91,37 @@ $(document).ready(function () {
 
 
 $(document).on("click", ".view-req-btn", function () {
-  const rawReq = decodeURIComponent($(this).data("req"));
+  let rawReq = $(this).data("req");
   const name = $(this).data("name");
   let files = [];
 
-  try {
-    files = JSON.parse(rawReq || "[]");
-  } catch (e) {
-    console.error("JSON parse error:", e);
+  // ✅ Handle null, "null", or empty values safely
+  if (!rawReq || rawReq === "null" || rawReq === "[]" || rawReq.trim() === "") {
     files = [];
+  } else {
+    try {
+      rawReq = decodeURIComponent(rawReq);
+      files = JSON.parse(rawReq || "[]");
+    } catch (e) {
+      console.error("JSON parse error:", e);
+      files = [];
+    }
   }
 
+  // ✅ Header
   let listHTML = `
     <div class="col-span-full mb-3">
       <h3 class="text-lg md:text-xl font-semibold text-yellow-400">${name}'s Requirements</h3>
     </div>`;
 
-  if (files.length === 0) {
-    listHTML += `<p class="text-gray-400 col-span-full">No uploaded requirements.</p>`;
+  // ✅ No files case
+  if (!files || files.length === 0) {
+    listHTML += `
+      <div class="col-span-full text-center bg-[#2b2b2b] py-6 rounded-lg">
+        <p class="text-gray-400 text-base">No uploaded requirements found.</p>
+      </div>`;
   } else {
+    // ✅ Display each file
     files.forEach(file => {
       const fileExt = file.split('.').pop().toLowerCase();
       const filePath = `../static/upload/requirements/${file}`;
@@ -139,6 +151,7 @@ $(document).on("click", ".view-req-btn", function () {
     });
   }
 
+  // ✅ Inject & show modal
   $("#requirementsList").html(listHTML);
   $("#requirementsModal").removeClass("hidden");
 });
