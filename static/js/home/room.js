@@ -759,11 +759,7 @@ function fetchAllCreatedWorks(roomId, room_name) {
                     class="view-response-btn cursor-pointer bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm">
                     Response
                   </a>
-                  <button 
-                    class="delete-btn bg-red-500 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
-                    data-id="${work.classwork_id}">
-                    Delete
-                  </button>
+                 
                 </div>
               </td>
             </tr>
