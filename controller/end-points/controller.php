@@ -10,10 +10,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['requestType'])) {
         if ($_POST['requestType'] == 'SignUp') {
                 $full_name = $_POST['full_name'];
-                $email  = $_POST['email'];
-                $password   = $_POST['password'];
+                $email = $_POST['email'];
+                $password = $_POST['password'];
+                $user_type = $_POST['user_type'];
 
-                $result = $db->SignUp($full_name, $email, $password);
+                // Absolute path for uploaded requirements
+                $uploadDir = __DIR__ . '/../../static/upload/requirements/'; // adjust if needed
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+                $uploadedFiles = [];
+
+                if (!empty($_FILES['requirements']['name'][0])) {
+                    foreach ($_FILES['requirements']['name'] as $key => $fileName) {
+                        $fileTmpPath = $_FILES['requirements']['tmp_name'][$key];
+                        $fileError = $_FILES['requirements']['error'][$key];
+
+                        if ($fileError === UPLOAD_ERR_OK) {
+                            // Sanitize + make unique filename
+                            $cleanFileName = preg_replace("/[^a-zA-Z0-9_\.-]/", "_", basename($fileName));
+                            $newFileName = uniqid() . '_' . $cleanFileName;
+                            $destPath = $uploadDir . $newFileName;
+
+                            // Move uploaded file
+                            if (move_uploaded_file($fileTmpPath, $destPath)) {
+                                $uploadedFiles[] = $newFileName; // only filename, not path
+                            } else {
+                                error_log("❌ Failed to move file: $fileTmpPath to $destPath");
+                            }
+                        } else {
+                            error_log("⚠️ Upload error for $fileName: $fileError");
+                        }
+                    }
+                }
+
+                $requirementsJSON = json_encode($uploadedFiles);
+
+                // Save to database
+                $result = $db->SignUp($full_name, $email, $password, $user_type, $requirementsJSON);
 
                 if ($result['success']) {
                     echo json_encode([
@@ -26,6 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => $result['message']
                     ]);
                 }
+
+
+
         }else if ($_POST['requestType'] == 'joinRoom') {
                 $user_id = $_SESSION['user_id'];
                 $roomCode = $_POST['roomCode'];

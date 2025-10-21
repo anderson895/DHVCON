@@ -13,15 +13,10 @@
   <div class="absolute top-0 left-0 w-96 h-96 bg-purple-600 opacity-20 blur-3xl rounded-full"></div>
   <div class="absolute bottom-0 right-0 w-[28rem] h-[28rem] bg-indigo-700 opacity-10 blur-3xl rounded-full"></div>
 
-
-
-  
-   <!-- Fullscreen Spinner Overlay -->
-<div id="spinner" class="fixed inset-0 flex items-center justify-center z-[9998] bg-black/60 backdrop-blur-sm" style="display:none;">
-  <div class="w-16 h-16 border-4 border-gray-600 border-t-indigo-500 rounded-full animate-spin"></div>
-</div>
-
-
+  <!-- Fullscreen Spinner Overlay -->
+  <div id="spinner" class="fixed inset-0 flex items-center justify-center z-[9998] bg-black/60 backdrop-blur-sm" style="display:none;">
+    <div class="w-16 h-16 border-4 border-gray-600 border-t-indigo-500 rounded-full animate-spin"></div>
+  </div>
 
   <!-- Sign Up Card -->
   <div class="relative z-10 bg-[#2b2d31]/80 backdrop-blur-xl border border-[#3c3f44] shadow-2xl rounded-2xl w-full max-w-md p-10 space-y-8 transform transition-all hover:scale-[1.01] duration-300">
@@ -33,7 +28,7 @@
     </div>
 
     <!-- Sign Up Form -->
-    <form id="frmSignup" method="POST" class="space-y-6">
+    <form id="frmSignup" method="POST" enctype="multipart/form-data" class="space-y-6">
 
       <!-- Full Name -->
       <div>
@@ -65,6 +60,25 @@
         </div>
       </div>
 
+      <!-- Role Selection -->
+      <div>
+      <label class="block text-sm font-medium text-gray-300 mb-2">Account Type</label>
+      <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
+        <span class="material-icons text-gray-400 mr-3">account_circle</span>
+        <select 
+          name="user_type" 
+          class="cursor-pointer w-full bg-[#2b2d31] text-black focus:outline-none rounded-lg px-2 py-1" 
+          style="color:white;" 
+          required
+        >
+          <option value="" disabled selected class="text-gray-400">Select role</option>
+          <option value="teacher" class="text-white">Teacher</option>
+          <option value="student" class="text-white">Student</option>
+        </select>
+      </div>
+    </div>
+
+
       <!-- Password -->
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
@@ -95,6 +109,22 @@
             required
           >
         </div>
+      </div>
+
+      <!-- File Upload -->
+      <div>
+        <label class="block text-sm font-medium text-gray-300 mb-2">Upload Requirements</label>
+        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
+          <span class="cursor-pointer material-icons text-gray-400 mr-3">upload_file</span>
+          <input 
+            type="file" 
+            name="requirements[]" 
+            class="cursor-pointer w-full bg-transparent text-white focus:outline-none" 
+            multiple
+            required
+          >
+        </div>
+        <p class="text-xs text-gray-400 mt-1">You can upload multiple files (PDF, DOCX, JPG, PNG).</p>
       </div>
 
       <!-- Submit Button -->
