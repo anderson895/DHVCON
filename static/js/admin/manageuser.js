@@ -51,23 +51,27 @@ $(document).ready(function () {
                               <td class="py-2 px-3 capitalize">${u.user_type}</td>
                               <td class="py-2 px-3 ${statusClass}">${statusText}</td>
                               <td class="py-2 px-3 text-center space-x-1">
-                                <button class="cursor-pointer view-req-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded cursor-pointer" 
-                                  data-req="${safeReq}" data-name="${u.user_fullname}">
-                                  View Requirements
-                                </button>
+                                <!-- ✅ HIDE View Requirements if Admin -->
+                                ${u.user_type.toLowerCase() !== "admin" ? `
+                                  <button class="cursor-pointer view-req-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded cursor-pointer" 
+                                    data-req="${safeReq}" data-name="${u.user_fullname}">
+                                    View Requirements
+                                  </button>` 
+                                : ""}
+
                                 ${u.user_status == 0 ? `
                                     <button class="cursor-pointer approve-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
                                       Approve
                                     </button>` 
                                 : ""}
-                                
-                                <!-- ✅ HIDE "Disable" BUTTON IF USER IS ADMIN -->
+
+                                <!-- ✅ HIDE Disable if Admin -->
                                 ${u.user_status == 1 && u.user_type.toLowerCase() !== "admin" ? `
                                     <button class="cursor-pointer disable-btn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
                                       Disable
                                     </button>` 
                                 : ""}
-                                
+
                                 ${u.user_status == 2 ? `
                                     <button class="cursor-pointer restore-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
                                       Restore
