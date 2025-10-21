@@ -393,6 +393,86 @@ public function CreateClasswork($title, $instructions, $fileName, $user_id, $roo
 
 
 
+
+
+// 🔹 Get single classwork by ID
+public function GetClassworkById($classwork_id)
+{
+    $query = "SELECT * FROM `classwork` WHERE `classwork_id` = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $stmt->bind_param("i", $classwork_id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+
+    $stmt->close();
+    return $data ?: false;
+}
+
+
+
+// 🔹 Update existing classwork
+public function UpdateClasswork($classwork_id, $title, $instructions, $fileName = null)
+{
+    if ($fileName) {
+        $query = "
+            UPDATE `classwork` 
+            SET `classwork_title` = ?, 
+                `classwork_instruction` = ?, 
+                `classwork_file` = ? 
+            WHERE `classwork_id` = ?
+        ";
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) {
+            die("Prepare failed: " . $this->conn->error);
+        }
+        $stmt->bind_param("sssi", $title, $instructions, $fileName, $classwork_id);
+    } else {
+        $query = "
+            UPDATE `classwork` 
+            SET `classwork_title` = ?, 
+                `classwork_instruction` = ? 
+            WHERE `classwork_id` = ?
+        ";
+        $stmt = $this->conn->prepare($query);
+        if (!$stmt) {
+            die("Prepare failed: " . $this->conn->error);
+        }
+        $stmt->bind_param("ssi", $title, $instructions, $classwork_id);
+    }
+
+    $result = $stmt->execute();
+    $stmt->close();
+    return $result;
+}
+
+
+
+// 🔹 Delete classwork by ID
+public function DeleteClasswork($classwork_id)
+{
+    $query = "UPDATE `classwork` SET `classwork_status` = 0 WHERE `classwork_id` = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $stmt->bind_param("i", $classwork_id);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result;
+}
+
+
+
+
+
 public function getAllRooms($user_id) {
     $query = "
         SELECT * 
