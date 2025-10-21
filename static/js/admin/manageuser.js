@@ -55,7 +55,7 @@ $(document).ready(function () {
                                 ${u.user_type.toLowerCase() !== "admin" ? `
                                   <button class="cursor-pointer view-req-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded cursor-pointer" 
                                     data-req="${safeReq}" data-name="${u.user_fullname}">
-                                    View Requirements
+                                    Requirements
                                   </button>` 
                                 : ""}
 
