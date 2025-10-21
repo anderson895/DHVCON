@@ -212,17 +212,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $password = $_POST['password'];
                     $loginResult = $db->Login($email, $password);
 
-            if ($loginResult['success']) {
-                echo json_encode([
-                    'status' => 'success',
-                    'message' => $loginResult['message']
-                ]);
-            } else {
-                echo json_encode([
-                    'status' => 'error',
-                    'message' => $loginResult['message']
-                ]);
-            }
+                    if ($loginResult['success']) {
+
+                        // ✅ Include user_type and user_id if available
+                        echo json_encode([
+                            'status' => 'success',
+                            'message' => $loginResult['message'],
+                            'data' => isset($loginResult['data']) ? $loginResult['data'] : null
+                        ]);
+
+                    } else {
+                        echo json_encode([
+                            'status' => 'error',
+                            'message' => $loginResult['message']
+                        ]);
+                    }
+
         }else if ($_POST['requestType'] == 'recordMeetingLog') {
                     $user_id = $_SESSION['user_id'];
                     $meeting_id = $_POST['meeting_id'];
@@ -637,6 +642,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             }
 
+
+        }else if ($_GET['requestType'] == 'dashboard_analytics') {
+         
+              $data = $db->getDataAnalytics();
+
+                if ($data) {
+                    echo json_encode([
+                        'success' => true,
+                        'data' => $data
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Failed to retrieve analytics'
+                    ]);
+                }
 
         }else{
             echo "404";
