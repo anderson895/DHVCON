@@ -44,7 +44,7 @@ const getDataAnalytics = () => {
         $("#closed_meetings").text(d.closed_meetings);
         $("#total_classworks").text(d.total_classworks);
         $("#active_classworks").text(d.active_classworks);
-        $("#archived_classworks").text(d.archived_classworks);
+      
         $("#total_submissions").text(d.total_submissions);
         $("#not_submitted").text(d.not_submitted);
         $("#total_claimed_certificates").text(d.total_claimed_certificates);
