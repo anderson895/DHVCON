@@ -9,41 +9,61 @@ $(document).ready(function () {
 
     // Confirm password validation
     if (password !== confirmPassword) {
-      alertify.error("Passwords do not match.");
+      Swal.fire({
+        icon: "error",
+        title: "Password Mismatch",
+        text: "Passwords do not match.",
+        confirmButtonColor: "#d33"
+      });
       return; // Stop form submission
     }
 
     $('#spinner').show();
-    $('#btnLogin').prop('disabled', true);
 
-    var formData = $(this).serializeArray();
-    formData.push({ name: 'requestType', value: 'SignUp' });
-    var serializedData = $.param(formData);
+    // Collect form data (including files)
+    var formData = new FormData(this);
+    formData.append("requestType", "SignUp");
 
     $.ajax({
       type: "POST",
       url: "controller/end-points/controller.php",
-      data: serializedData,
-      dataType: 'json',
+      data: formData,
+      processData: false, // Required for file upload
+      contentType: false, // Required for file upload
+      dataType: "json",
       success: function (response) {
-        console.log(response.status);
+        $('#spinner').hide();
 
         if (response.status === "success") {
-          alertify.success('Registration Successful');
-          setTimeout(function () {
+          Swal.fire({
+            icon: "success",
+            title: "Account Created!",
+            text: "Please wait for the admin’s approval.",
+            confirmButtonColor: "#28a745",
+            timer: 2500,
+            timerProgressBar: true,
+            showConfirmButton: false
+          }).then(() => {
             window.location.href = "signin";
-          }, 1000);
+          });
         } else {
-          $('#spinner').hide();
-          $('#btnLogin').prop('disabled', false);
-          console.log(response);
-          alertify.error(response.message);
+          Swal.fire({
+            icon: "error",
+            title: "Registration Failed",
+            text: response.message,
+            confirmButtonColor: "#d33"
+          });
         }
       },
-      error: function () {
+      error: function (xhr, status, error) {
         $('#spinner').hide();
-        $('#btnLogin').prop('disabled', false);
-        alertify.error('An error occurred. Please try again.');
+        console.error("Error:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "An error occurred. Please try again.",
+          confirmButtonColor: "#d33"
+        });
       }
     });
   });

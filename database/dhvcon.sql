@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2025 at 09:50 AM
+-- Generation Time: Oct 21, 2025 at 03:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,14 +34,6 @@ CREATE TABLE `claimed_certificate` (
   `claimed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `claimed_certificate`
---
-
-INSERT INTO `claimed_certificate` (`claimed_id`, `claimed_meeting_id`, `claimed_user_id`, `claimed_date`) VALUES
-(1, 6, 3, '2025-10-11 10:07:41'),
-(2, 7, 8, '2025-10-11 12:58:44');
-
 -- --------------------------------------------------------
 
 --
@@ -58,16 +50,6 @@ CREATE TABLE `classwork` (
   `classwork_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=archived,1=active',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `classwork`
---
-
-INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
-(13, 'assignment 1', 'Overview\r\nThis assignment is a piece of directed writing in response to a text or texts chosen by your teacher (or by you with your teacher’s approval). The assignment is assessed equally for both reading and writing, and to achieve top marks the examiners are looking for the following:\r\n\r\nReading (15 marks):\r\n\r\nYour ability to select, put together and evaluate facts, opinions and arguments to give a developed and sophisticated response\r\n\r\nYour ability to successfully evaluate both explicit and implicit ideas and opinions from your chosen text(s)\r\n\r\nWriting (15 marks):\r\n\r\nYour ability to display a highly effective style of writing capable of conveying subtle meaning\r\n\r\nYour ability to use effective language and to structure a response carefully\r\n\r\nA high degree of technical accuracy (spelling, grammar and punctuation are accurate)\r\n\r\nDepending on the choice of reading material, a typical Assignment 1 response would be to reply to the author of your chosen text(s) in the form of a letter. However, a speech or an article in which you are able to argue ideas are equally permissible. Whatever the form, you should be able to give an overview of the argument as a whole and demonstrate your understanding by commenting on specific ideas presented by the author of your chosen text or texts. This should include an explanation of any ideas of interest and an argument for or against them, as well as an examination of inconsistencies and the recognition of bias.\r\n\r\nA copy of all texts used for Assignment 1 must be included in your portfolio.', NULL, 2, 23, 1, '2025-10-10 18:33:13'),
-(14, 'python lesson 1', 'create python program  for grading system', 'classwork_68ea52f919d5a6.77692051.pdf', 3, 25, 1, '2025-10-11 12:52:09'),
-(15, 'test', 'awdawdaw', NULL, 2, 23, 1, '2025-10-11 13:18:24'),
-(16, 'assignment 2', 'awdawd', 'classwork_68ea5a7ae53b48.50847092.png', 2, 23, 1, '2025-10-11 13:24:10');
 
 -- --------------------------------------------------------
 
@@ -88,14 +70,6 @@ CREATE TABLE `meeting` (
   `meeting_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=close,1=open'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `meeting`
---
-
-INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
-(6, 'https://meet.google.com/msk-azgz-pek', 'java programming introduction', '', '2025-10-11 16:00:00', '2025-10-11 17:00:00', 23, 2, '2a8cd4ba', 0),
-(7, 'https://meet.google.com/hbf-oori-kru?fbclid=IwY2xjawNXMRdleHRuA2FlbQIxMABicmlkETFaN09kZmozaVU2dDJGemJoAR6RrlCxl0uqhLaAT4wFx8Eh2TE41qyOMCDjX2kjNKjR3gK3vvM5ioOi4zX8uQ_aem_2qmX1fMbCZkHOzlpCMv0WQ&pli=1&authuser=2', 'Introduction To Python Fundamentals', 'Learn Python. Python is a popular programming language. Python can be used on a server to create web applications. Start learning Python now.\r\n', '2025-10-11 20:55:00', '2025-10-11 21:56:00', 25, 3, 'f05c121d', 0);
-
 -- --------------------------------------------------------
 
 --
@@ -108,14 +82,6 @@ CREATE TABLE `meeting_logs` (
   `ml_date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ml_meeting_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `meeting_logs`
---
-
-INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
-(30, 3, '2025-10-11 08:44:33', 6),
-(31, 8, '2025-10-11 12:57:05', 7);
 
 -- --------------------------------------------------------
 
@@ -139,14 +105,6 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code`, `room_name`, `room_description`, `room_status`, `room_date_created`) VALUES
-(23, 2, 'room_68e94fc5925d84.46376038.png', 'W0YQUF', 'room 101', 'When it comes to renting out a property, whether it\'s a single room, an entire house, or an apartment, the way you describe the space can make a huge difference in attracting the right tenants. Below are several examples and tips on how to write compelling rental descriptions that highlight the property’s best features while keeping it informative and clear.', 1, '2025-10-10 18:26:13'),
-(24, 7, 'room_68ea3905713579.96145396.png', 'WPG0HV', 'bsit world', 'The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.The BS Information Technology (BSIT) program includes the study of the utilization of both hardware and software technologies involving planning, installing, customizing, operating, managing and administering, and maintaining information technology infrastructure that provides computing solutions to address the needs of an organization.', 1, '2025-10-11 11:01:37'),
-(25, 3, 'room_68ea527fc6ccd4.00151234.webp', 'F509O6', 'BSCS', 'Bachelor of Science in Computer Science (BSCS) is a four-year program that includes the study of computing concepts and theories, algorithmic foundations, and new developments in computing. The program prepares its students to design and create algorithmically complex software and develop new and effective', 1, '2025-10-12 07:27:59'),
-(26, 2, 'room_68eb592192fda9.48281875.avif', 'TBWRFC', 'Python Programming', 'Python is a high-level, general-purpose programming language known for its readability and versatility. Developed by Guido van Rossum and first released in 1991, its design philosophy emphasizes code readability through the use of significant indentation.', 1, '2025-10-12 07:30:41'),
-(27, 2, 'room_68eb5982658417.60246736.webp', 'DRAV61', 'Graphics & Animation', 'When looking into your dream creative pursuits, you may have wondered: exactly what is the difference between animation and motion graphics? We get it – the two are often used interchangeably. But they have distinct differences, and each can delight and inspire in their own way.\r\n\r\nTo help you get clearer on your aspirations, this guide will break down the essentials of both animation and motion graphics so you can understand the key differences between the two disciplines.', 1, '2025-10-12 07:32:18'),
-(28, 2, 'room_68eb59bb71a806.34018976.jpg', 'BT2S0I', 'java programming', 'Java Introduction\r\nJava is a simple, secure, portable, robust, object-oriented, multithreaded, architecture-neutral, interpreted, high-performance, distributed and dynamic programming language. Java is also known as write-once, run-anywhere programming language.', 1, '2025-10-12 07:33:15'),
-(29, 2, 'room_68eb5a2271a0a1.13236267.webp', 'X0PCDU', 'Data Analytics', 'Data analysts are among several professionals who navigate information each day. They turn raw data into actionable insights, helping organizations make data-driven decisions about their products, services, customers, and overall performance.', 1, '2025-10-12 07:34:58'),
-(30, 2, 'room_68eb5a4a827024.21636802.jpg', 'D7WBGS', 'Web Development', 'The world of web development has seen massive growth over the past decade. As more businesses move online and consumers increasingly rely on websites and apps, demand for skilled web developers continues to rise. However, with coding bootcamps churning out new graduates, and resources like YouTube making it easier than ever to learn, some speculate that the web development job market has become oversaturated.', 1, '2025-10-12 07:35:38'),
 (31, 1, 'room_68eb5d944d6685.57757154.jpg', 'WXZ1E5', 'Mobile Development', 'Mobile apps have taken a remarkable rise in the tech market. App stores are overflowing with various kinds of applications. Several businesses have stepped forward in developing their mobile applications to expand their business and achieve success. Mobile applications have become an integral part of people’s lives, which has inspired enterprises to come up with their apps to satisfy their customers’ requirements.\r\n\r\nWhen you plan to develop your mobile app, it is important that you integrate unique features and functionality to make it stand out in the market. Also, it is significant to see that it does not become a common app similar to others. Your mobile app has to have the potential to attract new customers and retain the existing ones as well.', 1, '2025-10-12 07:49:40');
 
 -- --------------------------------------------------------
@@ -162,15 +120,6 @@ CREATE TABLE `room_members` (
   `date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `room_members`
---
-
-INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
-(25, 24, 6, '2025-10-11 11:20:25'),
-(28, 25, 8, '2025-10-11 13:02:08'),
-(30, 30, 1, '2025-10-12 07:49:49');
-
 -- --------------------------------------------------------
 
 --
@@ -185,16 +134,6 @@ CREATE TABLE `submitted_classwork` (
   `sw_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=not-turnin,1=turnin'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `submitted_classwork`
---
-
-INSERT INTO `submitted_classwork` (`sw_id`, `sw_classwork_id`, `sw_user_id`, `sw_files`, `sw_status`) VALUES
-(12, 13, 3, '[\"submission_68e951833c9f61.87182974.pdf\"]', 1),
-(13, 13, 6, '[\"submission_68e95a29808448.04659162.webp\"]', 1),
-(14, 14, 8, '[\"submission_68ea535a8bf0f0.77939147.txt\",\"submission_68ea55741ddaf7.71114991.png\"]', 1),
-(15, 15, 3, '[\"submission_68ea5a2740f6e3.19244831.cpp\"]', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -206,22 +145,18 @@ CREATE TABLE `user` (
   `user_fullname` varchar(60) NOT NULL,
   `user_email` varchar(60) NOT NULL,
   `user_password` varchar(255) NOT NULL,
-  `user_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=not-active,1=active'
+  `user_type` enum('admin','teacher','student','') NOT NULL,
+  `user_requirements` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`user_requirements`)),
+  `user_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=not-active,1=active'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_status`) VALUES
-(1, 'Joshua Anderson Padilla', 'joshua@gmail.com', '$2y$10$yeFySWND5eJqX4meEdCnw.D9AbHTMLRuI8W1.26dD4vujD8KrU1bC', 1),
-(2, 'john john', 'john@gmail.com', '$2y$10$FF11SoWjaBpdpaE6oEycfe2Gh9QmQLsfecQ0x/Viv4mBQVqXcjAIy', 1),
-(3, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$rxa/yT1Cx9EhWyRhnB8l1O213zkUBiaaNw/qaoaHo5H2Np/MCFmv6', 1),
-(4, 'samantha flores', 'samantha123@gmail.com', '$2y$10$f9XLVW/ETL/uMDZ2z/YIHOlRwqFm7.ajG6Yf3kWngyPiBYLDa8BNS', 1),
-(5, 'john doe', 'jdoe@gmail.com', '$2y$10$xVtSGeRcTRn8wAg.2VLXXOxCGL9wCDWFkxkOZM41xPCscqnU7/GxC', 1),
-(6, 'juan san pedro', 'juandelacruz@gmail.com', '$2y$10$f27OSMOB/ychFOaG3yLwkeFco/0S8tJLSnbqTX3dpW72d7dptMbh2', 1),
-(7, 'bong bong', 'bbm@gmail.com', '$2y$10$o2xqvB.YoI9Ut6TCq.6wVOLDnypV03tgSPQN7qQV/llE2W2cD1uUa', 1),
-(8, 'jessbert dela cruz', 'jessbert@gmail.com', '$2y$10$3y0EZNs.g4WWvH6ejp0b5O1BCCpAyyPrkCPmHWZY3MRqtC.SO4pXa', 1);
+INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_status`) VALUES
+(1, 'admin de la cruz', 'admin@gmail.com', '$2y$10$fF5ASoYxcMYvG5bawBNfkusgRzUQwgB5xXYbqJubQFYrn6uwl4.l2', 'admin', NULL, 1),
+(15, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$8aFvB1j42iN3RAjRRA9g3e/Z.f9qm1uaKWEKa3Y5I73GUY2.H/gUy', 'teacher', '[\"68f7840d267d0_492151840_3128831320602859_4159043562509539743_n.jpg\",\"68f7840d26a4f_494579798_693373853415594_8083316453582063649_n.jpg\",\"68f7840d26c47_494820713_532984179748342_8788347790273388241_n.png\"]', 0);
 
 --
 -- Indexes for dumped tables
@@ -338,7 +273,7 @@ ALTER TABLE `submitted_classwork`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- Constraints for dumped tables
