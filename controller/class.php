@@ -836,8 +836,6 @@ public function getRoomById($room_id)
 
 
 
-    
-    
     public function Login($email, $password)
 {
     $query = $this->conn->prepare("SELECT * FROM `user` WHERE `user_email` = ?");
@@ -849,26 +847,43 @@ public function getRoomById($room_id)
             $user = $result->fetch_assoc();
 
             if (password_verify($password, $user['user_password'])) {
-                // 🔍 Check if inactive
+
+                // ✅ Check user account status
                 if ($user['user_status'] == 0) {
                     $query->close();
                     return [
                         'success' => false,
-                        'message' => 'Your account is not active.'
+                        'message' => 'Your account is awaiting administrator approval.'
+                    ];
+                } elseif ($user['user_status'] == 2) {
+                    $query->close();
+                    return [
+                        'success' => false,
+                        'message' => 'Your account has been disabled. Please contact the administrator.'
+                    ];
+                } elseif ($user['user_status'] != 1) {
+                    $query->close();
+                    return [
+                        'success' => false,
+                        'message' => 'Invalid account status. Please contact support.'
                     ];
                 }
 
+                // ✅ Proceed with login if status is 1
                 if (session_status() == PHP_SESSION_NONE) {
                     session_start();
                 }
+
                 $_SESSION['user_id'] = $user['user_id'];
+                $_SESSION['user_type'] = $user['user_type']; 
 
                 $query->close();
                 return [
                     'success' => true,
                     'message' => 'Login successful.',
                     'data' => [
-                        'user_id' => $user['user_id']
+                        'user_id' => $user['user_id'],
+                        'user_type' => $user['user_type'] 
                     ]
                 ];
             } else {
@@ -884,6 +899,8 @@ public function getRoomById($room_id)
         return ['success' => false, 'message' => 'Database error during execution.'];
     }
 }
+
+
 
 
 
@@ -1170,6 +1187,93 @@ public function fetchAllClaimedCertificates($user_id, $room_id)
         'data' => $data
     ];
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+public function getDataAnalytics()
+{
+    $query = "
+        SELECT 
+            -- Total users
+            (SELECT COUNT(*) FROM user) AS total_users,
+
+            -- Active users
+            (SELECT COUNT(*) FROM user WHERE user_status = 1) AS active_users,
+
+            -- Users waiting for approval
+            (SELECT COUNT(*) FROM user WHERE user_status = 0) AS for_approval_users,
+
+            -- Disabled users
+            (SELECT COUNT(*) FROM user WHERE user_status = 2) AS disabled_users,
+
+            -- Total admins
+            (SELECT COUNT(*) FROM user WHERE user_type = 'admin') AS total_admins,
+
+            -- Total teachers
+            (SELECT COUNT(*) FROM user WHERE user_type = 'teacher') AS total_teachers,
+
+            -- Total students
+            (SELECT COUNT(*) FROM user WHERE user_type = 'student') AS total_students,
+
+            -- Total rooms
+            (SELECT COUNT(*) FROM room) AS total_rooms,
+
+            -- Total active rooms
+            (SELECT COUNT(*) FROM room WHERE room_status = 1) AS active_rooms,
+
+            -- Total meetings
+            (SELECT COUNT(*) FROM meeting) AS total_meetings,
+
+            -- Open meetings
+            (SELECT COUNT(*) FROM meeting WHERE meeting_status = 1) AS open_meetings,
+
+            -- Closed meetings
+            (SELECT COUNT(*) FROM meeting WHERE meeting_status = 0) AS closed_meetings,
+
+            -- Total classworks
+            (SELECT COUNT(*) FROM classwork) AS total_classworks,
+
+            -- Active classworks
+            (SELECT COUNT(*) FROM classwork WHERE classwork_status = 1) AS active_classworks,
+
+            -- Archived classworks
+            (SELECT COUNT(*) FROM classwork WHERE classwork_status = 0) AS archived_classworks,
+
+            -- Total submissions
+            (SELECT COUNT(*) FROM submitted_classwork WHERE sw_status = 1) AS total_submissions,
+
+            -- Not turned in
+            (SELECT COUNT(*) FROM submitted_classwork WHERE sw_status = 0) AS not_submitted,
+
+            -- Total claimed certificates
+            (SELECT COUNT(*) FROM claimed_certificate) AS total_claimed_certificates,
+
+            -- Total room memberships
+            (SELECT COUNT(*) FROM room_members) AS total_room_members,
+
+            -- Total meeting logs (attendance)
+            (SELECT COUNT(*) FROM meeting_logs) AS total_meeting_logs
+    ";
+
+    $result = $this->conn->query($query);
+
+    if ($result) {
+        return $result->fetch_assoc();
+    } else {
+        return false;
+    }
+}
+
 
 
 
