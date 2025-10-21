@@ -5,87 +5,91 @@ $(document).ready(function () {
     loadUsers(page);
 
     function loadUsers(filter) {
-        $.ajax({
-            url: "../controller/end-points/controller.php",
-            type: "POST",
-            data: { requestType: "fetchUsers", filter: filter },
-            dataType: "json",
-            success: function (response) {
-                if (response.success) {
-                    let html = `
-                        <div class="overflow-x-auto">
-                          <table class="min-w-full bg-[#1a1a1a] text-white border border-gray-700 rounded-md">
-                            <thead class="bg-[#FFD700] text-black">
-                              <tr>
-                                <th class="py-2 px-3 text-left">ID</th>
-                                <th class="py-2 px-3 text-left">Full Name</th>
-                                <th class="py-2 px-3 text-left">Email</th>
-                                <th class="py-2 px-3 text-left">Type</th>
-                                <th class="py-2 px-3 text-left">Status</th>
-                                <th class="py-2 px-3 text-center">Actions</th>
-                              </tr>
-                            </thead>
-                            <tbody>`;
+    $.ajax({
+        url: "../controller/end-points/controller.php",
+        type: "POST",
+        data: { requestType: "fetchUsers", filter: filter },
+        dataType: "json",
+        success: function (response) {
+            if (response.success) {
+                let html = `
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full bg-[#1a1a1a] text-white border border-gray-700 rounded-md">
+                        <thead class="bg-[#FFD700] text-black">
+                          <tr>
+                            <th class="py-2 px-3 text-left">ID</th>
+                            <th class="py-2 px-3 text-left">Full Name</th>
+                            <th class="py-2 px-3 text-left">Email</th>
+                            <th class="py-2 px-3 text-left">Type</th>
+                            <th class="py-2 px-3 text-left">Status</th>
+                            <th class="py-2 px-3 text-center">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>`;
 
-                    if (response.data.length === 0) {
-                        html += `<tr><td colspan="6" class="text-center py-4 text-gray-400">No users found.</td></tr>`;
-                    } else {
-                        response.data.forEach(u => {
-                            const statusText = 
-                                u.user_status == 0 ? "Pending" : 
-                                u.user_status == 1 ? "Active" : 
-                                "Disabled";
-
-                            const statusClass = 
-                                u.user_status == 0 ? "text-yellow-400" : 
-                                u.user_status == 1 ? "text-green-400" : 
-                                "text-red-400";
-
-                            const safeReq = encodeURIComponent(u.user_requirements);
-
-                            html += `
-                                <tr class="border-t border-gray-700 hover:bg-[#222] transition">
-                                  <td class="py-2 px-3">${u.user_id}</td>
-                                  <td class="py-2 px-3 capitalize">${u.user_fullname}</td>
-                                  <td class="py-2 px-3">${u.user_email}</td>
-                                  <td class="py-2 px-3 capitalize">${u.user_type}</td>
-                                  <td class="py-2 px-3 ${statusClass}">${statusText}</td>
-                                  <td class="py-2 px-3 text-center space-x-1">
-                                    <button class="cursor-pointer view-req-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded cursor-pointer" 
-                                      data-req="${safeReq}" data-name="${u.user_fullname}">
-                                      View Requirements
-                                    </button>
-                                    ${u.user_status == 0 ? `
-                                        <button class="cursor-pointer approve-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
-                                          Approve
-                                        </button>` 
-                                    : ""}
-                                    ${u.user_status == 1 ? `
-                                        <button class="cursor-pointer disable-btn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
-                                          Disable
-                                        </button>` 
-                                    : ""}
-                                    ${u.user_status == 2 ? `
-                                        <button class="cursor-pointer restore-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
-                                          Restore
-                                        </button>`
-                                    : ""}
-                                  </td>
-                                </tr>`;
-                        });
-                    }
-
-                    html += `</tbody></table></div>`;
-                    $(".user-table").html(html);
+                if (response.data.length === 0) {
+                    html += `<tr><td colspan="6" class="text-center py-4 text-gray-400">No users found.</td></tr>`;
                 } else {
-                    $(".user-table").html("<p class='text-gray-400'>Failed to load users.</p>");
+                    response.data.forEach(u => {
+                        const statusText = 
+                            u.user_status == 0 ? "Pending" : 
+                            u.user_status == 1 ? "Active" : 
+                            "Disabled";
+
+                        const statusClass = 
+                            u.user_status == 0 ? "text-yellow-400" : 
+                            u.user_status == 1 ? "text-green-400" : 
+                            "text-red-400";
+
+                        const safeReq = encodeURIComponent(u.user_requirements);
+
+                        html += `
+                            <tr class="border-t border-gray-700 hover:bg-[#222] transition">
+                              <td class="py-2 px-3">${u.user_id}</td>
+                              <td class="py-2 px-3 capitalize">${u.user_fullname}</td>
+                              <td class="py-2 px-3">${u.user_email}</td>
+                              <td class="py-2 px-3 capitalize">${u.user_type}</td>
+                              <td class="py-2 px-3 ${statusClass}">${statusText}</td>
+                              <td class="py-2 px-3 text-center space-x-1">
+                                <button class="cursor-pointer view-req-btn bg-yellow-600 hover:bg-yellow-700 text-white px-3 py-1 rounded cursor-pointer" 
+                                  data-req="${safeReq}" data-name="${u.user_fullname}">
+                                  View Requirements
+                                </button>
+                                ${u.user_status == 0 ? `
+                                    <button class="cursor-pointer approve-btn bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
+                                      Approve
+                                    </button>` 
+                                : ""}
+                                
+                                <!-- ✅ HIDE "Disable" BUTTON IF USER IS ADMIN -->
+                                ${u.user_status == 1 && u.user_type.toLowerCase() !== "admin" ? `
+                                    <button class="cursor-pointer disable-btn bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
+                                      Disable
+                                    </button>` 
+                                : ""}
+                                
+                                ${u.user_status == 2 ? `
+                                    <button class="cursor-pointer restore-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded cursor-pointer" data-id="${u.user_id}">
+                                      Restore
+                                    </button>`
+                                : ""}
+                              </td>
+                            </tr>`;
+                    });
                 }
-            },
-            error: function () {
-                $(".user-table").html("<p class='text-red-400'>Error connecting to the server.</p>");
+
+                html += `</tbody></table></div>`;
+                $(".user-table").html(html);
+            } else {
+                $(".user-table").html("<p class='text-gray-400'>Failed to load users.</p>");
             }
-        });
-    }
+        },
+        error: function () {
+            $(".user-table").html("<p class='text-red-400'>Error connecting to the server.</p>");
+        }
+    });
+}
+
 
 
 
