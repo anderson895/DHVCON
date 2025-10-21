@@ -27,7 +27,7 @@ if (isset($_SESSION['user_id'])) {
 
   <link href="../src/output.css" rel="stylesheet" />
   <link href="../src/alertifyconfig.css" rel="stylesheet" />
-  <link rel="icon" type="image/x-icon" href="../static/favicon.ico">
+  <link rel="icon" type="image/x-icon" href="../static/image/favicon.ico">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.css" crossorigin="anonymous" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/alertify.min.js" crossorigin="anonymous"></script>
