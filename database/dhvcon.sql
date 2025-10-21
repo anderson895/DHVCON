@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 21, 2025 at 03:01 PM
+-- Generation Time: Oct 21, 2025 at 05:35 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -147,7 +147,7 @@ CREATE TABLE `user` (
   `user_password` varchar(255) NOT NULL,
   `user_type` enum('admin','teacher','student','') NOT NULL,
   `user_requirements` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`user_requirements`)),
-  `user_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=not-active,1=active'
+  `user_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=for-approval,1=active,2=disabled'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -155,8 +155,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_status`) VALUES
-(1, 'admin de la cruz', 'admin@gmail.com', '$2y$10$fF5ASoYxcMYvG5bawBNfkusgRzUQwgB5xXYbqJubQFYrn6uwl4.l2', 'admin', NULL, 1),
-(15, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$8aFvB1j42iN3RAjRRA9g3e/Z.f9qm1uaKWEKa3Y5I73GUY2.H/gUy', 'teacher', '[\"68f7840d267d0_492151840_3128831320602859_4159043562509539743_n.jpg\",\"68f7840d26a4f_494579798_693373853415594_8083316453582063649_n.jpg\",\"68f7840d26c47_494820713_532984179748342_8788347790273388241_n.png\"]', 0);
+(1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, 1),
+(15, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$8aFvB1j42iN3RAjRRA9g3e/Z.f9qm1uaKWEKa3Y5I73GUY2.H/gUy', 'teacher', '[\"68f7840d267d0_492151840_3128831320602859_4159043562509539743_n.jpg\",\"68f7840d26a4f_494579798_693373853415594_8083316453582063649_n.jpg\",\"68f7840d26c47_494820713_532984179748342_8788347790273388241_n.png\"]', 0),
+(16, 'Joshua Anderson Padilla', 'sanjosekylie@yahoo.com', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', '[\"68f7a4cd3bd06_Exercise-04.pdf\",\"68f7a4cd3bfe8_istockphoto-1390249924-2048x2048.jpg\",\"68f7a4cd3c279_NC.pdf\"]', 0);
 
 --
 -- Indexes for dumped tables
@@ -273,7 +274,7 @@ ALTER TABLE `submitted_classwork`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- Constraints for dumped tables

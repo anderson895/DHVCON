@@ -103,7 +103,7 @@ if (isset($_SESSION['user_id'])) {
 
       <div id="profileDropdown" class="ml-8 mt-2 hidden space-y-2">
         <a href="profile" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">My Profile</a>
-        <a href="change_password" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Change Password</a>
+        <!-- <a href="change_password" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Change Password</a> -->
         <a href="logout" class="block hover:text-red-500 hover:bg-white/10 px-4 py-2 rounded-md">Logout</a>
       </div>
     </div>
