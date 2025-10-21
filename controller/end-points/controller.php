@@ -207,6 +207,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['status'=> $updated ? 'success' : 'error']);
             exit;
             
+        }else if($_POST['requestType'] === 'fetchUsers') {
+
+            $filter = $_POST['filter'] ?? null;
+            $data = $db->getUsers($filter);
+            echo json_encode(["success" => true, "data" => $data]);
+           
+            
+        }else if($_POST['requestType'] === 'updateStatus') {
+
+            $id = intval($_POST['id']);
+            $status = intval($_POST['status']);
+            $ok = $db->updateUserStatus($id, $status);
+            echo json_encode(["success" => $ok]);
+           
+            
+        }else if($_POST['requestType'] === 'updateProfile') {
+            
+            $user_id = $_SESSION['user_id'];
+            $fullname = trim($_POST['fullname']);
+            $email = trim($_POST['email']);
+
+            $res = $db->updateProfile($user_id, $fullname, $email);
+            echo json_encode(['success' => $res]);
+           
+            
+        }else if($_POST['requestType'] === 'updatePassword') {
+
+            $user_id = $_SESSION['user_id'];
+            $old_pass = $_POST['old_password'];
+            $new_pass = $_POST['new_password'];
+
+            $res = $db->updatePassword($user_id, $old_pass, $new_pass);
+            echo json_encode(['success' => $res]);
+           
+            
         }else if ($_POST['requestType'] == 'Login') {
                     $email = $_POST['email'];
                     $password = $_POST['password'];
@@ -214,7 +249,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                     if ($loginResult['success']) {
 
-                        // ✅ Include user_type and user_id if available
                         echo json_encode([
                             'status' => 'success',
                             'message' => $loginResult['message'],
@@ -644,6 +678,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
         }else if ($_GET['requestType'] == 'dashboard_analytics') {
+         
+              $data = $db->getDataAnalytics();
+
+                if ($data) {
+                    echo json_encode([
+                        'success' => true,
+                        'data' => $data
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'message' => 'Failed to retrieve analytics'
+                    ]);
+                }
+
+        }else if ($_GET['requestType'] == 'updateStatus') {
          
               $data = $db->getDataAnalytics();
 

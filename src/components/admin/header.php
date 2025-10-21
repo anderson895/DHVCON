@@ -69,17 +69,17 @@ if (isset($_SESSION['user_id'])) {
         </a>
 
         <!-- Deals Dropdown -->
-        <button id="toggleDeals" class="cursor-pointer flex justify-between items-center w-full text-[#CCCCCC] hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
+        <button id="toggleUsers" class="cursor-pointer flex justify-between items-center w-full text-[#CCCCCC] hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
           <div class="flex items-center space-x-3">
             <span class="material-icons">sell</span><span>Manage Users</span>
           </div>
-          <span id="deals_dropdownIcon" class="material-icons transition-transform">expand_more</span>
+          <span id="user_dropdownIcon" class="material-icons transition-transform">expand_more</span>
         </button>
         <div id="dealsDropdown" class="ml-8 hidden space-y-2">
-          <a href="pendingPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Pending</a>
-          <a href="pendingPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">All User</a>
-          <a href="teacherPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Teacher</a>
-          <a href="studentPage" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Student</a>
+          <a href="manageuser?pages=pending&&user_type=all" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Pending</a>
+          <a href="manageuser?pages=all&&user_type=all" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">All User</a>
+          <a href="manageuser?pages=teacher&&user_type=teacher" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Teacher</a>
+          <a href="manageuser?pages=student&&user_type=student" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Student</a>
         </div>
 
         
@@ -103,7 +103,7 @@ if (isset($_SESSION['user_id'])) {
 
       <div id="profileDropdown" class="ml-8 mt-2 hidden space-y-2">
         <a href="profile" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">My Profile</a>
-        <a href="change_password" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Change Password</a>
+        <!-- <a href="change_password" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Change Password</a> -->
         <a href="logout" class="block hover:text-red-500 hover:bg-white/10 px-4 py-2 rounded-md">Logout</a>
       </div>
     </div>
@@ -131,8 +131,7 @@ if (isset($_SESSION['user_id'])) {
   };
 
   toggleDropdown("toggleProfile", "profileDropdown", "profile_dropdownIcon");
-  toggleDropdown("toggleDeals", "dealsDropdown", "deals_dropdownIcon");
-  toggleDropdown("toggleReservation", "reserveDropdown", "reserve_dropdownIcon");
+  toggleDropdown("toggleUsers", "dealsDropdown", "user_dropdownIcon");
 
   // Mobile Sidebar
   const menuButton = document.getElementById('menuButton');
@@ -150,15 +149,25 @@ if (isset($_SESSION['user_id'])) {
   });
 
   // Highlight Active Link
-  const links = document.querySelectorAll('.nav-link');
-  const currentPath = window.location.pathname;
-  links.forEach(link => {
-    const linkHref = link.getAttribute('href');
-    if (currentPath.includes(linkHref)) {
-      link.classList.add('text-[#FFD700]', 'bg-white/10');
+  const currentURL = window.location.href; // full URL including query
+  const navLinks = document.querySelectorAll('nav a');
+
+  navLinks.forEach(link => {
+    const href = link.getAttribute('href');
+    if (currentURL.includes(href)) {
+      link.classList.add('text-[#FFD700]', 'bg-white/10', 'font-semibold');
+
+      // If this link is inside a dropdown, open the dropdown automatically
+      const dropdown = link.closest('#dealsDropdown');
+      if (dropdown) {
+        dropdown.style.display = 'block'; // make dropdown visible
+        const icon = document.getElementById('user_dropdownIcon');
+        if (icon) icon.textContent = 'expand_less';
+      }
     }
   });
 </script>
+
 
 </body>
 </html>

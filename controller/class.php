@@ -13,6 +13,76 @@ class global_class extends db_connect
         $this->connect();
     }
 
+
+
+
+     public function getUsers($filter = null) {
+        $sql = "SELECT user_id, user_fullname, user_email, user_type, user_status,user_requirements FROM user";
+        $conditions = [];
+
+        if ($filter === 'pending') {
+            $conditions[] = "user_status = 0";
+        } elseif ($filter === 'teacher') {
+            $conditions[] = "user_type = 'teacher'";
+        } elseif ($filter === 'student') {
+            $conditions[] = "user_type = 'student'";
+        }
+
+        if (!empty($conditions)) {
+            $sql .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $result = $this->conn->query($sql);
+        $data = [];
+
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+        }
+
+        return $data;
+    }
+
+
+    public function updateUserStatus($id, $status) {
+        $stmt = $this->conn->prepare("UPDATE user SET user_status = ? WHERE user_id = ?");
+        $stmt->bind_param("ii", $status, $id);
+        $ok = $stmt->execute();
+        $stmt->close();
+        return $ok;
+    }
+
+
+
+
+    public function updateProfile($id, $fullname, $email) {
+
+        $sql = "UPDATE user SET user_fullname='$fullname', user_email='$email' WHERE user_id=$id";
+        return $this->conn->query($sql) ? true : false;
+    }
+
+    public function updatePassword($id, $old_pass, $new_pass) {
+        $old_pass = trim($old_pass);
+        $new_pass = trim($new_pass);
+
+        $sql = "SELECT user_password FROM user WHERE user_id=$id LIMIT 1";
+        $result = $this->conn->query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if (password_verify($old_pass, $row['user_password'])) {
+                $newHash = password_hash($new_pass, PASSWORD_BCRYPT);
+                $update = "UPDATE user SET user_password='$newHash' WHERE user_id=$id";
+                return $this->conn->query($update) ? true : false;
+            }
+        }
+        return false;
+    }
+
+    
+
+
     public function saveFiles(int $user_id, int $classwork_id, array $uploadedFiles): array 
     {
         // Fetch existing files
@@ -24,7 +94,7 @@ class global_class extends db_connect
         $res = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
-        // If record exists, get existing files; otherwise empty array
+
         $existing = ($res && !empty($res['sw_files'])) ? json_decode($res['sw_files'], true) : [];
 
         $merged = array_merge($existing, $uploadedFiles);
