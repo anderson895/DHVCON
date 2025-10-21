@@ -1,5 +1,5 @@
 <?php 
-include "../src/components/admin/header.php";
+include "../src/components/home/header.php";
 
 if (isset($On_Session) && !empty($On_Session)) {
   $User = $On_Session[0];
@@ -12,9 +12,8 @@ $statusText = $User['user_status'] == 1 ? "Active" : ($User['user_status'] == 0 
 $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_status'] == 0 ? "text-yellow-400" : "text-red-400");
 ?>
 
-<div class="flex justify-between items-center bg-[#0D0D0D] p-4 mb-6 rounded-md shadow-lg">
-  <h2 class="text-xl font-bold text-[#FFD700] capitalize tracking-wide">My Profile</h2>
-</div>
+<main class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12">
+
 
 <!-- Profile Container -->
 <div class="bg-[#1a1a1a] p-6 rounded-lg shadow-md border border-gray-700 max-w-2xl mx-auto text-white">
@@ -50,6 +49,7 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
   </div>
 </div>
 
+</main>
 
 <!-- ✨ Edit Profile Modal -->
 <div id="editProfileModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
@@ -110,7 +110,7 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
   </div>
 </div>
 
-<?php include "../src/components/admin/footer.php"; ?>
+<?php include "../src/components/home/footer.php"; ?>
 
 
 
