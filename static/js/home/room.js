@@ -750,16 +750,22 @@ function fetchAllCreatedWorks(roomId, room_name) {
               <td class="px-4 py-3 text-center">
                 <div class="flex justify-center items-center gap-2">
                   <button 
-                    class="cursor-pointer edit-btn bg-blue-500 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
-                    data-id="${work.classwork_id}">
-                    Edit
-                  </button>
+                  type="button"
+                  class="cursor-pointer edit-btn bg-blue-500 hover:bg-blue-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                  data-id="${work.classwork_id}">
+                  Edit
+                </button>
+
                   <a 
                     href="view_response?classwork_id=${work.classwork_id}&&room_name=${room_name}" 
                     class="view-response-btn cursor-pointer bg-gray-600 hover:bg-gray-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm">
                     Response
                   </a>
-                 
+                  <button 
+                    class="delete-btn bg-red-500 cursor-pointer hover:bg-red-700 text-white text-sm px-3 py-1.5 rounded-lg transition-colors duration-200 shadow-sm" 
+                    data-id="${work.classwork_id}">
+                    Delete
+                  </button>
                 </div>
               </td>
             </tr>
@@ -877,13 +883,6 @@ function renderMembers(members) {
 
 // Initial fetch
 fetchRoomsDetails();
-
-// Refresh every 5 seconds (5000 ms)
-// setInterval(fetchRoomsDetails, 5000);
-
-
-  
-
 });
 
 
@@ -900,15 +899,65 @@ fetchRoomsDetails();
 
 $(document).ready(function () {
   
-  $("#frmCreateClasswork").submit(function (e) {
+  // =========================
+// 🔹 FETCH SINGLE FOR EDIT
+// =========================
+$(document).on('click', '.edit-btn', function () {
+    const classwork_id = $(this).data('id');
+
+    $('#spinner').show();
+
+    $.ajax({
+        type: 'GET',
+        url: '../controller/end-points/controller.php',
+        data: { requestType: 'GetClassworkById', classwork_id: classwork_id },
+        dataType: 'json',
+        success: function (response) {
+            $('#spinner').hide();
+
+            if (response.status === 'success') {
+                const work = response.data;
+
+                // Populate form
+                $('#title').val(work.classwork_title);
+                $('#instructions').val(work.classwork_instruction);
+                $('#btnCreateWork')
+                    .text('Update')
+                    .data('mode', 'edit')
+                    .data('id', work.classwork_id);
+
+                $('html, body').animate({ scrollTop: $('#frmCreateClasswork').offset().top }, 300);
+            } else {
+                alertify.error(response.message);
+            }
+        },
+        error: function () {
+            $('#spinner').hide();
+            alertify.error('Failed to load classwork data.');
+        }
+    });
+});
+
+
+// =========================
+// 🔹 UPDATE CLASSWORK
+// =========================
+$("#frmCreateClasswork").off('submit').on('submit', function (e) {
     e.preventDefault();
 
     $('#spinner').show();
     $('#btnCreateWork').prop('disabled', true);
 
     var formData = new FormData(this);
-    formData.append('requestType', 'CreateClasswork');
-    formData.append('room_id', room_id); 
+    const mode = $('#btnCreateWork').data('mode');
+
+    if (mode === 'edit') {
+        formData.append('requestType', 'UpdateClasswork');
+        formData.append('classwork_id', $('#btnCreateWork').data('id'));
+    } else {
+        formData.append('requestType', 'CreateClasswork');
+        formData.append('room_id', room_id);
+    }
 
     $.ajax({
         type: "POST",
@@ -918,21 +967,81 @@ $(document).ready(function () {
         contentType: false,
         dataType: 'json',
         success: function (response) {
-            console.log(response);
+            $('#spinner').hide();
+            $('#btnCreateWork').prop('disabled', false);
 
             if (response.status === "success") {
-                alertify.success('Created Successfully');
-                setTimeout(function () {
-                    location.reload();
-                }, 1000);
+                alertify.success(mode === 'edit' ? 'Updated Successfully' : 'Created Successfully');
+                setTimeout(() => location.reload(), 1000);
             } else {
-                $('#spinner').hide();
-                $('#btnCreateWork').prop('disabled', false);
                 alertify.error(response.message);
             }
+        },
+        error: function () {
+            $('#spinner').hide();
+            $('#btnCreateWork').prop('disabled', false);
+            alertify.error('Something went wrong.');
         }
     });
 });
+
+
+// =========================
+// 🔹 DELETE CLASSWORK
+// =========================
+$(document).on('click', '.delete-btn', function () {
+    const id = $(this).data('id');
+
+    Swal.fire({
+        title: 'Delete Classwork',
+        text: 'Are you sure you want to delete this classwork?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $('#spinner').show();
+
+            $.ajax({
+                type: 'POST',
+                url: '../controller/end-points/controller.php',
+                data: { requestType: 'DeleteClasswork', classwork_id: id },
+                dataType: 'json',
+                success: function (response) {
+                    $('#spinner').hide();
+
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Classwork has been deleted.',
+                            timer: 1000,
+                            showConfirmButton: false
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function () {
+                    $('#spinner').hide();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to delete classwork.'
+                    });
+                }
+            });
+        }
+    });
+});
+
 
 
 

@@ -27,21 +27,7 @@
               </tr>
             </thead>
             <tbody id="classworkTableBody" class="divide-y divide-[#3a3b3f] ">
-              <!-- Dynamically inserted rows -->
-              <!-- Example static row -->
-              <!--
-              <tr class="hover:bg-[#3a3b3f]/50 transition">
-                <td class="px-4 py-3 text-sm text-gray-300">1</td>
-                <td class="px-4 py-3 text-sm text-gray-300">Research Paper</td>
-                <td class="px-4 py-3 text-sm text-gray-400 line-clamp-1">Write a 3-page report...</td>
-                <td class="px-4 py-3 text-sm text-blue-400 underline cursor-pointer">document.pdf</td>
-                <td class="px-4 py-3 text-sm text-gray-400">Oct 10, 2025</td>
-                <td class="px-4 py-3 text-center">
-                  <button class="text-blue-500 hover:underline mr-2 edit-btn">Edit</button>
-                  <button class="text-red-500 hover:underline delete-btn">Delete</button>
-                </td>
-              </tr>
-              -->
+             
             </tbody>
           </table>
         </div>

@@ -380,7 +380,71 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             exit;
             
-        }else{
+        }
+
+
+            // =========================
+            // 🔹 Update Classwork
+            // =========================
+            else if ($_POST['requestType'] == 'UpdateClasswork') {
+                $classwork_id = $_POST['classwork_id'];
+                $title = $_POST['title'];
+                $instructions = $_POST['instructions'];
+
+                $file_upload = $_FILES['file_upload'];
+                $uploadDir = '../../static/upload/';
+                $fileName = null;
+
+                if (isset($file_upload) && $file_upload['error'] === UPLOAD_ERR_OK) {
+                    $fileExtension = pathinfo($file_upload['name'], PATHINFO_EXTENSION);
+                    $fileName = uniqid('classwork_', true) . '.' . strtolower($fileExtension);
+                    $filePath = $uploadDir . $fileName;
+
+                    if (!move_uploaded_file($file_upload['tmp_name'], $filePath)) {
+                        echo json_encode([
+                            'status' => 500,
+                            'message' => 'Error uploading file.'
+                        ]);
+                        exit;
+                    }
+                }
+
+                $updated = $db->UpdateClasswork($classwork_id, $title, $instructions, $fileName);
+
+                if ($updated) {
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => 'Classwork updated successfully.'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Failed to update classwork.'
+                    ]);
+                }
+            }
+
+
+            // =========================
+            // 🔹 Delete Classwork
+            // =========================
+            else if ($_POST['requestType'] == 'DeleteClasswork') {
+                $classwork_id = $_POST['classwork_id'];
+
+                $deleted = $db->DeleteClasswork($classwork_id);
+
+                if ($deleted) {
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => 'Classwork deleted successfully.'
+                    ]);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Failed to delete classwork.'
+                    ]);
+                }
+            }else{
             echo "404";
         }
     }else {
@@ -709,7 +773,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                 }
 
-        }else{
+        }else if ($_GET['requestType'] == 'GetClassworkById') {
+                $classwork_id = $_GET['classwork_id'];
+                $result = $db->GetClassworkById($classwork_id);
+
+                if ($result) {
+                    echo json_encode([
+                        'status' => 'success',
+                        'data' => $result
+                    ]);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => 'Classwork not found.'
+                    ]);
+                }
+            }else{
             echo "404";
         }
     }else {
