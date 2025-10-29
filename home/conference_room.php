@@ -79,16 +79,20 @@ $roomcode = $_GET['code'];
     </main>
 
 
-    <script>
+   <script>
 const chatToggle = document.getElementById('chat-toggle');
 const chatIcon = document.getElementById('chat-toggle-icon');
 const chatMessagesWrapper = document.getElementById('chat-messages-wrapper');
+const chatInput = document.getElementById('chat-input');
+const chatForm = document.getElementById('chat-form');
 
 let isCollapsed = window.innerWidth < 640;
+let inputFocused = false;
+let submitting = false;
 
 // Initialize chat state
 function initChat() {
-    if (isCollapsed) {
+    if (isCollapsed && !inputFocused) {
         chatMessagesWrapper.style.maxHeight = '0';
         chatIcon.textContent = 'expand_more';
     } else {
@@ -98,7 +102,7 @@ function initChat() {
 }
 initChat();
 
-// Toggle only the messages container
+// Toggle messages container manually
 chatToggle.addEventListener('click', () => {
     if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
         chatMessagesWrapper.style.maxHeight = '60vh';
@@ -107,6 +111,36 @@ chatToggle.addEventListener('click', () => {
         chatMessagesWrapper.style.maxHeight = '0';
         chatIcon.textContent = 'expand_more';
     }
+});
+
+// Keep chat expanded while typing
+chatInput.addEventListener('focus', () => {
+    inputFocused = true;
+    chatMessagesWrapper.style.maxHeight = '60vh';
+    chatIcon.textContent = 'expand_less';
+});
+
+chatInput.addEventListener('blur', () => {
+    if (!submitting) {  // only collapse if not submitting
+        inputFocused = false;
+        if (isCollapsed) {
+            chatMessagesWrapper.style.maxHeight = '0';
+            chatIcon.textContent = 'expand_more';
+        }
+    }
+});
+
+// Prevent collapse when submitting
+chatForm.addEventListener('submit', (e) => {
+    submitting = true;
+    inputFocused = true;  // keep expanded
+    chatMessagesWrapper.style.maxHeight = '60vh';
+    chatIcon.textContent = 'expand_less';
+    
+    // allow some delay before resetting
+    setTimeout(() => {
+        submitting = false;
+    }, 100); // adjust if needed
 });
 
 // Update on resize
