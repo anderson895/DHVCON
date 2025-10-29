@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agora Video Meeting with Approval</title>
+<title>Agora Video Meeting with Approval & Remove</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+
+
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-2 sm:p-4">
 
@@ -48,7 +50,7 @@ let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
 let localTracks = { videoTrack: null, audioTrack: null };
 let localPlayer;
 let isCreator = false;
-let approvalRequests = []; // { id: uid, name: 'User' } in real app use server or RTM
+let approvalRequests = [];
 
 const createBtn = document.getElementById('createMeeting');
 const joinBtn = document.getElementById('joinMeeting');
@@ -66,7 +68,7 @@ function setStatus(message, type = '') {
   else statusBox.className = "w-full max-w-xl p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center";
 }
 
-// Show approval requests
+// Pending requests UI
 function updateRequestsUI() {
   requestsList.innerHTML = '';
   if (approvalRequests.length === 0) {
@@ -88,16 +90,14 @@ function updateRequestsUI() {
   });
 }
 
-// Approve join request
 window.approve = async (index) => {
   const req = approvalRequests[index];
   approvalRequests.splice(index,1);
   updateRequestsUI();
   setStatus(`✅ Approved ${req.name}, joining meeting...`, 'success');
-  await joinMeeting(roomInput.value); // approved user joins
+  await joinMeeting(roomInput.value);
 }
 
-// Reject join request
 window.reject = (index) => {
   const req = approvalRequests[index];
   approvalRequests.splice(index,1);
@@ -105,7 +105,7 @@ window.reject = (index) => {
   setStatus(`❌ Rejected ${req.name}`, 'error');
 }
 
-// Function to join meeting
+// Join Meeting function
 async function joinMeeting(roomCode) {
   try {
     setStatus("Requesting camera & microphone permission...");
@@ -118,9 +118,19 @@ async function joinMeeting(roomCode) {
       if (!player) {
         player = document.createElement('div');
         player.id = 'player-' + user.uid;
-        player.className = "aspect-video rounded-md overflow-hidden";
+        player.className = "aspect-video rounded-md overflow-hidden relative"; // relative for button
         videoContainer.appendChild(player);
+
+        // Add Remove Member button if host
+        if (isCreator) {
+          const removeBtn = document.createElement('button');
+          removeBtn.textContent = "Remove";
+          removeBtn.className = "absolute top-2 left-2 bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded z-10";
+          removeBtn.onclick = () => removeMember(user.uid);
+          player.appendChild(removeBtn);
+        }
       }
+
       if (mediaType === 'video') user.videoTrack.play(player);
       if (mediaType === 'audio') user.audioTrack.play();
     });
@@ -140,7 +150,7 @@ async function joinMeeting(roomCode) {
     if (!localPlayer) {
       localPlayer = document.createElement('div');
       localPlayer.id = 'local-player';
-      localPlayer.className = "aspect-video rounded-md overflow-hidden";
+      localPlayer.className = "aspect-video rounded-md overflow-hidden relative";
       videoContainer.appendChild(localPlayer);
     }
     await localTracks.videoTrack.play(localPlayer);
@@ -161,7 +171,27 @@ async function joinMeeting(roomCode) {
   }
 }
 
-// Create Meeting (auto-join & host)
+// Remove member function (simulated)
+async function removeMember(uid) {
+  const player = document.getElementById('player-' + uid);
+  if (player) player.remove();
+  setStatus(`⚠️ Member ${uid} was removed by host`, 'error');
+
+  try {
+    const user = client.remoteUsers[uid];
+    if(user) {
+      user.audioTrack?.stop();
+      user.videoTrack?.stop();
+      user.videoTrack?.close();
+    }
+  } catch(err) {
+    console.warn("Failed to stop tracks:", err);
+  }
+
+  // In real implementation, send RTM message to user to leave meeting
+}
+
+// Create Meeting
 createBtn.onclick = async () => {
   isCreator = true;
   const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -176,10 +206,8 @@ joinBtn.onclick = () => {
   if (!roomCode) return setStatus("⚠️ Enter a room code first!", "error");
 
   if (isCreator) {
-    // Creator joins directly
     joinMeeting(roomCode);
   } else {
-    // Non-creator sends request
     const name = prompt("Enter your name to request join:");
     if(!name) return;
     approvalRequests.push({ name });

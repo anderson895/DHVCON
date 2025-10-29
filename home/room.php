@@ -98,8 +98,8 @@ include "../src/components/home/footer.php";
 
       
       <div>
-        <label class="block mb-1 text-sm">Meeting Link</label>
-        <input type="url" name="meeting_link" placeholder="https://meet.google.com/xyz-abc"
+        <label class="block mb-1 text-sm">Meeting Code</label>
+        <input type="text" name="meeting_link" placeholder=""
                class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
       </div>
 
