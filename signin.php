@@ -53,9 +53,9 @@
       </div>
 
       <!-- Password Field -->
-      <div>
+     <div>
         <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
+        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition relative">
           <span class="material-icons text-gray-400 mr-3">lock</span>
           <input 
             type="password" 
@@ -65,8 +65,12 @@
             placeholder="Enter your password" 
             required
           >
+          <span id="togglePassword" class="material-icons text-gray-400 cursor-pointer ml-3">
+            visibility
+          </span>
         </div>
       </div>
+
 
       <!-- Submit Button -->
       <button 
@@ -91,4 +95,19 @@
 <?php 
   include "src/components/footer.php";
 ?>
+
+
+
+<script>
+  const passwordInput = document.getElementById('password');
+  const togglePassword = document.getElementById('togglePassword');
+
+  togglePassword.addEventListener('click', () => {
+    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+
+    // Toggle icon
+    togglePassword.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+  });
+</script>
 <script src="static/js/signin.js"></script>

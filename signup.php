@@ -79,10 +79,10 @@
     </div>
 
 
-      <!-- Password -->
+            <!-- Password -->
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
+        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition relative">
           <span class="material-icons text-gray-400 mr-3">lock</span>
           <input 
             type="password" 
@@ -92,13 +92,16 @@
             placeholder="Create a password" 
             required
           >
+          <span class="material-icons text-gray-400 cursor-pointer ml-3 toggle-password" data-target="password">
+            visibility
+          </span>
         </div>
       </div>
 
       <!-- Confirm Password -->
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
+        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition relative">
           <span class="material-icons text-gray-400 mr-3">lock_reset</span>
           <input 
             type="password" 
@@ -108,8 +111,13 @@
             placeholder="Re-enter password" 
             required
           >
+          <span class="material-icons text-gray-400 cursor-pointer ml-3 toggle-password" data-target="confirm_password">
+            visibility
+          </span>
         </div>
       </div>
+
+    
 
       <!-- File Upload -->
       <div>
@@ -148,5 +156,20 @@
 <?php 
   include "src/components/footer.php";
 ?>
+
+
+
+<script>
+     // Toggle password visibility for all fields with .toggle-password
+        document.querySelectorAll('.toggle-password').forEach(icon => {
+          icon.addEventListener('click', () => {
+            const targetId = icon.getAttribute('data-target');
+            const input = document.getElementById(targetId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            icon.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+          });
+        });
+  </script>
 
 <script src="static/js/signup.js"></script>
