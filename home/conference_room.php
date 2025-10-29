@@ -36,34 +36,78 @@ $roomcode = $_GET['code'];
     </div>
 
 
-    <!-- Main Content: Video + Chat -->
-    <div class="flex flex-1 gap-4">
-
+        <!-- Main Content: Video + Chat -->
+    <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
+        
         <!-- Video Section -->
         <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <!-- Video players will appear here -->
         </div>
 
-        <!-- Chat Section -->
-        <div class="w-80 bg-[#2b2d31] rounded-md flex flex-col shadow-lg border border-gray-700">
-            <div class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold">
-                Chat
-            </div>
-            <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
-                <!-- Messages will appear here -->
-            </div>
-            <form id="chat-form" class="flex p-2 border-t border-gray-600">
-                <input type="text" id="chat-input" placeholder="Type a message..." 
-                    class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" 
-                    class="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-                    Send
-                </button>
-            </form>
-        </div>
+                    <!-- Chat Section -->
+                        <!-- Chat Section -->
+            <div id="chat-section" class="fixed bottom-0 right-4 w-full md:w-80 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-transform duration-300 transform translate-y-full md:translate-y-0">
 
+                <!-- Chat Header with toggle button -->
+                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
+                    <span>Chat</span>
+                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">
+                        expand_less
+                    </span>
+                </div>
+
+                <!-- Chat content -->
+                <div id="chat-content" class="flex flex-col max-h-96 overflow-hidden transition-all duration-300">
+                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
+                        <!-- Messages will appear here -->
+                    </div>
+                    <form id="chat-form" class="flex p-2 border-t border-gray-600">
+                        <input type="text" id="chat-input" placeholder="Type a message..." 
+                            class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
+                            Send
+                        </button>
+                    </form>
+                </div>
+            </div>
     </div>
+
 </main>
+
+<script>
+const chatToggle = document.getElementById('chat-toggle');
+const chatSection = document.getElementById('chat-section');
+const chatIcon = document.getElementById('chat-toggle-icon');
+const chatContent = document.getElementById('chat-content');
+
+// Initial state
+let isCollapsed = window.innerWidth < 768;
+if (isCollapsed) {
+    chatSection.classList.add('translate-y-full'); // hide chat
+    chatIcon.textContent = 'expand_less';
+}
+
+// Toggle chat
+chatToggle.addEventListener('click', () => {
+    if (isCollapsed) {
+        // Expand chat
+        chatSection.classList.remove('translate-y-full');
+        chatContent.style.maxHeight = '24rem'; // Tailwind h-96
+        chatIcon.textContent = 'expand_more';
+        isCollapsed = false;
+    } else {
+        // Collapse chat
+        chatSection.classList.add('translate-y-full');
+        chatContent.style.maxHeight = '0';
+        chatIcon.textContent = 'expand_less';
+        isCollapsed = true;
+    }
+});
+</script>
+
+
+
+
 
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
 <script>
@@ -133,19 +177,60 @@ async function joinMeeting(code) {
 }
 
 // Toggle Cam
+// Toggle Cam with default user icon
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
     if (!localTracks.videoTrack) return;
     const icon = document.getElementById('iconCam');
     const text = document.getElementById('textCam');
 
     if (localTracks.videoTrack.enabled) {
+        // Turn off camera
         localTracks.videoTrack.setEnabled(false);
         icon.textContent = 'videocam_off';
         text.textContent = 'Turn On Cam';
+
+            // Show default user icon (fills and centers in video container)
+        if (!document.getElementById('default-user-icon')) {
+                const defaultIcon = document.createElement('div');
+                defaultIcon.id = 'default-user-icon';
+
+                // Make it cover the entire video player
+                defaultIcon.style.position = 'absolute';
+                defaultIcon.style.top = '0';
+                defaultIcon.style.left = '0';
+                defaultIcon.style.width = '100%';
+                defaultIcon.style.height = '100%';
+                defaultIcon.style.backgroundColor = 'black';
+                defaultIcon.style.display = 'flex';
+                defaultIcon.style.alignItems = 'center';
+                defaultIcon.style.justifyContent = 'center';
+                defaultIcon.style.userSelect = 'none';
+
+                // Use a block span that scales dynamically
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'material-icons';
+                iconSpan.textContent = 'account_circle';
+                iconSpan.style.fontSize = '8vw';  // slightly smaller
+                iconSpan.style.lineHeight = '1';
+                iconSpan.style.display = 'block';
+                iconSpan.style.color = '#d1d5db';  // gray-300
+
+                defaultIcon.appendChild(iconSpan);
+                localPlayer.appendChild(defaultIcon);
+            }
+
+
+
+
     } else {
+        // Turn on camera
         localTracks.videoTrack.setEnabled(true);
         icon.textContent = 'videocam';
         text.textContent = 'Turn Off Cam';
+
+        // Remove default icon
+        const defaultIcon = document.getElementById('default-user-icon');
+        if (defaultIcon) defaultIcon.remove();
     }
 });
 
