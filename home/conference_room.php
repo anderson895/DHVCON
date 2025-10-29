@@ -3,108 +3,122 @@ include "../src/components/home/header.php";
 $roomcode = $_GET['code']; 
 ?>
 
-<main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
+    <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
 
-    <!-- Header -->
-    <div class="flex justify-between items-center px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700">
-        <h1 class="text-xl text-gray-100 font-semibold">Conference Room</h1>
-        <div class="flex items-center space-x-4">
-            <span class="text-gray-400">Room Code: <strong class="text-gray-100"><?= $roomcode ?></strong></span>
-            <button id="btnLeaveRoom" 
-                class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white order-1 sm:order-2 mb-2 sm:mb-0">
-                <span class="material-icons">exit_to_app</span>
-                <span class="hidden sm:inline">Leave Room</span>
+        <!-- Header -->
+        <div class="flex justify-between items-center px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700">
+            <h1 class="text-xl text-gray-100 font-semibold">Conference Room</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-400">Room Code: <strong class="text-gray-100"><?= $roomcode ?></strong></span>
+                <button id="btnLeaveRoom" 
+                    class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white order-1 sm:order-2 mb-2 sm:mb-0">
+                    <span class="material-icons">exit_to_app</span>
+                    <span class="hidden sm:inline">Leave Room</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Status -->
+        <div id="status" class="w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center">
+            Ready to join
+        </div>
+
+        <!-- Controls: Cam / Mic -->
+        <div class="flex gap-4 mb-4">
+            <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+                <span id="iconCam" class="material-icons">videocam</span>
+                <span id="textCam">Turn Off Cam</span>
+            </button>
+            <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+                <span id="iconMic" class="material-icons">mic</span>
+                <span id="textMic">Turn Off Mic</span>
             </button>
         </div>
-    </div>
-
-    <!-- Status -->
-    <div id="status" class="w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center">
-        Ready to join
-    </div>
-
-    <!-- Controls: Cam / Mic -->
-    <div class="flex gap-4 mb-4">
-        <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-            <span id="iconCam" class="material-icons">videocam</span>
-            <span id="textCam">Turn Off Cam</span>
-        </button>
-        <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-            <span id="iconMic" class="material-icons">mic</span>
-            <span id="textMic">Turn Off Mic</span>
-        </button>
-    </div>
 
 
-        <!-- Main Content: Video + Chat -->
-    <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-        
-        <!-- Video Section -->
-        <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            <!-- Video players will appear here -->
-        </div>
+            <!-- Main Content: Video + Chat -->
+        <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
+            
+            <!-- Video Section -->
+            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                <!-- Video players will appear here -->
+            </div>
 
-                    <!-- Chat Section -->
-                        <!-- Chat Section -->
-            <div id="chat-section" class="fixed bottom-0 right-4 w-full md:w-80 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-transform duration-300 transform translate-y-full md:translate-y-0">
+                                    <!-- Chat Section -->
+                                <!-- Chat Section -->
+                <div id="chat-section" class="fixed bottom-1 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
 
-                <!-- Chat Header with toggle button -->
-                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
-                    <span>Chat</span>
-                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">
-                        expand_less
-                    </span>
-                </div>
-
-                <!-- Chat content -->
-                <div id="chat-content" class="flex flex-col max-h-96 overflow-hidden transition-all duration-300">
-                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
-                        <!-- Messages will appear here -->
+                    <!-- Chat Header -->
+                    <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
+                        <span>Chat</span>
+                        <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
                     </div>
-                    <form id="chat-form" class="flex p-2 border-t border-gray-600">
+
+                    <!-- Chat Content -->
+                    <div id="chat-content" class="flex flex-col max-h-96 overflow-hidden transition-all duration-300">
+                        <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
+                            <!-- Messages appear here -->
+                        </div>
+
+                        <!-- Chat Form -->
+                       <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2">
                         <input type="text" id="chat-input" placeholder="Type a message..." 
                             class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
                             Send
                         </button>
                     </form>
+
+                    </div>
                 </div>
-            </div>
-    </div>
 
-</main>
 
-<script>
+        </div>
+
+    </main>
+
+    <script>
 const chatToggle = document.getElementById('chat-toggle');
 const chatSection = document.getElementById('chat-section');
 const chatIcon = document.getElementById('chat-toggle-icon');
 const chatContent = document.getElementById('chat-content');
 
-// Initial state
-let isCollapsed = window.innerWidth < 768;
+let isCollapsed = window.innerWidth < 640; // mobile breakpoint
+
+// Initialize mobile view
 if (isCollapsed) {
-    chatSection.classList.add('translate-y-full'); // hide chat
+    chatContent.style.maxHeight = '0'; // collapsed
+    chatIcon.textContent = 'expand_more';
+} else {
+    chatContent.style.maxHeight = '24rem'; // Tailwind h-96
     chatIcon.textContent = 'expand_less';
 }
 
 // Toggle chat
 chatToggle.addEventListener('click', () => {
-    if (isCollapsed) {
-        // Expand chat
-        chatSection.classList.remove('translate-y-full');
-        chatContent.style.maxHeight = '24rem'; // Tailwind h-96
-        chatIcon.textContent = 'expand_more';
-        isCollapsed = false;
-    } else {
-        // Collapse chat
-        chatSection.classList.add('translate-y-full');
-        chatContent.style.maxHeight = '0';
+    if (chatContent.style.maxHeight === '0px' || chatContent.style.maxHeight === '0') {
+        // Expand
+        chatContent.style.maxHeight = '24rem';
         chatIcon.textContent = 'expand_less';
-        isCollapsed = true;
+    } else {
+        // Collapse
+        chatContent.style.maxHeight = '0';
+        chatIcon.textContent = 'expand_more';
+    }
+});
+
+// Update on resize
+window.addEventListener('resize', () => {
+    if (window.innerWidth < 640) {
+        chatContent.style.maxHeight = '0';
+        chatIcon.textContent = 'expand_more';
+    } else {
+        chatContent.style.maxHeight = '24rem';
+        chatIcon.textContent = 'expand_less';
     }
 });
 </script>
-
 
 
 
