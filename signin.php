@@ -54,22 +54,22 @@
 
       <!-- Password Field -->
      <div>
-        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition relative">
-          <span class="material-icons text-gray-400 mr-3">lock</span>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            class="w-full bg-transparent text-white focus:outline-none" 
-            placeholder="Enter your password" 
-            required
-          >
-          <span id="togglePassword" class="material-icons text-gray-400 cursor-pointer ml-3">
-            visibility
-          </span>
-        </div>
+      <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+      <div class="relative border border-[#3c3f44] bg-[#232428] rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 transition">
+        <span class="material-icons text-gray-400 absolute left-3 top-1/2 -translate-y-1/2">lock</span>
+        <input 
+          type="password" 
+          id="password" 
+          name="password" 
+          class="w-full pl-10 pr-10 py-3 bg-transparent text-white focus:outline-none rounded-xl" 
+          placeholder="Enter your password" 
+          required
+        >
+        <span id="togglePassword" class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2">
+          visibility_off
+        </span>
       </div>
+    </div>
 
 
       <!-- Submit Button -->
@@ -96,18 +96,20 @@
   include "src/components/footer.php";
 ?>
 
-
-
 <script>
-  const passwordInput = document.getElementById('password');
   const togglePassword = document.getElementById('togglePassword');
+  const passwordInput = document.getElementById('password');
 
   togglePassword.addEventListener('click', () => {
-    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-    passwordInput.setAttribute('type', type);
-
-    // Toggle icon
-    togglePassword.textContent = type === 'password' ? 'visibility' : 'visibility_off';
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+      togglePassword.textContent = 'visibility';
+    } else {
+      passwordInput.type = 'password';
+      togglePassword.textContent = 'visibility_off';
+    }
   });
 </script>
+
+
 <script src="static/js/signin.js"></script>
