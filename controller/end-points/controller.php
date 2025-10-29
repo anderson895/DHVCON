@@ -113,7 +113,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo json_encode(['status' => 500, 'message' => 'Failed to create room.']);
                 }
 
-            } elseif ($_POST['requestType'] == 'updateRoom') {
+            }else if ($_POST['requestType'] === 'sendchats') {
+                $user_id = $_SESSION['user_id'];
+
+                $roomCode = $_POST['roomCode'] ?? '';
+                $message = trim($_POST['message'] ?? '');
+
+                if ($message && $roomCode) {
+                    // Assuming your sendchats function signature is: sendchats($message, $senderId, $roomCode)
+                    $result = $db->sendchats($message, $user_id, $roomCode);
+
+                    if ($result) {
+                        echo json_encode(['success' => true, 'message' => 'Message sent']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Failed to send message']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Message or RoomCode missing']);
+                }
+
+            } else if ($_POST['requestType'] === 'loadchats') {
+                $user_id = $_SESSION['user_id'];
+                $roomCode = $_POST['roomCode'] ?? '';
+
+                if ($roomCode) {
+                    // Assuming your loadchats function signature is: loadchats($userId, $roomCode)
+                    $messages = $db->loadchats($user_id, $roomCode);
+
+                    echo json_encode([
+                        'success' => true,
+                        'data' => $messages
+                    ]);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'RoomCode missing']);
+                }
+
+            }elseif ($_POST['requestType'] == 'updateRoom') {
                 $user_id = $_SESSION['user_id'];
                 $roomId = $_POST['room_id'];
                 $roomName = $_POST['roomName'];
@@ -803,9 +838,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 do {
                     $code = generateCode();
                     $exists = $db->checkMeetingLink($code);
-                } while ($exists); // Keep regenerating until not found
-
-                // Return final unique code
+                } while ($exists); 
+                
                 echo json_encode([
                     'status' => 'success',
                     'meeting_code' => $code

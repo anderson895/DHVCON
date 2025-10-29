@@ -10,29 +10,62 @@ $roomcode = $_GET['code'];
         <h1 class="text-xl text-gray-100 font-semibold">Conference Room</h1>
         <div class="flex items-center space-x-4">
             <span class="text-gray-400">Room Code: <strong class="text-gray-100"><?= $roomcode ?></strong></span>
-          <button id="btnLeaveRoom" 
-            class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white order-1 sm:order-2 mb-2 sm:mb-0">
-                
-                <!-- Icon always visible -->
+            <button id="btnLeaveRoom" 
+                class="joiner-only cursor-pointer flex items-center gap-2 text-gray-400 hover:text-white order-1 sm:order-2 mb-2 sm:mb-0">
                 <span class="material-icons">exit_to_app</span>
-
                 <span class="hidden sm:inline">Leave Room</span>
             </button>
         </div>
     </div>
-
 
     <!-- Status -->
     <div id="status" class="w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center">
         Ready to join
     </div>
 
-    <!-- Video Container -->
-    <div id="video-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 flex-1">
-        <!-- Video players will appear here -->
+    <!-- Main Content: Video + Chat -->
+    <div class="flex flex-1 gap-4">
+
+        <!-- Video Section -->
+        <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <!-- Video players will appear here -->
+        </div>
+
+        <!-- Chat Section -->
+        <div class="w-80 bg-[#2b2d31] rounded-md flex flex-col shadow-lg border border-gray-700">
+            <div class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold">
+                Chat
+            </div>
+            <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
+                <!-- Messages will appear here -->
+            </div>
+            <form id="chat-form" class="flex p-2 border-t border-gray-600">
+                <input type="text" id="chat-input" placeholder="Type a message..." 
+                    class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" 
+                    class="ml-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
+                    Send
+                </button>
+            </form>
+        </div>
+
     </div>
 
 </main>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
 <script>
@@ -140,6 +173,14 @@ $(document).ready(function() {
 
 </script>
 
+
+
+
+
+
+
+
 <?php 
 include "../src/components/home/footer.php";
 ?>
+<script src="../static/js/home/conference_room.js"></script>

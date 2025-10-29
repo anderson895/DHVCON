@@ -16,6 +16,51 @@ class global_class extends db_connect
 
 
 
+    
+
+
+ // Send a chat message
+    public function sendchats($message, $userId, $roomCode)
+    {
+        $stmt = $this->conn->prepare("INSERT INTO meeting_chats (chat_message, chat_sender, chat_meeting_code) VALUES (?, ?, ?)");
+        if (!$stmt) return false;
+
+        $stmt->bind_param("sis", $message, $userId, $roomCode);
+        return $stmt->execute(); // returns true on success, false on failure
+    }
+
+    // Load chat messages for a room
+    public function loadchats($userId, $roomCode)
+    {
+        // Join meeting_chats with user table to get fullname and position
+        $stmt = $this->conn->prepare("
+            SELECT mc.chat_message, mc.chat_sender, u.user_fullname, u.user_type
+            FROM meeting_chats mc
+            INNER JOIN user u ON mc.chat_sender = u.user_id
+            WHERE mc.chat_meeting_code = ?
+            ORDER BY mc.chat_id ASC
+        ");
+        if (!$stmt) return [];
+
+        $stmt->bind_param("s", $roomCode);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $messages = [];
+
+        while ($row = $result->fetch_assoc()) {
+            $messages[] = [
+                'message' => htmlspecialchars($row['chat_message']),
+                'sender_self' => $row['chat_sender'] == $userId,
+                'sender_name' => $row['user_fullname'],
+                'sender_position' => $row['user_type']
+            ];
+        }
+
+        return $messages;
+    }
+
+
+
      public function getUsers($filter = null) {
         $sql = "SELECT user_id, user_fullname, user_email, user_type, user_status,user_requirements FROM user";
         $conditions = [];
@@ -1452,6 +1497,10 @@ public function getDataAnalytics()
         return false;
     }
 }
+
+
+
+
 
 
 
