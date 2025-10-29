@@ -25,11 +25,11 @@ $roomcode = $_GET['code'];
 
     <!-- Controls: Cam / Mic -->
     <div class="flex gap-4 mb-4">
-        <button id="btnToggleCam" class="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+        <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
             <span id="iconCam" class="material-icons">videocam</span>
             <span id="textCam">Turn Off Cam</span>
         </button>
-        <button id="btnToggleMic" class="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+        <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
             <span id="iconMic" class="material-icons">mic</span>
             <span id="textMic">Turn Off Mic</span>
         </button>
