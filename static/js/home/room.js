@@ -1114,8 +1114,53 @@ $(document).on('click', '.delete-btn', function () {
 
 $(document).ready(function() {
 
-  // Open modal
+  function getUniqueMeetingCode() {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      url: "../controller/end-points/controller.php",
+      type: "GET",
+      data: { requestType: "generateMeetingCode" },
+      dataType: "json",
+      success: function(response) {
+        if (response.status === "success") {
+          resolve(response.meeting_code);
+        } else {
+          reject("Failed to generate code.");
+        }
+      },
+      error: function(err) {
+        console.error("AJAX Error:", err);
+        reject("Server error while generating code.");
+      }
+    });
+  });
+}
+
+$('#btnCreateMeeting').click(async function() {
+  try {
+    const uniqueCode = await getUniqueMeetingCode();
+    $('#meeting_code').val(uniqueCode);
+    $('#createMeetingModal').fadeIn().css('display', 'flex');
+  } catch (error) {
+    alert(error);
+  }
+});
+
+
+
+  // Close modal
+  $('#closeModal, #cancelMeeting').click(function() {
+    $('#createMeetingModal').fadeOut();
+  });
+
+
+
+  // Handle form submission
+
+  // Show modal and generate code
   $('#btnCreateMeeting').click(function() {
+    const meetingCode = generateMeetingCode();
+    $('#meeting_code').val(meetingCode);
     $('#createMeetingModal').fadeIn().css('display', 'flex');
   });
 
@@ -1124,12 +1169,13 @@ $(document).ready(function() {
     $('#createMeetingModal').fadeOut();
   });
 
+
   // Handle form submission
   $('#meetingForm').submit(function(e) {
     e.preventDefault();
 
     const meetingData = {
-      link: $('input[name="meeting_link"]').val(),
+      link: $('#meeting_code').val(),
       title: $('input[name="meeting_title"]').val(),
       description: $('textarea[name="meeting_description"]').val(),
       start: $('input[name="start_date"]').val(),

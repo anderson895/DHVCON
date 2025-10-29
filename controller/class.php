@@ -416,6 +416,35 @@ public function GetClassworkById($classwork_id)
 
 
 
+
+
+// 🔹 Check if meeting link exists
+public function checkMeetingLink($code)
+{
+    $query = "SELECT * FROM `meeting` WHERE `meeting_link` = ?";
+    $stmt = $this->conn->prepare($query);
+
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    // Bind as string (not integer)
+    $stmt->bind_param("s", $code);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $data = $result->fetch_assoc();
+
+    $stmt->close();
+    return $data ?: false;
+}
+
+
+
+
+
+
+
 // 🔹 Update existing classwork
 public function UpdateClasswork($classwork_id, $title, $instructions, $fileName = null)
 {

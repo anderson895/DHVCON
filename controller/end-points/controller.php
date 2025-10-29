@@ -788,7 +788,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => 'Classwork not found.'
                     ]);
                 }
-            }else{
+        }else if ($_GET['requestType'] == 'generateMeetingCode') {
+
+               function generateCode() {
+                    $chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    $code = 'MTG-';
+                    for ($i = 0; $i < 6; $i++) {
+                        $code .= $chars[rand(0, strlen($chars) - 1)];
+                    }
+                    return $code;
+                }
+
+                // Loop until a unique code is found
+                do {
+                    $code = generateCode();
+                    $exists = $db->checkMeetingLink($code);
+                } while ($exists); // Keep regenerating until not found
+
+                // Return final unique code
+                echo json_encode([
+                    'status' => 'success',
+                    'meeting_code' => $code
+                ]);
+                exit;
+
+
+        }else{
             echo "404";
         }
     }else {
