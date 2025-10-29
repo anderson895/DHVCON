@@ -23,6 +23,19 @@ $roomcode = $_GET['code'];
         Ready to join
     </div>
 
+    <!-- Controls: Cam / Mic -->
+    <div class="flex gap-4 mb-4">
+        <button id="btnToggleCam" class="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+            <span id="iconCam" class="material-icons">videocam</span>
+            <span id="textCam">Turn Off Cam</span>
+        </button>
+        <button id="btnToggleMic" class="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+            <span id="iconMic" class="material-icons">mic</span>
+            <span id="textMic">Turn Off Mic</span>
+        </button>
+    </div>
+
+
     <!-- Main Content: Video + Chat -->
     <div class="flex flex-1 gap-4">
 
@@ -50,22 +63,7 @@ $roomcode = $_GET['code'];
         </div>
 
     </div>
-
 </main>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
 <script>
@@ -134,10 +132,44 @@ async function joinMeeting(code) {
     }
 }
 
+// Toggle Cam
+document.getElementById('btnToggleCam').addEventListener('click', async () => {
+    if (!localTracks.videoTrack) return;
+    const icon = document.getElementById('iconCam');
+    const text = document.getElementById('textCam');
+
+    if (localTracks.videoTrack.enabled) {
+        localTracks.videoTrack.setEnabled(false);
+        icon.textContent = 'videocam_off';
+        text.textContent = 'Turn On Cam';
+    } else {
+        localTracks.videoTrack.setEnabled(true);
+        icon.textContent = 'videocam';
+        text.textContent = 'Turn Off Cam';
+    }
+});
+
+// Toggle Mic
+document.getElementById('btnToggleMic').addEventListener('click', async () => {
+    if (!localTracks.audioTrack) return;
+    const icon = document.getElementById('iconMic');
+    const text = document.getElementById('textMic');
+
+    // Correct property: `enabled` (not isEnabled())
+    if (localTracks.audioTrack.enabled) {
+        localTracks.audioTrack.setEnabled(false);
+        icon.textContent = 'mic_off';
+        text.textContent = 'Turn On Mic';
+    } else {
+        localTracks.audioTrack.setEnabled(true);
+        icon.textContent = 'mic';
+        text.textContent = 'Turn Off Mic';
+    }
+});
+
+
 // Automatically join on page load
 joinMeeting(roomCode);
-
-
 
 $(document).ready(function() {
     $('#btnLeaveRoom').on('click', function(e) {
@@ -150,17 +182,10 @@ $(document).ready(function() {
             showCancelButton: true,
             confirmButtonText: 'Yes, leave',
             cancelButtonText: 'Cancel',
-            background: '#2b2d31',  // Dark background
-            color: '#fff',           // White text
+            background: '#2b2d31',
+            color: '#fff',
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            customClass: {
-                popup: 'swal-dark-popup',
-                title: 'swal-dark-title',
-                content: 'swal-dark-content',
-                confirmButton: 'swal-dark-confirm',
-                cancelButton: 'swal-dark-cancel'
-            }
+            cancelButtonColor: '#d33'
         }).then((result) => {
             if (result.isConfirmed) {
                 window.location.href = '../home/';
@@ -168,12 +193,7 @@ $(document).ready(function() {
         });
     });
 });
-
-
-
 </script>
-
-
 
 
 
