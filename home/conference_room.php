@@ -46,79 +46,77 @@ $roomcode = $_GET['code'];
 
                                     <!-- Chat Section -->
                                 <!-- Chat Section -->
-                <div id="chat-section" class="fixed bottom-1 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
+            <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
 
-                    <!-- Chat Header -->
-                    <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
-                        <span>Chat</span>
-                        <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
-                    </div>
+                <!-- Chat Header -->
+                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
+                    <span>Chat</span>
+                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
+                </div>
 
-                    <!-- Chat Content -->
-                    <div id="chat-content" class="flex flex-col max-h-96 overflow-hidden transition-all duration-300">
-                        <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
-                            <!-- Messages appear here -->
-                        </div>
-
-                        <!-- Chat Form -->
-                       <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2">
-                        <input type="text" id="chat-input" placeholder="Type a message..." 
-                            class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <button type="submit" 
-                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-                            Send
-                        </button>
-                    </form>
-
+                <!-- Chat Messages (collapsible) -->
+                <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
+                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
+                        <!-- Messages appear here -->
                     </div>
                 </div>
+
+                <!-- Chat Form (always visible) -->
+                <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
+                    <input type="text" id="chat-input" placeholder="Type a message..." 
+                        class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
+                        Send
+                    </button>
+                </form>
+            </div>
+
 
 
         </div>
 
     </main>
 
+
     <script>
 const chatToggle = document.getElementById('chat-toggle');
-const chatSection = document.getElementById('chat-section');
 const chatIcon = document.getElementById('chat-toggle-icon');
-const chatContent = document.getElementById('chat-content');
+const chatMessagesWrapper = document.getElementById('chat-messages-wrapper');
 
-let isCollapsed = window.innerWidth < 640; // mobile breakpoint
+let isCollapsed = window.innerWidth < 640;
 
-// Initialize mobile view
-if (isCollapsed) {
-    chatContent.style.maxHeight = '0'; // collapsed
-    chatIcon.textContent = 'expand_more';
-} else {
-    chatContent.style.maxHeight = '24rem'; // Tailwind h-96
-    chatIcon.textContent = 'expand_less';
+// Initialize chat state
+function initChat() {
+    if (isCollapsed) {
+        chatMessagesWrapper.style.maxHeight = '0';
+        chatIcon.textContent = 'expand_more';
+    } else {
+        chatMessagesWrapper.style.maxHeight = '60vh';
+        chatIcon.textContent = 'expand_less';
+    }
 }
+initChat();
 
-// Toggle chat
+// Toggle only the messages container
 chatToggle.addEventListener('click', () => {
-    if (chatContent.style.maxHeight === '0px' || chatContent.style.maxHeight === '0') {
-        // Expand
-        chatContent.style.maxHeight = '24rem';
+    if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
+        chatMessagesWrapper.style.maxHeight = '60vh';
         chatIcon.textContent = 'expand_less';
     } else {
-        // Collapse
-        chatContent.style.maxHeight = '0';
+        chatMessagesWrapper.style.maxHeight = '0';
         chatIcon.textContent = 'expand_more';
     }
 });
 
 // Update on resize
 window.addEventListener('resize', () => {
-    if (window.innerWidth < 640) {
-        chatContent.style.maxHeight = '0';
-        chatIcon.textContent = 'expand_more';
-    } else {
-        chatContent.style.maxHeight = '24rem';
-        chatIcon.textContent = 'expand_less';
-    }
+    isCollapsed = window.innerWidth < 640;
+    initChat();
 });
 </script>
+
+
 
 
 
