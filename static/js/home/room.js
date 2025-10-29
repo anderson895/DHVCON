@@ -254,11 +254,11 @@ function fetchMeetings() {
         dataType: "json",
         success: function(response) {
             const container = $("#meeting .grid");
-            container.empty(); 
+            container.empty();
 
             if (response.status === 200 && response.data.length > 0) {
                 response.data.forEach(meeting => {
-                    // Format Start & End Date (short format)
+                    // Format Start & End Date
                     const startDate = new Date(meeting.meeting_start);
                     const endDate = new Date(meeting.meeting_end);
                     const formattedStart = startDate.toLocaleString('en-PH', { 
@@ -275,10 +275,18 @@ function fetchMeetings() {
                         <p class="text-gray-400 text-sm"><span class="font-medium">End:</span> ${formattedEnd}</p>
                     `;
 
-                    // Determine action button
+                    // =============================
+                    // Action Button (for participants)
+                    // =============================
                     let actionButton = "";
                     if (meeting.meeting_status == 0) {
+                        // Meeting closed — disable join, show cert
                         actionButton = `
+                            <button 
+                                class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
+                                disabled>
+                                Meeting Closed
+                            </button>
                             <button 
                                 class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer generate-cert"
                                 data-meeting-pass="${meeting.meeting_pass}"
@@ -287,7 +295,8 @@ function fetchMeetings() {
                             </button>
                         `;
                     } else if (meeting.meeting_status == 1) {
-                         actionButton = `
+                        // Active — can join
+                        actionButton = `
                             <button 
                                 class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-link="${meeting.meeting_link}"
@@ -296,28 +305,50 @@ function fetchMeetings() {
                             </button>
                         `;
                     }
-                      // Check if current user is the creator
-                      let creatorButtons = '';
-                      if (response.user_id === meeting.meeting_creator_user_id) {
-                          // Determine if the Close Meeting button should be disabled
-                          const closeDisabled = meeting.meeting_status == 0 ? 'disabled cursor-not-allowed opacity-50' : 'cursor-pointer btnCloseMeeting';
 
-                          creatorButtons = `
-                              <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
-                              <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition ${closeDisabled}"
-                              data-meeting-id="${meeting.meeting_id}"
-                              >
-                                  Close Meeting
-                              </button>
-                             <button class="view-logs w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                    // =============================
+                    // Creator buttons (for host)
+                    // =============================
+                    let creatorButtons = '';
+                    if (response.user_id === meeting.meeting_creator_user_id) {
+                        const closeDisabled = meeting.meeting_status == 0 
+                            ? 'disabled cursor-not-allowed opacity-50' 
+                            : 'cursor-pointer btnCloseMeeting';
+
+                        // Add join button only if active
+                        const joinBtn = meeting.meeting_status == 1 ? `
+                            <button 
+                                class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                                data-meeting-link="${meeting.meeting_link}"
+                                data-meeting-id="${meeting.meeting_id}">
+                                Join Meeting
+                            </button>
+                        ` : `
+                            <button 
+                                class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
+                                disabled>
+                                Meeting Closed
+                            </button>
+                        `;
+
+                        creatorButtons = `
+                            <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
+                            ${joinBtn}
+                            <button class="w-full text-center bg-red-500 text-white py-2 rounded-md hover:bg-red-300 transition ${closeDisabled}"
+                                data-meeting-id="${meeting.meeting_id}">
+                                Close Meeting
+                            </button>
+
+                            <button class="view-logs w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-id="${meeting.meeting_id}">
                                 Meeting Logs
                             </button>
+                        `;
+                    }
 
-                          `;
-                      }
-
-
+                    // =============================
+                    // Card Output
+                    // =============================
                     const card = `
                         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
                             <div class="p-4 space-y-3">
@@ -331,6 +362,9 @@ function fetchMeetings() {
                     container.append(card);
                 });
 
+                // =============================
+                // Generate Certificate Logic
+                // =============================
                 $(".generate-cert").click(function() {
                     const meetingPass = $(this).data("meeting-pass");
                     const meetingId = $(this).data("meeting-id");
@@ -349,20 +383,14 @@ function fetchMeetings() {
                     }).then((result) => {
                         if (result.isConfirmed) {
                             if (result.value === meetingPass) {
-                                // Show processing Swal for 1 second
                                 Swal.fire({
                                     title: 'Processing...',
                                     timer: 1000,
-                                    didOpen: () => {
-                                        Swal.showLoading();
-                                    },
+                                    didOpen: () => Swal.showLoading(),
                                     allowOutsideClick: false,
                                     allowEscapeKey: false
                                 }).then(() => {
-
                                     window.open(`certificate?meeting_id=${meetingId}&&meeting_pass=${meetingPass}`, '_blank');
-                                     
-
                                 });
                             } else {
                                 Swal.fire({
@@ -375,21 +403,17 @@ function fetchMeetings() {
                     });
                 });
 
-
             } else {
-              container.append(`
-               <div class="col-span-full text-center px-4">
-  <img 
-    src="../static/image/no_schedule_banner.png" 
-    alt="No meetings" 
-    class="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto" 
-  />
-  <p class="text-gray-400 mt-4 text-base sm:text-lg md:text-xl">No meetings scheduled.</p>
-</div>
-
-
-              `);
-
+                container.append(`
+                    <div class="col-span-full text-center px-4">
+                        <img 
+                            src="../static/image/no_schedule_banner.png" 
+                            alt="No meetings" 
+                            class="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto" 
+                        />
+                        <p class="text-gray-400 mt-4 text-base sm:text-lg md:text-xl">No meetings scheduled.</p>
+                    </div>
+                `);
             }
         },
         error: function(xhr, status, error) {
@@ -397,6 +421,7 @@ function fetchMeetings() {
         }
     });
 }
+
 
 
 
@@ -427,7 +452,7 @@ $(document).on("click", ".join-meeting", function() {
         dataType: "json",
         success: function(res) {
             if (res.status === 200 || res.status === 409) {
-                window.open(meetingLink, "_blank");
+                window.open("conference_room?code="+meetingLink, "_blank");
             } else {
                 Swal.fire({
                     icon: "error",
@@ -1087,6 +1112,193 @@ $(document).on('click', '.delete-btn', function () {
             }
         }
     });
+
+
+
+    const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
+let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+let localTracks = { videoTrack: null, audioTrack: null };
+let localPlayer;
+let isCreator = false;
+let approvalRequests = [];
+
+const createBtn = document.getElementById('createMeeting');
+const joinBtn = document.getElementById('joinMeeting');
+const leaveBtn = document.getElementById('leave');
+const videoContainer = document.getElementById('video-container');
+const roomInput = document.getElementById('roomCode');
+const statusBox = document.getElementById('status');
+const pendingDiv = document.getElementById('pendingRequests');
+const requestsList = document.getElementById('requestsList');
+
+function setStatus(message, type = '') {
+  statusBox.textContent = message;
+  if(type === "success") statusBox.className = "w-full max-w-xl p-2 mb-4 bg-green-100 rounded-md text-green-700 text-center";
+  else if(type === "error") statusBox.className = "w-full max-w-xl p-2 mb-4 bg-red-100 rounded-md text-red-700 text-center";
+  else statusBox.className = "w-full max-w-xl p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center";
+}
+
+// Pending requests UI
+function updateRequestsUI() {
+  requestsList.innerHTML = '';
+  if (approvalRequests.length === 0) {
+    pendingDiv.classList.add('hidden');
+    return;
+  }
+  pendingDiv.classList.remove('hidden');
+  approvalRequests.forEach((req, index) => {
+    const li = document.createElement('li');
+    li.className = "flex justify-between items-center mb-1";
+    li.innerHTML = `
+      ${req.name || 'Anonymous'} 
+      <span>
+        <button class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded mr-1" onclick="approve(${index})">Approve</button>
+        <button class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded" onclick="reject(${index})">Reject</button>
+      </span>
+    `;
+    requestsList.appendChild(li);
+  });
+}
+
+window.approve = async (index) => {
+  const req = approvalRequests[index];
+  approvalRequests.splice(index,1);
+  updateRequestsUI();
+  setStatus(`✅ Approved ${req.name}, joining meeting...`, 'success');
+  await joinMeeting(roomInput.value);
+}
+
+window.reject = (index) => {
+  const req = approvalRequests[index];
+  approvalRequests.splice(index,1);
+  updateRequestsUI();
+  setStatus(`❌ Rejected ${req.name}`, 'error');
+}
+
+// Join Meeting function
+async function joinMeeting(roomCode) {
+  try {
+    setStatus("Requesting camera & microphone permission...");
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    stream.getTracks().forEach(track => track.stop());
+
+    client.on('user-published', async (user, mediaType) => {
+      await client.subscribe(user, mediaType);
+      let player = document.getElementById('player-' + user.uid);
+      if (!player) {
+        player = document.createElement('div');
+        player.id = 'player-' + user.uid;
+        player.className = "aspect-video rounded-md overflow-hidden relative"; // relative for button
+        videoContainer.appendChild(player);
+
+        // Add Remove Member button if host
+        if (isCreator) {
+          const removeBtn = document.createElement('button');
+          removeBtn.textContent = "Remove";
+          removeBtn.className = "absolute top-2 left-2 bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded z-10";
+          removeBtn.onclick = () => removeMember(user.uid);
+          player.appendChild(removeBtn);
+        }
+      }
+
+      if (mediaType === 'video') user.videoTrack.play(player);
+      if (mediaType === 'audio') user.audioTrack.play();
+    });
+
+    client.on('user-unpublished', (user) => {
+      const player = document.getElementById('player-' + user.uid);
+      if (player) player.remove();
+    });
+
+    setStatus(`Joining room: ${roomCode}...`);
+    const uid = await client.join(APP_ID, roomCode, null, null);
+
+    localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+
+    localPlayer = document.getElementById('local-player');
+    if (!localPlayer) {
+      localPlayer = document.createElement('div');
+      localPlayer.id = 'local-player';
+      localPlayer.className = "aspect-video rounded-md overflow-hidden relative";
+      videoContainer.appendChild(localPlayer);
+    }
+    await localTracks.videoTrack.play(localPlayer);
+    await client.publish(Object.values(localTracks));
+
+    setStatus(`✅ Joined meeting: ${roomCode}`, "success");
+    joinBtn.disabled = true;
+    createBtn.disabled = true;
+    leaveBtn.disabled = false;
+
+  } catch (err) {
+    console.error(err);
+    Object.values(localTracks).forEach(track => { if(track){ track.stop(); track.close(); }});
+    setStatus("❌ Failed to join meeting: " + err.message, "error");
+    joinBtn.disabled = false;
+    createBtn.disabled = false;
+    leaveBtn.disabled = true;
+  }
+}
+
+// Remove member function (simulated)
+async function removeMember(uid) {
+  const player = document.getElementById('player-' + uid);
+  if (player) player.remove();
+  setStatus(`⚠️ Member ${uid} was removed by host`, 'error');
+
+  try {
+    const user = client.remoteUsers[uid];
+    if(user) {
+      user.audioTrack?.stop();
+      user.videoTrack?.stop();
+      user.videoTrack?.close();
+    }
+  } catch(err) {
+    console.warn("Failed to stop tracks:", err);
+  }
+
+  // In real implementation, send RTM message to user to leave meeting
+}
+
+// Create Meeting
+createBtn.onclick = async () => {
+  isCreator = true;
+  const code = $("#meeting_link").val();;
+  roomInput.value = code;
+  setStatus(`✅ Room created: ${code}`, "success");
+  await joinMeeting(code);
+};
+
+// Join Meeting (request approval)
+joinBtn.onclick = () => {
+  const roomCode = roomInput.value.trim();
+  if (!roomCode) return setStatus("⚠️ Enter a room code first!", "error");
+
+  if (isCreator) {
+    joinMeeting(roomCode);
+  } else {
+    const name = prompt("Enter your name to request join:");
+    if(!name) return;
+    approvalRequests.push({ name });
+    updateRequestsUI();
+    setStatus(`⚠️ Join request sent for approval`, 'error');
+  }
+};
+
+// Leave Meeting
+leaveBtn.onclick = async () => {
+  setStatus("Leaving meeting...");
+  for (let track of Object.values(localTracks)) { if(track){ track.stop(); track.close(); }}
+  await client.leave();
+  videoContainer.innerHTML = '';
+  localTracks = { videoTrack:null, audioTrack:null };
+  localPlayer = null;
+  joinBtn.disabled = false;
+  createBtn.disabled = false;
+  leaveBtn.disabled = true;
+  setStatus("👋 You left the meeting", "success");
+};
 });
 
 

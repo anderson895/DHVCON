@@ -19,7 +19,7 @@
           <div class="p-4 space-y-3">
             <h3 class="font-semibold text-lg text-white">Meeting Title Here</h3>
             <p class="text-gray-400 text-sm">Start datetime here  • Ends datetime here </p>
-            <p class="text-sm text-gray-300">description here</p>
+            <p class="text-sm text-gray-300">description here </p>
            
            
             <a href="https://meet.google.com/" target="_blank" 

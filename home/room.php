@@ -73,8 +73,6 @@ include "../src/components/home/footer.php";
 ?>
 
 
-
-
 <!-- Modal Background -->
 <div id="createMeetingModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50">
   <!-- Modal Content -->
@@ -97,7 +95,7 @@ include "../src/components/home/footer.php";
       </div>
 
       
-      <div>
+      <div hidden>
         <label class="block mb-1 text-sm">Meeting Code</label>
         <input type="text" id="meeting_code" name="meeting_link" placeholder=""
                class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
@@ -137,6 +135,12 @@ include "../src/components/home/footer.php";
     </form>
   </div>
 </div>
+
+
+
+
+
+
 
 
 
