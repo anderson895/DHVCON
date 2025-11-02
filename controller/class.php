@@ -1296,6 +1296,198 @@ public function deleteRoom($room_id)
 
 
 
+
+
+
+
+
+
+public function requestToJoin($meeting_id, $user_id)
+{
+    // Check if record already exists
+    $checkQuery = "SELECT jr_id FROM meeting_member WHERE jr_meeting_id = ? AND jr_user_id = ?";
+    $checkStmt = $this->conn->prepare($checkQuery);
+    if (!$checkStmt) return false;
+
+    $checkStmt->bind_param("ii", $meeting_id, $user_id);
+    $checkStmt->execute();
+    $checkStmt->store_result();
+
+    if ($checkStmt->num_rows > 0) {
+        $checkStmt->close();
+        return "exists";
+    }
+    $checkStmt->close();
+
+    // Insert new record
+    $insertQuery = "INSERT INTO meeting_member (jr_meeting_id, jr_user_id) VALUES (?, ?)";
+    $insertStmt = $this->conn->prepare($insertQuery);
+    if (!$insertStmt) return false;
+
+    $insertStmt->bind_param("ii", $meeting_id, $user_id);
+    $result = $insertStmt->execute();
+    $insertStmt->close();
+
+    return $result ? "inserted" : false;
+}
+
+
+
+
+public function checkMemberStatus($meeting_id, $user_id)
+{
+    // 1. Check if the user is the meeting creator
+    $query = "SELECT meeting_creator_user_id FROM meeting WHERE meeting_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return false;
+
+    $stmt->bind_param("i", $meeting_id);
+    $stmt->execute();
+    $stmt->bind_result($creator_id);
+
+    if ($stmt->fetch()) {
+        if ($creator_id == $user_id) {
+            $stmt->close();
+            return "creator"; // user is the meeting creator
+        }
+    }
+    $stmt->close();
+
+    // 2. If not the creator, check meeting_member table
+    $query = "SELECT jr_status FROM meeting_member WHERE jr_meeting_id = ? AND jr_user_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return false;
+
+    $stmt->bind_param("ii", $meeting_id, $user_id);
+    $stmt->execute();
+    $stmt->bind_result($status);
+
+    if ($stmt->fetch()) {
+        $stmt->close();
+        return $status; // 'pending', 'approved', or 'rejected'
+    } else {
+        $stmt->close();
+        return null; // user is not in meeting_member
+    }
+}
+
+
+
+
+
+public function getPendingJoinRequests($meeting_id)
+{
+    // Prepare SQL query to count pending join requests
+    $query = "SELECT COUNT(*) as pending_count 
+              FROM meeting_member 
+              WHERE jr_meeting_id = ? AND jr_status = 'pending'";
+    
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return 0; // Return 0 if preparation fails
+
+    $stmt->bind_param("i", $meeting_id);
+    $stmt->execute();
+    $stmt->bind_result($pending_count);
+    $stmt->fetch();
+    $stmt->close();
+
+    return $pending_count; 
+}
+
+
+
+
+public function getPendingRequestsDetails($meeting_id)
+{
+    $query = "
+        SELECT jr.*, u.*
+        FROM meeting_member jr
+        JOIN user u ON jr.jr_user_id = u.user_id
+        WHERE jr.jr_meeting_id = ? AND jr.jr_status = 'pending'
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return [];
+
+    $stmt->bind_param("i", $meeting_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $pendingRequests = [];
+    while ($row = $result->fetch_assoc()) {
+        $pendingRequests[] = $row;
+    }
+    $stmt->close();
+
+    return $pendingRequests;
+}
+
+
+
+
+
+
+
+public function updateJoinRequestStatus($jr_id, $action)
+{
+    $query = "UPDATE meeting_member SET jr_status = ? WHERE jr_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return false;
+
+    $stmt->bind_param("si", $action, $jr_id);
+    return $stmt; // return the prepared statement for execution
+}
+
+
+
+public function removeUserFromMeeting($meeting_id, $user_id)
+{
+    $query = "DELETE FROM meeting_member WHERE jr_meeting_id = ? AND jr_user_id = ?";
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return false;
+
+    $stmt->bind_param("ii", $meeting_id, $user_id);
+    $result = $stmt->execute();
+    $stmt->close();
+
+    return $result;
+}
+
+
+
+
+
+
+
+public function getApprovedUsers($meeting_id)
+{
+    $query = "
+        SELECT jr.jr_id, jr.jr_user_id, jr.jr_requested_at, u.user_fullname, u.user_email
+        FROM meeting_member jr
+        JOIN user u ON jr.jr_user_id = u.user_id
+        WHERE jr.jr_meeting_id = ? AND jr.jr_status = 'approved'
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) return []; // return empty array if preparation fails
+
+    $stmt->bind_param("i", $meeting_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $approvedUsers = [];
+    while ($row = $result->fetch_assoc()) {
+        $approvedUsers[] = $row;
+    }
+
+    $stmt->close();
+    return $approvedUsers; // return the approved users
+}
+
+
+
+
+
 public function recordMeetingLog($meeting_id, $user_id)
 {
     // Check if record already exists

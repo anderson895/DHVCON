@@ -27,6 +27,25 @@ class auth_class extends db_connect
         return $items; 
     }
 
+
+     public function check_meeting($code) {
+
+        $query = "SELECT * FROM `meeting` WHERE meeting_link = '$code' AND meeting_status=1";
+
+        $result = $this->conn->query($query);
+
+        $items = [];
+        if ($result && $result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $items[] = $row;
+            }
+        }
+        return $items; 
+    }
+
+
+    
+
 }
 
 

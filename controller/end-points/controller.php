@@ -76,6 +76,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 echo json_encode(['status' => 'error', 'message' => $result['message']]);
             }
+        }else if ($_POST['requestType'] == 'removeUserFromMeeting') {
+            $meeting_id = $_POST['meeting_id'] ?? null;
+            $user_id = $_POST['user_id'] ?? null;
+
+            if (!$meeting_id || !$user_id) {
+                echo json_encode([
+                    "status" => 400,
+                    "message" => "Invalid request."
+                ]);
+                exit;
+            }
+
+            if ($db->removeUserFromMeeting($meeting_id, $user_id)) {
+                echo json_encode([
+                    "status" => 200,
+                    "message" => "User removed successfully."
+                ]);
+            } else {
+                echo json_encode([
+                    "status" => 500,
+                    "message" => "Failed to remove user."
+                ]);
+            }
+            exit;
         }else if ($_POST['requestType'] == 'joinRoom') {
                 $user_id = $_SESSION['user_id'];
                 $roomCode = $_POST['roomCode'];
@@ -93,6 +117,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => $result['message']
                     ]);
                 }
+
+        }else if ($_POST['requestType'] == 'updateJoinRequest') {
+            $jr_id = $_POST['jr_id'] ?? null;
+            $action = $_POST['action'] ?? null; // 'approved' or 'rejected'
+
+            // Validate input
+            if (!$jr_id || !in_array($action, ['approved', 'rejected'])) {
+                echo json_encode([
+                    "status" => 400,
+                    "message" => "Invalid request."
+                ]);
+                exit;
+            }
+
+            // Prepare update
+            $stmt = $db->updateJoinRequestStatus($jr_id, $action);
+            if (!$stmt) {
+                echo json_encode([
+                    "status" => 500,
+                    "message" => "Failed to prepare update query."
+                ]);
+                exit;
+            }
+
+            // Execute update
+            if ($stmt->execute()) {
+                echo json_encode([
+                    "status" => 200,
+                    "message" => "Join request updated successfully."
+                ]);
+            } else {
+                echo json_encode([
+                    "status" => 500,
+                    "message" => "Failed to update join request."
+                ]);
+            }
+
+            $stmt->close();
+            exit;
 
         }else if ($_POST['requestType'] == 'createRoom') {
                 $user_id = $_SESSION['user_id'];
@@ -322,6 +385,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     } else {
                         echo json_encode(['status' => 500, 'message' => 'Error recording log']);
                     }
+        }else if ($_POST['requestType'] == 'requestToJoin') {
+                    $user_id = $_SESSION['user_id'];
+
+                    $meeting_id = $_POST['meeting_id'];
+                     $result = $db->requestToJoin($meeting_id, $user_id);
+
+                    if ($result === 'exists') {
+                        echo json_encode(['status' => 409, 'message' => 'Already sent']);
+                    } elseif ($result) {
+                        echo json_encode(['status' => 200, 'message' => 'Request sent']);
+                    } else {
+                        echo json_encode(['status' => 500, 'message' => 'Error recording log']);
+                    }
+
+                    
         }else if ($_POST['requestType'] == 'CreateClasswork') {
             $user_id = $_SESSION['user_id'];
             $title = $_POST['title'];
@@ -836,6 +914,98 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => 'Classwork not found.'
                     ]);
                 }
+        }else if ($_GET['requestType'] == 'checkMemberStatus') {
+                $user_id = $_SESSION['user_id'] ?? null;
+                $meeting_id = $_GET['meeting_id'] ?? null;
+
+                // Validate inputs
+                if (!$user_id || !$meeting_id || !is_numeric($meeting_id)) {
+                    echo json_encode([
+                        "status" => 400,
+                        "message" => "Invalid user or meeting ID."
+                    ]);
+                    exit;
+                }
+
+                // Check member status
+                $status = $db->checkMemberStatus($meeting_id, $user_id);
+
+                if ($status === false) {
+                    // Query failed
+                    echo json_encode([
+                        "status" => 500,
+                        "message" => "Failed to fetch join request status."
+                    ]);
+                } elseif ($status === null) {
+                    // User is neither creator nor member
+                    echo json_encode([
+                        "status" => 200,
+                        "message" => "Success",
+                        "data" => [
+                            "join_request_status" => "Not member"
+                        ]
+                    ]);
+                } else {
+                    // User is creator or member
+                    echo json_encode([
+                        "status" => 200,
+                        "message" => "Success",
+                        "data" => [
+                            "join_request_status" => $status
+                        ]
+                    ]);
+                }
+
+                exit;
+
+
+
+        }else if ($_GET['requestType'] == 'checkPendingRequests') {
+            $meeting_id=$_GET['meeting_id'];
+            $pendingCount = $db->getPendingJoinRequests($meeting_id); 
+            echo json_encode([
+                "status" => 200,
+                "message" => "Success",
+                "data" => [
+                    "pending_count" => $pendingCount
+                ]
+            ]);
+            exit;
+
+
+        }else if ($_GET['requestType'] == 'getPendingRequestsDetails') {
+           $meeting_id = $_GET['meeting_id'] ?? null;
+
+            if (!$meeting_id) {
+                echo json_encode([
+                    "status" => 400,
+                    "message" => "Meeting ID is required.",
+                    "data" => []
+                ]);
+                exit;
+            }
+
+            // Call the class method
+            $pendingRequests = $db->getPendingRequestsDetails($meeting_id);
+
+            echo json_encode([
+                "status" => 200,
+                "message" => "Success",
+                "data" => $pendingRequests
+            ]);
+            exit;
+
+        }else if ($_GET['requestType'] == 'getApprovedUsers') {
+            $meeting_id = $_GET['meeting_id'] ?? null;
+
+            $approvedUsers = $db->getApprovedUsers($meeting_id);
+            echo json_encode([
+                "status" => 200,
+                "message" => "Success",
+                "data" => $approvedUsers
+            ]);
+            exit;
+
         }else if ($_GET['requestType'] == 'generateMeetingCode') {
 
                function generateCode() {
