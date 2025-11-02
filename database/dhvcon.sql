@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 21, 2025 at 05:35 PM
+-- Generation Time: Oct 29, 2025 at 03:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -51,6 +51,29 @@ CREATE TABLE `classwork` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `classwork`
+--
+
+INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
+(17, 'dawdaw ssss', 'ersfsreg', 'classwork_68f7c05b821b24.57595105.avif', 15, 33, 0, '2025-10-21 17:21:35'),
+(18, 'task 2', 'dawdaw', 'classwork_68f7c03a499832.64730949.webp', 15, 33, 0, '2025-10-21 17:21:29');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `join_requests`
+--
+
+CREATE TABLE `join_requests` (
+  `id` int(11) NOT NULL,
+  `room_code` varchar(10) NOT NULL,
+  `user_name` varchar(50) NOT NULL,
+  `user_uid` varchar(50) DEFAULT NULL,
+  `status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `requested_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 -- --------------------------------------------------------
 
 --
@@ -70,6 +93,37 @@ CREATE TABLE `meeting` (
   `meeting_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=close,1=open'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `meeting`
+--
+
+INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
+(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 1),
+(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meeting_chats`
+--
+
+CREATE TABLE `meeting_chats` (
+  `chat_id` int(11) NOT NULL,
+  `chat_message` text NOT NULL,
+  `chat_sender` int(11) NOT NULL,
+  `chat_meeting_code` varchar(60) NOT NULL,
+  `chat_type` enum('txt','img','document') NOT NULL DEFAULT 'txt',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_chats`
+--
+
+INSERT INTO `meeting_chats` (`chat_id`, `chat_message`, `chat_sender`, `chat_meeting_code`, `chat_type`, `created_at`) VALUES
+(1, 'rwar', 15, 'MTG-FHQT98', 'txt', '2025-10-29 14:16:41'),
+(2, '❌ Failed to join meeting: Cannot read properties of undefined (reading \'getUserMedia\')', 17, 'MTG-VJWB1N', 'txt', '2025-10-29 14:28:15');
+
 -- --------------------------------------------------------
 
 --
@@ -82,6 +136,15 @@ CREATE TABLE `meeting_logs` (
   `ml_date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `ml_meeting_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_logs`
+--
+
+INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
+(34, 15, '2025-10-29 12:58:58', 9),
+(35, 15, '2025-10-29 13:08:16', 10),
+(36, 17, '2025-10-29 14:27:47', 9);
 
 -- --------------------------------------------------------
 
@@ -105,7 +168,9 @@ CREATE TABLE `room` (
 --
 
 INSERT INTO `room` (`room_id`, `room_creator_user_id`, `room_banner`, `room_code`, `room_name`, `room_description`, `room_status`, `room_date_created`) VALUES
-(31, 1, 'room_68eb5d944d6685.57757154.jpg', 'WXZ1E5', 'Mobile Development', 'Mobile apps have taken a remarkable rise in the tech market. App stores are overflowing with various kinds of applications. Several businesses have stepped forward in developing their mobile applications to expand their business and achieve success. Mobile applications have become an integral part of people’s lives, which has inspired enterprises to come up with their apps to satisfy their customers’ requirements.\r\n\r\nWhen you plan to develop your mobile app, it is important that you integrate unique features and functionality to make it stand out in the market. Also, it is significant to see that it does not become a common app similar to others. Your mobile app has to have the potential to attract new customers and retain the existing ones as well.', 1, '2025-10-12 07:49:40');
+(31, 1, 'room_68eb5d944d6685.57757154.jpg', 'WXZ1E5', 'Mobile Development', 'Mobile apps have taken a remarkable rise in the tech market. App stores are overflowing with various kinds of applications. Several businesses have stepped forward in developing their mobile applications to expand their business and achieve success. Mobile applications have become an integral part of people’s lives, which has inspired enterprises to come up with their apps to satisfy their customers’ requirements.\r\n\r\nWhen you plan to develop your mobile app, it is important that you integrate unique features and functionality to make it stand out in the market. Also, it is significant to see that it does not become a common app similar to others. Your mobile app has to have the potential to attract new customers and retain the existing ones as well.', 1, '2025-10-12 07:49:40'),
+(32, 15, 'room_68f7b194a15705.71072707.avif', '1XCQ7O', 'drhthtf', 'gyjgy', 0, '2025-10-21 16:15:39'),
+(33, 15, 'room_68f7bb9ee735f8.18881901.webp', 'NU9OFC', 'room 102', 'awdawd', 1, '2025-10-21 16:58:06');
 
 -- --------------------------------------------------------
 
@@ -119,6 +184,15 @@ CREATE TABLE `room_members` (
   `user_id` int(11) NOT NULL,
   `date_joined` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `room_members`
+--
+
+INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
+(32, 31, 15, '2025-10-21 16:57:57'),
+(33, 33, 16, '2025-10-29 12:05:27'),
+(34, 33, 17, '2025-10-29 14:26:57');
 
 -- --------------------------------------------------------
 
@@ -156,8 +230,9 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_status`) VALUES
 (1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, 1),
-(15, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$8aFvB1j42iN3RAjRRA9g3e/Z.f9qm1uaKWEKa3Y5I73GUY2.H/gUy', 'teacher', '[\"68f7840d267d0_492151840_3128831320602859_4159043562509539743_n.jpg\",\"68f7840d26a4f_494579798_693373853415594_8083316453582063649_n.jpg\",\"68f7840d26c47_494820713_532984179748342_8788347790273388241_n.png\"]', 0),
-(16, 'Joshua Anderson Padilla', 'sanjosekylie@yahoo.com', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', '[\"68f7a4cd3bd06_Exercise-04.pdf\",\"68f7a4cd3bfe8_istockphoto-1390249924-2048x2048.jpg\",\"68f7a4cd3c279_NC.pdf\"]', 0);
+(15, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$8aFvB1j42iN3RAjRRA9g3e/Z.f9qm1uaKWEKa3Y5I73GUY2.H/gUy', 'teacher', NULL, 1),
+(16, 'san jose', 'sanjosekylie@yahoo.com', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', NULL, 1),
+(17, 'april jane', 'april@gmail.com', '$2y$10$1vvtSUMmxqkuS1mHvZgtHef9Lx.fZZX02SONeTYBxlftzEulAZKcC', 'student', '[\"690223fe8c4d1_b4353473-ffa4-43f2-8512-c36155c5c944.jpg\"]', 1);
 
 --
 -- Indexes for dumped tables
@@ -180,12 +255,26 @@ ALTER TABLE `classwork`
   ADD KEY `classwork_room_id` (`classwork_room_id`);
 
 --
+-- Indexes for table `join_requests`
+--
+ALTER TABLE `join_requests`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `meeting`
 --
 ALTER TABLE `meeting`
   ADD PRIMARY KEY (`meeting_id`),
   ADD KEY `meeting_room_id` (`meeting_room_id`),
   ADD KEY `meeting_creator_user_id` (`meeting_creator_user_id`);
+
+--
+-- Indexes for table `meeting_chats`
+--
+ALTER TABLE `meeting_chats`
+  ADD PRIMARY KEY (`chat_id`),
+  ADD KEY `idx_sender` (`chat_sender`),
+  ADD KEY `idx_receiver` (`chat_meeting_code`);
 
 --
 -- Indexes for table `meeting_logs`
@@ -238,31 +327,43 @@ ALTER TABLE `claimed_certificate`
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `join_requests`
+--
+ALTER TABLE `join_requests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `meeting`
 --
 ALTER TABLE `meeting`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `meeting_chats`
+--
+ALTER TABLE `meeting_chats`
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `meeting_logs`
 --
 ALTER TABLE `meeting_logs`
-  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `room_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`
@@ -274,7 +375,7 @@ ALTER TABLE `submitted_classwork`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- Constraints for dumped tables

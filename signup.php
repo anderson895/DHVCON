@@ -78,38 +78,46 @@
       </div>
     </div>
 
-
-      <!-- Password -->
+            <!-- Password -->
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
-          <span class="material-icons text-gray-400 mr-3">lock</span>
+        <div class="relative border border-[#3c3f44] bg-[#232428] rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 transition">
+          <span class="material-icons text-gray-400 absolute left-3 top-1/2 -translate-y-1/2">lock</span>
           <input 
             type="password" 
             name="password" 
             id="password"
-            class="w-full bg-transparent text-white focus:outline-none" 
+            class="w-full pl-10 pr-10 py-3 bg-transparent text-white rounded-xl focus:outline-none" 
             placeholder="Create a password" 
             required
           >
+          <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="password">
+            visibility_off
+          </span>
         </div>
       </div>
 
       <!-- Confirm Password -->
       <div>
         <label class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition">
-          <span class="material-icons text-gray-400 mr-3">lock_reset</span>
+        <div class="relative border border-[#3c3f44] bg-[#232428] rounded-xl focus-within:ring-2 focus-within:ring-indigo-500 transition">
+          <span class="material-icons text-gray-400 absolute left-3 top-1/2 -translate-y-1/2">lock_reset</span>
           <input 
             type="password" 
             name="confirm_password" 
             id="confirm_password"
-            class="w-full bg-transparent text-white focus:outline-none" 
+            class="w-full pl-10 pr-10 py-3 bg-transparent text-white rounded-xl focus:outline-none" 
             placeholder="Re-enter password" 
             required
           >
+          <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="confirm_password">
+            visibility_off
+          </span>
         </div>
       </div>
+
+
+    
 
       <!-- File Upload -->
       <div>
@@ -149,4 +157,21 @@
   include "src/components/footer.php";
 ?>
 
+
+<script>
+  // Toggle visibility for all password fields
+  document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', () => {
+      const targetId = icon.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility_off';
+      }
+    });
+  });
+</script>
 <script src="static/js/signup.js"></script>

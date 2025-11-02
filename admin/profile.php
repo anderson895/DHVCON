@@ -84,31 +84,71 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
   <div class="bg-[#1a1a1a]/80 p-6 rounded-xl shadow-2xl w-full max-w-md border border-gray-700 backdrop-blur-md">
     <h3 class="text-xl font-bold text-[#FFD700] mb-4">Change Password</h3>
     <form id="changePasswordForm" class="space-y-4">
-      <div>
+
+      <!-- Current Password -->
+     <div class="relative">
         <label class="block text-sm text-gray-300 mb-1">Current Password</label>
-        <input type="password" name="old_password" id="old_password" required
-          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+        <div class="relative">
+          <input type="password" name="old_password" id="old_password" required
+            class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="old_password">
+            visibility_off
+          </span>
+        </div>
       </div>
-      <div>
+
+
+          <!-- New Password -->
+      <div class="relative">
         <label class="block text-sm text-gray-300 mb-1">New Password</label>
-        <input type="password" name="new_password" id="new_password" required
-          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+        <div class="relative">
+          <input type="password" name="new_password" id="new_password" required
+            class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="new_password">
+            visibility_off
+          </span>
+        </div>
       </div>
-      <div>
+
+      <!-- Confirm Password -->
+      <div class="relative">
         <label class="block text-sm text-gray-300 mb-1">Confirm Password</label>
-        <input type="password" id="confirm_password" required
-          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+        <div class="relative">
+          <input type="password" id="confirm_password" required
+            class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="confirm_password">
+            visibility_off
+          </span>
+        </div>
       </div>
+
+
       <div class="flex justify-end space-x-2">
         <button type="button" id="closePassModal"
           class="bg-gray-700/70 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer">Cancel</button>
         <button type="submit"
-          class="bg-[#FFD700] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">Update
-          Password</button>
+          class="bg-[#FFD700] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">Update Password</button>
       </div>
     </form>
   </div>
 </div>
+
+<script>
+  // Toggle password visibility for all fields with .toggle-password
+  document.querySelectorAll('.toggle-password').forEach(icon => {
+    icon.addEventListener('click', () => {
+      const targetId = icon.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility'; // Eye open when visible
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility_off'; // Eye closed when hidden
+      }
+    });
+  });
+</script>
 
 <?php include "../src/components/admin/footer.php"; ?>
 
