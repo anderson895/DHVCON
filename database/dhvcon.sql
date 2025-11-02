@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 29, 2025 at 03:31 PM
+-- Generation Time: Nov 02, 2025 at 08:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -62,21 +62,6 @@ INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instructi
 -- --------------------------------------------------------
 
 --
--- Table structure for table `join_requests`
---
-
-CREATE TABLE `join_requests` (
-  `id` int(11) NOT NULL,
-  `room_code` varchar(10) NOT NULL,
-  `user_name` varchar(50) NOT NULL,
-  `user_uid` varchar(50) DEFAULT NULL,
-  `status` enum('pending','approved','rejected') DEFAULT 'pending',
-  `requested_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `meeting`
 --
 
@@ -98,8 +83,9 @@ CREATE TABLE `meeting` (
 --
 
 INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
-(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 1),
-(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 1);
+(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0),
+(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0),
+(12, 'MTG-PCT1C6', 'meeting 1', 'awdawd', '2025-11-02 23:34:00', '2025-11-02 14:34:00', 33, 15, 'f4072d29', 1);
 
 -- --------------------------------------------------------
 
@@ -122,7 +108,23 @@ CREATE TABLE `meeting_chats` (
 
 INSERT INTO `meeting_chats` (`chat_id`, `chat_message`, `chat_sender`, `chat_meeting_code`, `chat_type`, `created_at`) VALUES
 (1, 'rwar', 15, 'MTG-FHQT98', 'txt', '2025-10-29 14:16:41'),
-(2, '❌ Failed to join meeting: Cannot read properties of undefined (reading \'getUserMedia\')', 17, 'MTG-VJWB1N', 'txt', '2025-10-29 14:28:15');
+(2, '❌ Failed to join meeting: Cannot read properties of undefined (reading \'getUserMedia\')', 17, 'MTG-VJWB1N', 'txt', '2025-10-29 14:28:15'),
+(3, 'sdsd', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:11'),
+(4, 'as', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:15'),
+(5, 'wd', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:16'),
+(6, 'sef', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:17'),
+(7, 'rg', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:18'),
+(8, 'th', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:19'),
+(9, 'yj', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:20'),
+(10, 'uk', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:21'),
+(11, 'uil', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:02:22'),
+(12, 'awdawd', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:04:17'),
+(13, 'drgdrg', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:04:22'),
+(14, 'ssawdawd', 15, 'MTG-FHQT98', 'txt', '2025-10-29 15:24:03'),
+(15, 'hello', 17, 'MTG-FHQT98', 'txt', '2025-10-29 15:29:52'),
+(16, 'ldkdkdnd', 17, 'MTG-FHQT98', 'txt', '2025-10-29 15:40:33'),
+(17, 'yyy', 17, 'MTG-FHQT98', 'txt', '2025-10-29 15:41:48'),
+(18, 'hhh', 17, 'MTG-FHQT98', 'txt', '2025-10-29 15:41:51');
 
 -- --------------------------------------------------------
 
@@ -144,7 +146,30 @@ CREATE TABLE `meeting_logs` (
 INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
 (34, 15, '2025-10-29 12:58:58', 9),
 (35, 15, '2025-10-29 13:08:16', 10),
-(36, 17, '2025-10-29 14:27:47', 9);
+(38, 16, '2025-11-02 12:51:18', 10),
+(39, 22, '2025-11-02 15:34:52', 12),
+(40, 15, '2025-11-02 15:35:50', 12);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meeting_member`
+--
+
+CREATE TABLE `meeting_member` (
+  `jr_id` int(11) NOT NULL,
+  `jr_meeting_id` int(11) NOT NULL,
+  `jr_user_id` int(11) DEFAULT NULL,
+  `jr_status` enum('pending','approved','rejected') DEFAULT 'pending',
+  `jr_requested_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_member`
+--
+
+INSERT INTO `meeting_member` (`jr_id`, `jr_meeting_id`, `jr_user_id`, `jr_status`, `jr_requested_at`) VALUES
+(25, 12, 22, 'approved', '2025-11-02 18:51:04');
 
 -- --------------------------------------------------------
 
@@ -192,7 +217,7 @@ CREATE TABLE `room_members` (
 INSERT INTO `room_members` (`id`, `room_id`, `user_id`, `date_joined`) VALUES
 (32, 31, 15, '2025-10-21 16:57:57'),
 (33, 33, 16, '2025-10-29 12:05:27'),
-(34, 33, 17, '2025-10-29 14:26:57');
+(35, 33, 22, '2025-11-02 15:34:36');
 
 -- --------------------------------------------------------
 
@@ -230,9 +255,9 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_status`) VALUES
 (1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, 1),
-(15, 'Joshua Anderson Padilla', 'andersonandy046@gmail.com', '$2y$10$8aFvB1j42iN3RAjRRA9g3e/Z.f9qm1uaKWEKa3Y5I73GUY2.H/gUy', 'teacher', NULL, 1),
+(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$aaV7.u070wWhP2QZyd55EO/2ScxmADcC6V0xa.rZxb07KYbNtNf46', 'teacher', NULL, 1),
 (16, 'san jose', 'sanjosekylie@yahoo.com', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', NULL, 1),
-(17, 'april jane', 'april@gmail.com', '$2y$10$1vvtSUMmxqkuS1mHvZgtHef9Lx.fZZX02SONeTYBxlftzEulAZKcC', 'student', '[\"690223fe8c4d1_b4353473-ffa4-43f2-8512-c36155c5c944.jpg\"]', 1);
+(22, 'april jane', 'padillajoshuaanderson.pdm@gmail.com', '$2y$10$lrrhk5bEA6IRcYxPEI9KheHuA8TYaPoKj.K8ZDJG0A3uGTk2Kn03a', 'student', '[\"6907778db0bd4_bini-desktop-wallpapers-v0-v1z43kmivtbd1.webp\",\"6907778db0e6b_dbd95cee-40e9-420e-a3f0-0b63d7073197.webp\",\"6907778db1176_Exercise-04.docs.pdf\"]', 1);
 
 --
 -- Indexes for dumped tables
@@ -253,12 +278,6 @@ ALTER TABLE `classwork`
   ADD PRIMARY KEY (`classwork_id`),
   ADD KEY `classword_by_user_id` (`classwork_by_user_id`),
   ADD KEY `classwork_room_id` (`classwork_room_id`);
-
---
--- Indexes for table `join_requests`
---
-ALTER TABLE `join_requests`
-  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `meeting`
@@ -283,6 +302,14 @@ ALTER TABLE `meeting_logs`
   ADD PRIMARY KEY (`ml_id`),
   ADD KEY `ml_meeting_id` (`ml_meeting_id`),
   ADD KEY `ml_user_id` (`ml_user_id`);
+
+--
+-- Indexes for table `meeting_member`
+--
+ALTER TABLE `meeting_member`
+  ADD PRIMARY KEY (`jr_id`),
+  ADD KEY `jr_user_id` (`jr_user_id`),
+  ADD KEY `jr_meeting_id` (`jr_meeting_id`);
 
 --
 -- Indexes for table `room`
@@ -330,28 +357,28 @@ ALTER TABLE `classwork`
   MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT for table `join_requests`
---
-ALTER TABLE `join_requests`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
 -- AUTO_INCREMENT for table `meeting`
 --
 ALTER TABLE `meeting`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `meeting_chats`
 --
 ALTER TABLE `meeting_chats`
-  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `chat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `meeting_logs`
 --
 ALTER TABLE `meeting_logs`
-  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `ml_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+
+--
+-- AUTO_INCREMENT for table `meeting_member`
+--
+ALTER TABLE `meeting_member`
+  MODIFY `jr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `room`
@@ -363,7 +390,7 @@ ALTER TABLE `room`
 -- AUTO_INCREMENT for table `room_members`
 --
 ALTER TABLE `room_members`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT for table `submitted_classwork`
@@ -375,7 +402,7 @@ ALTER TABLE `submitted_classwork`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Constraints for dumped tables
@@ -408,6 +435,13 @@ ALTER TABLE `meeting`
 ALTER TABLE `meeting_logs`
   ADD CONSTRAINT `meeting_logs_ibfk_1` FOREIGN KEY (`ml_meeting_id`) REFERENCES `meeting` (`meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `meeting_logs_ibfk_2` FOREIGN KEY (`ml_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `meeting_member`
+--
+ALTER TABLE `meeting_member`
+  ADD CONSTRAINT `meeting_member_ibfk_1` FOREIGN KEY (`jr_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `meeting_member_ibfk_2` FOREIGN KEY (`jr_meeting_id`) REFERENCES `meeting` (`meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `room`
