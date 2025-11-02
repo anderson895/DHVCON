@@ -1348,7 +1348,7 @@ public function checkMemberStatus($meeting_id, $user_id)
     if ($stmt->fetch()) {
         if ($creator_id == $user_id) {
             $stmt->close();
-            return "creator"; // user is the meeting creator
+            return "creator"; 
         }
     }
     $stmt->close();
