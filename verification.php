@@ -20,14 +20,15 @@ if (!isset($user['last_resend_time'])) {
 $resendCooldown = max(0, 300 - (time() - $user['last_resend_time']));
 ?>
 
-<div class="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+
+<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
 
     <p class="mb-4 text-blue-500 text-lg font-medium">
-        Verification code expires in: <span id="timer" class="font-semibold text-black"><?= $timeLeft ?>s</span>
+        Verification code expires in: <span id="timer" class="font-semibold text-white"><?= $timeLeft ?>s</span>
     </p>
 
-    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md text-center border border-gray-200">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-6">Verify Your Account</h2>
+    <div class="relative z-10 bg-[#2b2d31]/80 backdrop-blur-xl border border-[#3c3f44] shadow-2xl rounded-2xl w-full max-w-md p-10 space-y-8 transform transition-all hover:scale-[1.01] duration-300">
+        <h2 class="text-3xl font-semibold text-white-800 mb-6">Verify Your Account</h2>
 
         <!-- Uploaded Requirements Display -->
         <?php if (!empty($user['requirements'])): ?>
@@ -78,6 +79,7 @@ $resendCooldown = max(0, 300 - (time() - $user['last_resend_time']));
         </form>
     </div>
 </div>
+            
 
 <?php include "src/components/footer.php"; ?>
 
