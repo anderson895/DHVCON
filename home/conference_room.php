@@ -7,39 +7,44 @@ $meeting = $db->check_meeting($meetingCode );
 
     <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
 
-       <!-- Header -->
-<div class="flex flex-col md:flex-row justify-between items-center px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
+<!-- Header -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
     <!-- Title -->
-    <h1 class="text-2xl md:text-xl text-gray-100 font-semibold">Conference Room</h1>
+    <h1 class="text-2xl md:text-xl text-gray-100 font-semibold truncate w-full md:w-auto">Conference Room</h1>
 
-                        <!-- Right Controls -->
-                <div class="flex items-center space-x-3 md:space-x-4">
-                    <!-- Room Code -->
-                    <div class="text-gray-400 text-sm md:text-base">
-                        Room Code: <span class="text-gray-100 font-medium"><?= $meetingCode  ?></span>
-                    </div>
+    <!-- Right Controls -->
+    <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full md:w-auto">
+        <!-- Room Code -->
+        <div class="text-gray-400 text-sm md:text-base truncate md:mr-4 flex-shrink-0">
+            Room Code: <span class="text-gray-100 font-medium"><?= $meetingCode ?></span>
+        </div>
 
-                    <!-- Pending Requests Button -->
-                    <button id="pendingRequestsBtn" class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1">
-                        <span class="material-icons text-base">person_add</span>
-                        <span>Requests</span>
-                        <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
-                    </button>
+        <!-- Buttons Row (scrollable on mobile) -->
+        <div class="flex flex-row gap-2 overflow-x-auto md:overflow-visible">
+            <!-- Pending Requests Button -->
+            <button id="pendingRequestsBtn" class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
+                <span class="material-icons text-base">person_add</span>
+                <span class="truncate">Requests</span>
+                <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+            </button>
 
-                                        <!-- View Attendance Button -->
-                    <button id="viewAttendanceBtn" class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-                        <span class="material-icons text-base">groups</span>
-                        <span>Attendance</span>
-                    </button>
+            <!-- View Attendance Button -->
+            <button id="viewAttendanceBtn" class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
+                <span class="material-icons text-base">groups</span>
+                <span class="truncate">Attendance</span>
+            </button>
 
-                    <!-- Leave Room Button -->
-                    <button id="btnLeaveRoom" class="joiner-only cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md">
-                        <span class="material-icons text-base">exit_to_app</span>
-                        <span class="hidden sm:inline">Leave Room</span>
-                    </button>
-                </div>
+            <!-- Leave Room Button -->
+            <button id="btnLeaveRoom" class="joiner-only cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md flex-shrink-0">
+                <span class="material-icons text-base">exit_to_app</span>
+                <span class="hidden sm:inline truncate">Leave Room</span>
+            </button>
+        </div>
+    </div>
+</div>
 
-            </div>
+
+
 
 
         <!-- Status -->
