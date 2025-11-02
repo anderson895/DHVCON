@@ -9,60 +9,68 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['requestType'])) {
         if ($_POST['requestType'] == 'SignUp') {
-                $full_name = $_POST['full_name'];
-                $email = $_POST['email'];
-                $password = $_POST['password'];
-                $user_type = $_POST['user_type'];
 
-                $uploadDir = __DIR__ . '/../../static/upload/requirements/'; 
-                if (!is_dir($uploadDir)) {
-                    mkdir($uploadDir, 0777, true);
-                }
+            if (!isset($_SESSION['register_data'])) {
+                echo json_encode(['status' => 'error','message' => 'No registration data found.']);
+                exit;
+            }
 
-                $uploadedFiles = [];
+            $registerData = $_SESSION['register_data'];
 
-                if (!empty($_FILES['requirements']['name'][0])) {
-                    foreach ($_FILES['requirements']['name'] as $key => $fileName) {
-                        $fileTmpPath = $_FILES['requirements']['tmp_name'][$key];
-                        $fileError = $_FILES['requirements']['error'][$key];
+            // --- Expiration check ---
+            if (time() - $registerData['code_generated_time'] > 300) {
+                unset($_SESSION['register_data']);
+                echo json_encode(['status' => 'error','message' => 'Verification code expired.']);
+                exit;
+            }
 
-                        if ($fileError === UPLOAD_ERR_OK) {
-                            
-                            $cleanFileName = preg_replace("/[^a-zA-Z0-9_\.-]/", "_", basename($fileName));
-                            $newFileName = uniqid() . '_' . $cleanFileName;
-                            $destPath = $uploadDir . $newFileName;
+            if (!isset($_POST['verification_code'])) {
+                echo json_encode(['status' => 'error','message' => 'Verification code is required.']);
+                exit;
+            }
 
-                            // Move uploaded file
-                            if (move_uploaded_file($fileTmpPath, $destPath)) {
-                                $uploadedFiles[] = $newFileName; 
-                            } else {
-                                error_log("❌ Failed to move file: $fileTmpPath to $destPath");
-                            }
-                        } else {
-                            error_log("⚠️ Upload error for $fileName: $fileError");
-                        }
-                    }
-                }
-
-                $requirementsJSON = json_encode($uploadedFiles);
-
-                // Save to database
-                $result = $db->SignUp($full_name, $email, $password, $user_type, $requirementsJSON);
-
-                if ($result['success']) {
-                    echo json_encode([
-                        'status' => 'success',
-                        'message' => $result['message'],
-                    ]);
-                } else {
-                    echo json_encode([
-                        'status' => 'error',
-                        'message' => $result['message']
-                    ]);
-                }
+            if ($_POST['verification_code'] !== $registerData['verification_code']) {
+                echo json_encode(['status' => 'error','message' => 'Invalid verification code.']);
+                exit;
+            }
 
 
+          
+            // --- Move files from session → permanent folder ---
+         
+            if (empty($_SESSION['register_data']['requirements'])) return;
 
+            $uploadDir = __DIR__ . '/../../static/upload/requirements/';
+            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+            foreach ($_SESSION['register_data']['requirements'] as $req) {
+                $cleanFileName = preg_replace("/[^a-zA-Z0-9_\.-]/", "_", basename($req['name']));
+                $newFileName = uniqid() . '_' . $cleanFileName;
+                $destination = $uploadDir . $newFileName;
+
+                $decoded = base64_decode($req['content']);
+                file_put_contents($destination, $decoded);
+            }
+
+            // --- Save user to DB ---
+            $full_name = $registerData['full_name'];
+            $email     = $registerData['email'];
+            $password  = $registerData['password'];
+            $user_type = $registerData['user_type'];
+            $requirements = $registerData['requirements'];
+
+            // Save file names to DB
+            $fileNames = array_map(function($f){ return uniqid() . '_' . preg_replace("/[^a-zA-Z0-9_\.-]/","_",$f['name']); }, $requirements);
+            $requirementsJSON = json_encode($fileNames);
+
+            $result = $db->SignUp($full_name, $email, $password, $user_type, $requirementsJSON);
+
+            if ($result['success']) {
+                unset($_SESSION['register_data']);
+                echo json_encode(['status' => 'success','message' => $result['message']]);
+            } else {
+                echo json_encode(['status' => 'error','message' => $result['message']]);
+            }
         }else if ($_POST['requestType'] == 'joinRoom') {
                 $user_id = $_SESSION['user_id'];
                 $roomCode = $_POST['roomCode'];

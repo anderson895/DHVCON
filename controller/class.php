@@ -180,16 +180,21 @@ class global_class extends db_connect
     }
 
 
+public function isEmailExist($email) {
+    $query = "SELECT user_id FROM `user` WHERE `user_email` = ?";
+    $stmt = $this->conn->prepare($query);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    return $stmt->num_rows > 0; 
+}
+
+
 
 public function SignUp($full_name, $email, $password, $user_type, $requirementsJSON) {
     // Check if the email already exists
-    $checkQuery = "SELECT user_id FROM `user` WHERE `user_email` = ?";
-    $checkStmt = $this->conn->prepare($checkQuery);
-    $checkStmt->bind_param("s", $email);
-    $checkStmt->execute();
-    $checkStmt->store_result();
-
-    if ($checkStmt->num_rows > 0) {
+     if ($this->isEmailExist($email)) {
         return [
             'success' => false,
             'message' => 'Email already registered.'
