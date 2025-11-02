@@ -347,7 +347,7 @@ function fetchMeetings() {
                                 Close Meeting
                             </button>
 
-                            <button class="view-logs w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                            <button hidden class="view-logs w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-id="${meeting.meeting_id}">
                                 Meeting Logs
                             </button>
