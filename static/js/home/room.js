@@ -298,10 +298,18 @@ function fetchMeetings() {
                         // Active — can join
                         actionButton = `
                             <button 
-                                class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                                class="pending-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-link="${meeting.meeting_link}"
                                 data-meeting-id="${meeting.meeting_id}">
                                 Join Meeting
+                            </button>
+
+
+                            <button 
+                                class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
+                                data-meeting-pass="${meeting.meeting_pass}"
+                                data-meeting-id="${meeting.meeting_id}">
+                                Generate Certificate
                             </button>
                         `;
                     }
@@ -432,45 +440,54 @@ function fetchMeetings() {
 
 
 
+// Handle Join Meeting click
+$(document).on("click", ".pending-meeting", function() {
+    const meetingLink = $(this).data("meeting-link");
+    window.location.href = "pending_room?code=" + meetingLink;
+});
 
+$(document).on("click", ".join-meeting", function() {
+    const meetingLink = $(this).data("meeting-link");
+    window.location.href = "conference_room?code=" + meetingLink;
+});
 
 
 
 
 // Handle Join Meeting click
-$(document).on("click", ".join-meeting", function() {
-    const meetingId = $(this).data("meeting-id");
-    const meetingLink = $(this).data("meeting-link");
+// $(document).on("click", ".join-meeting", function() {
+//     const meetingId = $(this).data("meeting-id");
+//     const meetingLink = $(this).data("meeting-link");
 
-    $.ajax({
-        url: "../controller/end-points/controller.php",
-        type: "POST",
-        data: {
-            requestType: "recordMeetingLog",
-            meeting_id: meetingId,
-        },
-        dataType: "json",
-        success: function(res) {
-            if (res.status === 200 || res.status === 409) {
-                window.open("conference_room?code="+meetingLink, "_blank");
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: "Failed to Log",
-                    text: "Unable to record your attendance."
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error(error);
-            Swal.fire({
-                icon: "error",
-                title: "Request Error",
-                text: "Something went wrong while recording the log."
-            });
-        }
-    });
-});
+//     $.ajax({
+//         url: "../controller/end-points/controller.php",
+//         type: "POST",
+//         data: {
+//             requestType: "recordMeetingLog",
+//             meeting_id: meetingId,
+//         },
+//         dataType: "json",
+//         success: function(res) {
+//             if (res.status === 200 || res.status === 409) {
+//                 window.open("conference_room?code="+meetingLink, "_blank");
+//             } else {
+//                 Swal.fire({
+//                     icon: "error",
+//                     title: "Failed to Log",
+//                     text: "Unable to record your attendance."
+//                 });
+//             }
+//         },
+//         error: function(xhr, status, error) {
+//             console.error(error);
+//             Swal.fire({
+//                 icon: "error",
+//                 title: "Request Error",
+//                 text: "Something went wrong while recording the log."
+//             });
+//         }
+//     });
+// });
 
 
 
