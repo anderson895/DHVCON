@@ -104,7 +104,7 @@ include "../src/components/home/footer.php";
       <div>
         <label class="block mb-1 text-sm">Meeting Title</label>
         <input type="text" name="meeting_title" placeholder="Enter meeting title"
-               class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+               class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none" required>
       </div>
 
       <div>
@@ -117,12 +117,12 @@ include "../src/components/home/footer.php";
         <div>
           <label class="block mb-1 text-sm">Start Date</label>
           <input type="datetime-local" name="start_date"
-                 class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+                 class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none" required>
         </div>
         <div>
           <label class="block mb-1 text-sm">End Date</label>
           <input type="datetime-local" name="end_date"
-                 class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none">
+                 class="w-full p-2 rounded-md bg-[#1e1f22] border border-gray-600 focus:border-[#5865f2] outline-none" required>
         </div>
       </div>
 
