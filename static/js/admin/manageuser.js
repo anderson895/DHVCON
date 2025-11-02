@@ -129,12 +129,15 @@ $(document).on("click", ".view-req-btn", function () {
         <p class="text-gray-400 text-base">No uploaded requirements found.</p>
       </div>`;
   } else {
+    console.log(files);
     // ✅ Display each file
     files.forEach(file => {
       const fileExt = file.split('.').pop().toLowerCase();
       const filePath = `../static/upload/requirements/${file}`;
 
-      if (["jpg", "jpeg", "png", "gif"].includes(fileExt)) {
+      
+
+      if (["jpg", "jpeg", "png", "gif","webp"].includes(fileExt)) {
         // 🖼 Image preview
         listHTML += `
           <div class="bg-[#2b2b2b] rounded-lg shadow-md p-2 flex flex-col items-center text-center">
@@ -163,6 +166,8 @@ $(document).on("click", ".view-req-btn", function () {
   $("#requirementsList").html(listHTML);
   $("#requirementsModal").removeClass("hidden");
 });
+
+
 
 // ✅ Close modal (header or footer or click outside)
 $(document).on("click", "#closeModal, #closeModalFooter", function () {

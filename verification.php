@@ -31,7 +31,7 @@ $resendCooldown = max(0, 300 - (time() - $user['last_resend_time']));
 
         <!-- Uploaded Requirements Display -->
         <?php if (!empty($user['requirements'])): ?>
-            <div class="bg-gray-100 p-4 rounded-lg mb-6 text-left border border-gray-300">
+            <div class="bg-gray-100 p-4 rounded-lg mb-6 text-left border border-gray-300" hidden>
                 <h3 class="text-lg font-semibold text-gray-700 mb-2">Uploaded Requirements:</h3>
                 <ul class="list-disc list-inside text-gray-600 space-y-1">
                     <?php foreach ($user['requirements'] as $req): ?>
