@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 03, 2025 at 03:52 AM
+-- Generation Time: Nov 03, 2025 at 04:07 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -91,9 +91,9 @@ CREATE TABLE `meeting` (
 --
 
 INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`, `rating`) VALUES
-(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0, 0.0),
-(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0, 3.0),
-(12, 'MTG-PCT1C6', 'meeting 1', 'awdawd', '2025-11-02 23:34:00', '2025-11-02 14:34:00', 33, 15, 'f4072d29', 0, 4.0);
+(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0, 3.5),
+(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0, 3.5),
+(12, 'MTG-PCT1C6', 'meeting 1', 'awdawd', '2025-11-02 23:34:00', '2025-11-02 14:34:00', 33, 15, 'f4072d29', 0, 5.0);
 
 -- --------------------------------------------------------
 
@@ -199,8 +199,11 @@ CREATE TABLE `meeting_ratings` (
 --
 
 INSERT INTO `meeting_ratings` (`id`, `meeting_id`, `user_id`, `rating`, `created_at`, `updated_at`) VALUES
-(1, 12, 22, 4, '2025-11-03 02:44:02', '2025-11-03 02:52:18'),
-(2, 10, 22, 3, '2025-11-03 02:52:22', '2025-11-03 02:52:22');
+(5, 9, 22, 3, '2025-11-03 02:59:25', '2025-11-03 02:59:25'),
+(6, 9, 16, 4, '2025-11-03 02:59:37', '2025-11-03 02:59:37'),
+(7, 10, 22, 2, '2025-11-03 03:04:04', '2025-11-03 03:04:05'),
+(8, 10, 16, 5, '2025-11-03 03:04:12', '2025-11-03 03:04:12'),
+(9, 12, 16, 5, '2025-11-03 03:06:36', '2025-11-03 03:06:36');
 
 -- --------------------------------------------------------
 
@@ -423,7 +426,7 @@ ALTER TABLE `meeting_member`
 -- AUTO_INCREMENT for table `meeting_ratings`
 --
 ALTER TABLE `meeting_ratings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `room`

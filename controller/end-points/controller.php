@@ -818,10 +818,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
         }else if ($_GET['requestType'] === 'getMeetingsByRoom') {
                     $room_id = intval($_GET['room_id']);
-                    $user_id = $_SESSION['user_id'];
+                    $user_id = $_SESSION['user_id']; // current logged-in user
 
-
-                    $response = $db->GetMeetingsByRoom($room_id);
+                    $response = $db->GetMeetingsByRoom($room_id, $user_id); // ✅ pass user_id
 
                     if ($response) {
                         echo json_encode([
@@ -833,9 +832,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo json_encode([
                             'status' => 500,
                             'user_id' => $user_id,
-                            'message' => $response
+                            'message' => 'Failed to fetch meetings'
                         ]);
                     }
+
                     
         }else if ($_GET['requestType'] === 'viewMeetingLogs') {
                 $meeting_id = intval($_GET['meeting_id']);

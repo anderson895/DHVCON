@@ -64,6 +64,69 @@ class global_class extends db_connect
 
 
 
+public function GetMeetingsByRoom($room_id, $user_id = null)
+{
+    $query = "
+        SELECT 
+            m.meeting_id,
+            m.meeting_link,
+            m.meeting_title,
+            m.meeting_description,
+            m.meeting_start,
+            m.meeting_end,
+            m.meeting_room_id,
+            m.meeting_creator_user_id,
+            m.meeting_status,
+            m.meeting_pass,
+            IFNULL((
+                SELECT ROUND(AVG(r.rating),1) 
+                FROM meeting_ratings r 
+                WHERE r.meeting_id = m.meeting_id
+            ), 0) AS average_rating,
+            IFNULL((
+                SELECT rating 
+                FROM meeting_ratings ur 
+                WHERE ur.meeting_id = m.meeting_id 
+                  AND ur.user_id = ?
+                LIMIT 1
+            ), 0) AS user_rating
+        FROM meeting m
+        WHERE m.meeting_room_id = ?
+        ORDER BY m.meeting_start ASC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    // Ensure $user_id is an integer
+    $user_id = intval($user_id);
+    $room_id = intval($room_id);
+
+    $stmt->bind_param("ii", $user_id, $room_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meetings = [];
+    while ($row = $result->fetch_assoc()) {
+        // Convert ratings to numeric types
+        $row['average_rating'] = floatval($row['average_rating']);
+        $row['user_rating'] = intval($row['user_rating']);
+        $meetings[] = $row;
+    }
+
+    $stmt->close();
+    return $meetings;
+}
+
+
+
+
+
+
+
+
      // Fetch rating results for a meeting
     public function getMeetingRating($meeting_id) {
         $meeting_id = intval($meeting_id);
@@ -446,50 +509,6 @@ public function CreateMeeting($user_id, $meeting_link, $meeting_title, $meeting_
 
 
 
-
-public function GetMeetingsByRoom($room_id, $user_id = null)
-{
-    $query = "
-        SELECT 
-            m.meeting_id,
-            m.meeting_link,
-            m.meeting_title,
-            m.meeting_description,
-            m.meeting_start,
-            m.meeting_end,
-            m.meeting_room_id,
-            m.meeting_creator_user_id,
-            m.meeting_status,
-            m.meeting_pass,
-            IFNULL(ROUND(AVG(r.rating),1), 0) AS average_rating,
-            COUNT(r.rating) AS total_ratings,
-            COALESCE(ur.rating, 0) AS user_rating
-        FROM meeting m
-        LEFT JOIN meeting_ratings r ON m.meeting_id = r.meeting_id
-        LEFT JOIN meeting_ratings ur ON m.meeting_id = ur.meeting_id AND ur.user_id = ?
-        WHERE m.meeting_room_id = ?
-        GROUP BY m.meeting_id
-        ORDER BY m.meeting_start ASC
-    ";
-
-    $stmt = $this->conn->prepare($query);
-    if (!$stmt) {
-        die("Prepare failed: " . $this->conn->error);
-    }
-
-    // Bind user_id first for COALESCE, then room_id
-    $stmt->bind_param("ii", $user_id, $room_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $meetings = [];
-    while ($row = $result->fetch_assoc()) {
-        $meetings[] = $row;
-    }
-
-    $stmt->close();
-    return $meetings;
-}
 
 
 
