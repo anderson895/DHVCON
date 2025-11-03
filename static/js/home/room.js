@@ -173,7 +173,7 @@ function fetchClaimedCertificates(room_id) {
                 <p class="text-gray-400 text-sm">Date Claimed: ${cert.claimed_date}</p>
                 <p class="text-gray-400 text-sm">Meeting Ended: ${cert.meeting_end}</p>
               </div>
-              <a href="certificate.php?meeting_id=${cert.claimed_meeting_id}&meeting_pass=${cert.meeting_pass}" 
+              <a href="certificate.php?meeting_id=${cert.claimed_meeting_id}&meeting_pass=${cert.meeting_pass}&user_id=${response.user_id}" 
                  target="_blank" 
                  rel="noopener noreferrer"
                  class="bg-[#5865f2] hover:bg-[#4752c4] text-white px-4 py-2 rounded-lg text-sm transition">
@@ -373,43 +373,61 @@ function fetchMeetings() {
                 // =============================
                 // Generate Certificate Logic
                 // =============================
-                $(".generate-cert").click(function() {
-                    const meetingPass = $(this).data("meeting-pass");
-                    const meetingId = $(this).data("meeting-id");
+               $(".generate-cert").click(function() {
+                  const meetingPass = $(this).data("meeting-pass");
+                  const meetingId = $(this).data("meeting-id");
 
-                    Swal.fire({
-                        title: 'Enter Meeting Pass',
-                        input: 'password',
-                        inputLabel: 'Meeting Pass',
-                        inputPlaceholder: 'Enter the meeting pass',
-                        showCancelButton: true,
-                        confirmButtonText: 'Submit',
-                        cancelButtonText: 'Cancel',
-                        inputValidator: (value) => {
-                            if (!value) return 'Meeting pass cannot be empty!';
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            if (result.value === meetingPass) {
-                                Swal.fire({
-                                    title: 'Processing...',
-                                    timer: 1000,
-                                    didOpen: () => Swal.showLoading(),
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                }).then(() => {
-                                    window.open(`certificate?meeting_id=${meetingId}&&meeting_pass=${meetingPass}`, '_blank');
-                                });
-                            } else {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Invalid Pass',
-                                    text: 'The meeting pass you entered is incorrect.'
-                                });
-                            }
-                        }
-                    });
-                });
+                  Swal.fire({
+                      title: 'Enter Meeting Pass',
+                      input: 'password',
+                      inputLabel: 'Meeting Pass',
+                      inputPlaceholder: 'Enter the meeting pass',
+                      showCancelButton: true,
+                      confirmButtonText: 'Submit',
+                      cancelButtonText: 'Cancel',
+                      inputValidator: (value) => {
+                          if (!value) return 'Meeting pass cannot be empty!';
+                      }
+                  }).then((result) => {
+                      if (result.isConfirmed) {
+                          if (result.value === meetingPass) {
+                              Swal.fire({
+                                  title: 'Sending certificate link...',
+                                  didOpen: () => Swal.showLoading(),
+                                  allowOutsideClick: false
+                              });
+
+                              // Send AJAX request to backend to send email
+                              $.get('../controller/end-points/send_certificate_email.php', {
+                                  meeting_id: meetingId,
+                                  meeting_pass: meetingPass
+                              }, function(response) {
+                                  Swal.close();
+                                  if (response.status === 'success') {
+                                      Swal.fire({
+                                          icon: 'success',
+                                          title: 'Email Sent',
+                                          text: 'The certificate link has been sent to your email.'
+                                      });
+                                  } else {
+                                      Swal.fire({
+                                          icon: 'error',
+                                          title: 'Error',
+                                          text: response.message
+                                      });
+                                  }
+                              }, 'json');
+                          } else {
+                              Swal.fire({
+                                  icon: 'error',
+                                  title: 'Invalid Pass',
+                                  text: 'The meeting pass you entered is incorrect.'
+                              });
+                          }
+                      }
+                  });
+              });
+
 
             } else {
                 container.append(`
@@ -525,15 +543,22 @@ $(document).on('click', '.btnCloseMeeting', function() {
                 dataType: 'json',
                 success: function(res) {
                     if (res.status === 200) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Meeting Closed',
-                            timer: 1000,
-                            showConfirmButton: false
-                        });
+                       Swal.fire({
+                          icon: 'success',
+                          title: 'Meeting Closed',
+                          timer: 1000,    
+                          showConfirmButton: false,
+                          didOpen: () => {
+                              button.prop("disabled", true)
+                                    .addClass("cursor-not-allowed opacity-50")
+                                    .removeClass("hover:bg-red-300");
+                          }
+                      }).then(() => {
+                          setTimeout(() => {
+                              location.reload();
+                          }, 500); 
+                      });
 
-                        // Disable the button immediately
-                        button.prop("disabled", true).addClass("cursor-not-allowed opacity-50").removeClass("hover:bg-red-300");
                     } else {
                         Swal.fire({
                             icon: 'error',

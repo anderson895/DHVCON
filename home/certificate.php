@@ -1,22 +1,23 @@
 <?php
-session_start();
 include "auth.php";
 
 $db = new auth_class();
 $cert = new certificate_class();
 
-if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
-    $user_id = intval($_SESSION['user_id']);
+// Check required GET parameters
+if (isset($_GET['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
+    $user_id = intval($_GET['user_id']);
     $meeting_id = intval($_GET['meeting_id']);
     $meeting_pass = $_GET['meeting_pass'];
 
+    // Use existing method instead of manual query
     $On_Session = $db->check_account($user_id);
 
     if (!empty($On_Session)) {
+        // Fetch certificate data
         $certificate_data = $cert->meeting_certificate($meeting_id, $meeting_pass, $user_id);
 
         if ($certificate_data === false) {
-          
             header('Location: ../404');
             exit;
         }
@@ -25,6 +26,7 @@ if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
         header('Location: ../404');
         exit;
     }
+
 } else {
     header('Location: ../404');
     exit;

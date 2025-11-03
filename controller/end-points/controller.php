@@ -857,7 +857,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($response['status'] === 200) {
                 echo json_encode([
                     'status' => 200,
-                    'data' => $response['data']
+                    'data' => $response['data'],
+                    'user_id'=>$user_id
                 ]);
             } else {
                 echo json_encode([
