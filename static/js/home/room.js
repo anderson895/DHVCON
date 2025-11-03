@@ -1438,7 +1438,7 @@ $('#btnCreateMeeting').click(async function() {
 
   // Show modal and generate code
   $('#btnCreateMeeting').click(function() {
-    const meetingCode = generateMeetingCode();
+    const meetingCode = getUniqueMeetingCode();
     $('#meeting_code').val(meetingCode);
     $('#createMeetingModal').fadeIn().css('display', 'flex');
   });
