@@ -511,14 +511,20 @@ window.addEventListener('resize', () => {
 
 
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+
+
+<?php 
+$user = "(" . $On_Session[0]['user_id'] . ") " . $On_Session[0]['user_fullname'];
+?>
+
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
 let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
 let localTracks = { videoTrack: null, audioTrack: null };
-let localPlayer;
 const videoContainer = document.getElementById('video-container');
 const statusBox = document.getElementById('status');
-const meetingCode  = "<?= $meetingCode  ?>";
+const meetingCode  = "<?= $meetingCode ?>";
+const userName = `<?= $user ?>`;
 
 function setStatus(message, type = '') {
     statusBox.textContent = message;
@@ -536,112 +542,160 @@ async function joinMeeting(code) {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         stream.getTracks().forEach(track => track.stop());
 
+        // ✅ Handle remote users
         client.on('user-published', async (user, mediaType) => {
-            await client.subscribe(user, mediaType);
-            let player = document.getElementById('player-' + user.uid);
-            if (!player) {
-                player = document.createElement('div');
-                player.id = 'player-' + user.uid;
-                player.className = "aspect-video rounded-md overflow-hidden relative shadow-md bg-black";
-                videoContainer.appendChild(player);
+        await client.subscribe(user, mediaType);
+
+        let wrapper = document.getElementById('wrapper-' + user.uid);
+        if (!wrapper) {
+            wrapper = document.createElement('div');
+            wrapper.id = 'wrapper-' + user.uid;
+            wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
+
+            // Video div
+            const videoDiv = document.createElement('div');
+            videoDiv.id = 'player-' + user.uid;
+            videoDiv.className = "w-full h-full";
+            wrapper.appendChild(videoDiv);
+
+            // Default icon
+            const defaultIcon = document.createElement('div');
+            defaultIcon.id = 'default-icon-' + user.uid;
+            defaultIcon.className = "absolute inset-0 flex items-center justify-center bg-black";
+            const iconSpan = document.createElement('span');
+            iconSpan.className = 'material-icons';
+            iconSpan.textContent = 'account_circle';
+            iconSpan.style.fontSize = '8vw';
+            iconSpan.style.color = '#9ca3af';
+            defaultIcon.appendChild(iconSpan);
+            wrapper.appendChild(defaultIcon);
+
+            // Username label
+            const nameTag = document.createElement('div');
+            nameTag.innerText = user.uid || `User ${user.uid}`;
+            nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1";
+            wrapper.appendChild(nameTag);
+
+            videoContainer.appendChild(wrapper);
+        }
+
+        if (mediaType === 'video') {
+            user.videoTrack.play('player-' + user.uid);
+            document.getElementById('player-' + user.uid).style.display = 'block';
+            document.getElementById('default-icon-' + user.uid).classList.add('hidden'); // hide default
+        }
+
+        if (mediaType === 'audio') {
+            user.audioTrack.play();
+        }
+    });
+
+
+        // ✅ Handle when user disables cam
+        client.on('user-unpublished', (user, mediaType) => {
+            if (mediaType === 'video') {
+                // Don’t remove — just show icon
+                const player = document.getElementById('player-' + user.uid);
+                const icon = document.getElementById('default-icon-' + user.uid);
+                if (player && icon) {
+                    player.style.display = 'none';
+                    icon.classList.remove('hidden');
+                    icon.classList.add('flex');
+                }
             }
-            if (mediaType === 'video') user.videoTrack.play(player);
-            if (mediaType === 'audio') user.audioTrack.play();
+            if (mediaType === 'audio') {
+                // Optional: mute their audio
+            }
         });
 
-        client.on('user-unpublished', (user) => {
-            const player = document.getElementById('player-' + user.uid);
-            if (player) player.remove();
-        });
+        // Join
+        setStatus(`Joining room: ${code} as ${userName}...`);
+        await client.join(APP_ID, code, null, userName);
 
-        setStatus(`Joining room: ${code}...`);
-        const uid = await client.join(APP_ID, code, null, null);
-
+        // Local tracks
         localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
 
-        localPlayer = document.createElement('div');
-        localPlayer.id = 'local-player';
-        localPlayer.className = "aspect-video rounded-md overflow-hidden relative shadow-md bg-black";
-        videoContainer.appendChild(localPlayer);
+        // Local wrapper
+        const localWrapper = document.createElement('div');
+        localWrapper.id = 'wrapper-local';
+        localWrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
 
-        await localTracks.videoTrack.play(localPlayer);
+        // Video div
+        const localVideoDiv = document.createElement('div');
+        localVideoDiv.id = 'local-player';
+        localVideoDiv.className = "w-full h-full";
+        localWrapper.appendChild(localVideoDiv);
+
+        // Default user icon (hidden initially)
+        const defaultIcon = document.createElement('div');
+        defaultIcon.id = 'default-user-icon';
+        defaultIcon.className = "absolute inset-0 hidden items-center justify-center bg-black";
+        const iconSpan = document.createElement('span');
+        iconSpan.className = 'material-icons';
+        iconSpan.textContent = 'account_circle';
+        iconSpan.style.fontSize = '8vw';
+        iconSpan.style.color = '#9ca3af';
+        defaultIcon.appendChild(iconSpan);
+        localWrapper.appendChild(defaultIcon);
+
+        // Username label (always visible)
+        const localName = document.createElement('div');
+        localName.innerText = `${userName} (You)`;
+        localName.className = "username-label absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-10";
+        localWrapper.appendChild(localName);
+
+        videoContainer.appendChild(localWrapper);
+
+        // Play and publish
+        await localTracks.videoTrack.play('local-player');
         await client.publish(Object.values(localTracks));
 
-        setStatus(`Joined meeting: ${code}`, "success");
+        setStatus(`✅ Joined meeting: ${code} as ${userName}`, "success");
 
     } catch (err) {
         console.error(err);
-        Object.values(localTracks).forEach(track => { if(track){ track.stop(); track.close(); }});
         setStatus("❌ Failed to join meeting: " + err.message, "error");
     }
 }
 
 
-// Toggle Cam with default user icon
+// ✅ Toggle Cam (local only)
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
     if (!localTracks.videoTrack) return;
+
     const icon = document.getElementById('iconCam');
     const text = document.getElementById('textCam');
+    const defaultIcon = document.getElementById('default-user-icon');
+    const localPlayer = document.getElementById('local-player');
 
     if (localTracks.videoTrack.enabled) {
-        // Turn off camera
-        localTracks.videoTrack.setEnabled(false);
+        await localTracks.videoTrack.setEnabled(false);
         icon.textContent = 'videocam_off';
         text.textContent = 'Turn On Cam';
 
-            // Show default user icon (fills and centers in video container)
-        if (!document.getElementById('default-user-icon')) {
-                const defaultIcon = document.createElement('div');
-                defaultIcon.id = 'default-user-icon';
-
-                // Make it cover the entire video player
-                defaultIcon.style.position = 'absolute';
-                defaultIcon.style.top = '0';
-                defaultIcon.style.left = '0';
-                defaultIcon.style.width = '100%';
-                defaultIcon.style.height = '100%';
-                defaultIcon.style.backgroundColor = 'black';
-                defaultIcon.style.display = 'flex';
-                defaultIcon.style.alignItems = 'center';
-                defaultIcon.style.justifyContent = 'center';
-                defaultIcon.style.userSelect = 'none';
-
-                // Use a block span that scales dynamically
-                const iconSpan = document.createElement('span');
-                iconSpan.className = 'material-icons';
-                iconSpan.textContent = 'account_circle';
-                iconSpan.style.fontSize = '8vw';  // slightly smaller
-                iconSpan.style.lineHeight = '1';
-                iconSpan.style.display = 'block';
-                iconSpan.style.color = '#d1d5db';  // gray-300
-
-                defaultIcon.appendChild(iconSpan);
-                localPlayer.appendChild(defaultIcon);
-            }
-
-
-
-
+        localPlayer.style.display = 'none';
+        defaultIcon.classList.remove('hidden');
+        defaultIcon.classList.add('flex');
     } else {
-        // Turn on camera
-        localTracks.videoTrack.setEnabled(true);
+        await localTracks.videoTrack.setEnabled(true);
         icon.textContent = 'videocam';
         text.textContent = 'Turn Off Cam';
 
-        // Remove default icon
-        const defaultIcon = document.getElementById('default-user-icon');
-        if (defaultIcon) defaultIcon.remove();
+        localPlayer.style.display = 'block';
+        defaultIcon.classList.add('hidden');
+        defaultIcon.classList.remove('flex');
     }
 });
 
-// Toggle Mic
+
+// ✅ Toggle Mic
 document.getElementById('btnToggleMic').addEventListener('click', async () => {
     if (!localTracks.audioTrack) return;
+
     const icon = document.getElementById('iconMic');
     const text = document.getElementById('textMic');
 
-    // Correct property: `enabled` (not isEnabled())
     if (localTracks.audioTrack.enabled) {
         localTracks.audioTrack.setEnabled(false);
         icon.textContent = 'mic_off';
@@ -654,9 +708,11 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
 });
 
 
-// Automatically join on page load
-joinMeeting(meetingCode );
+// ✅ Auto join
+joinMeeting(meetingCode);
 
+
+// ✅ Leave room
 $(document).ready(function() {
     $('#btnLeaveRoom').on('click', function(e) {
         e.preventDefault();
@@ -679,28 +735,6 @@ $(document).ready(function() {
         });
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </script>
 
 
