@@ -118,6 +118,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                 }
 
+        }else if ($_POST['requestType'] == 'ratingMeeting') {
+               $user_id = $_SESSION['user_id'];
+                $meeting_id = $_POST['meeting_id'];
+                $rating = $_POST['rating'];
+
+                // Correct parameter order
+                $result = $db->ratingMeeting($meeting_id, $rating, $user_id);
+
+                if ($result['status'] === 'success') {
+                    echo json_encode([
+                        'status' => 'success',
+                        'message' => $result['message'],
+                    ]);
+                } else {
+                    echo json_encode([
+                        'status' => 'error',
+                        'message' => $result['message']
+                    ]);
+                }
+
+
         }else if ($_POST['requestType'] == 'updateJoinRequest') {
             $jr_id = $_POST['jr_id'] ?? null;
             $action = $_POST['action'] ?? null; // 'approved' or 'rejected'
