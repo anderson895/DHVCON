@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 02, 2025 at 08:12 PM
+-- Generation Time: Nov 03, 2025 at 03:52 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,6 +33,13 @@ CREATE TABLE `claimed_certificate` (
   `claimed_user_id` int(11) NOT NULL,
   `claimed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `claimed_certificate`
+--
+
+INSERT INTO `claimed_certificate` (`claimed_id`, `claimed_meeting_id`, `claimed_user_id`, `claimed_date`) VALUES
+(4, 12, 22, '2025-11-03 01:59:03');
 
 -- --------------------------------------------------------
 
@@ -75,17 +82,18 @@ CREATE TABLE `meeting` (
   `meeting_room_id` int(11) NOT NULL,
   `meeting_creator_user_id` int(11) NOT NULL,
   `meeting_pass` varchar(30) NOT NULL,
-  `meeting_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=close,1=open'
+  `meeting_status` int(11) NOT NULL DEFAULT 1 COMMENT '0=close,1=open',
+  `rating` decimal(2,1) DEFAULT 0.0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `meeting`
 --
 
-INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`) VALUES
-(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0),
-(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0),
-(12, 'MTG-PCT1C6', 'meeting 1', 'awdawd', '2025-11-02 23:34:00', '2025-11-02 14:34:00', 33, 15, 'f4072d29', 1);
+INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`, `rating`) VALUES
+(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0, 0.0),
+(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0, 3.0),
+(12, 'MTG-PCT1C6', 'meeting 1', 'awdawd', '2025-11-02 23:34:00', '2025-11-02 14:34:00', 33, 15, 'f4072d29', 0, 4.0);
 
 -- --------------------------------------------------------
 
@@ -170,6 +178,29 @@ CREATE TABLE `meeting_member` (
 
 INSERT INTO `meeting_member` (`jr_id`, `jr_meeting_id`, `jr_user_id`, `jr_status`, `jr_requested_at`) VALUES
 (25, 12, 22, 'approved', '2025-11-02 18:51:04');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `meeting_ratings`
+--
+
+CREATE TABLE `meeting_ratings` (
+  `id` int(11) NOT NULL,
+  `meeting_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `rating` tinyint(4) NOT NULL CHECK (`rating` between 1 and 5),
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `meeting_ratings`
+--
+
+INSERT INTO `meeting_ratings` (`id`, `meeting_id`, `user_id`, `rating`, `created_at`, `updated_at`) VALUES
+(1, 12, 22, 4, '2025-11-03 02:44:02', '2025-11-03 02:52:18'),
+(2, 10, 22, 3, '2025-11-03 02:52:22', '2025-11-03 02:52:22');
 
 -- --------------------------------------------------------
 
@@ -312,6 +343,14 @@ ALTER TABLE `meeting_member`
   ADD KEY `jr_meeting_id` (`jr_meeting_id`);
 
 --
+-- Indexes for table `meeting_ratings`
+--
+ALTER TABLE `meeting_ratings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_meeting_user` (`meeting_id`,`user_id`),
+  ADD KEY `fk_meeting_rating_user` (`user_id`);
+
+--
 -- Indexes for table `room`
 --
 ALTER TABLE `room`
@@ -348,7 +387,7 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `claimed_certificate`
 --
 ALTER TABLE `claimed_certificate`
-  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `classwork`
@@ -379,6 +418,12 @@ ALTER TABLE `meeting_logs`
 --
 ALTER TABLE `meeting_member`
   MODIFY `jr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+
+--
+-- AUTO_INCREMENT for table `meeting_ratings`
+--
+ALTER TABLE `meeting_ratings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `room`
@@ -442,6 +487,13 @@ ALTER TABLE `meeting_logs`
 ALTER TABLE `meeting_member`
   ADD CONSTRAINT `meeting_member_ibfk_1` FOREIGN KEY (`jr_user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `meeting_member_ibfk_2` FOREIGN KEY (`jr_meeting_id`) REFERENCES `meeting` (`meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `meeting_ratings`
+--
+ALTER TABLE `meeting_ratings`
+  ADD CONSTRAINT `fk_meeting_rating_meeting` FOREIGN KEY (`meeting_id`) REFERENCES `meeting` (`meeting_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_meeting_rating_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `room`

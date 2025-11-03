@@ -241,8 +241,6 @@ function fetchAllClaimedCertificates(roomId, room_name) {
 
 
 
-
-
 function fetchMeetings() {
     $.ajax({
         url: `../controller/end-points/controller.php`,
@@ -276,41 +274,51 @@ function fetchMeetings() {
                     `;
 
                     // =============================
+                    // Generate dynamic rating stars
+                    // =============================
+                    const averageRating = parseFloat(meeting.average_rating) || 0;
+                    const userRating = parseInt(meeting.user_rating) || 0;
+
+                    let ratingStars = `<div class="rating mt-2 text-yellow-400 flex justify-center space-x-1">`;
+                    for (let i = 1; i <= 5; i++) {
+                        let starClass = "cursor-pointer ";
+                        if (i <= userRating) {
+                            starClass += "text-yellow-400"; // user's rating
+                        } else if (i <= averageRating) {
+                            starClass += "text-yellow-300"; // average rating
+                        } else {
+                            starClass += "text-gray-500"; // empty star
+                        }
+                        ratingStars += `<span class="star ${starClass}" data-value="${i}" data-meeting-id="${meeting.meeting_id}">&#9733;</span>`;
+                    }
+                    ratingStars += `</div>`;
+
+                    // =============================
                     // Action Button (for participants)
                     // =============================
                     let actionButton = "";
                     if (meeting.meeting_status == 0) {
-                        // Meeting closed — disable join, show cert
                         actionButton = `
-                            <button 
-                                class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
-                                disabled>
+                            <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed" disabled>
                                 Meeting Closed
                             </button>
-                            <button 
-                                class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer generate-cert"
-                                data-meeting-pass="${meeting.meeting_pass}"
-                                data-meeting-id="${meeting.meeting_id}">
+                            <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer generate-cert"
+                                data-meeting-pass="${meeting.meeting_pass}" data-meeting-id="${meeting.meeting_id}">
                                 Generate Certificate
                             </button>
+                            ${ratingStars}
                         `;
                     } else if (meeting.meeting_status == 1) {
-                        // Active — can join
                         actionButton = `
-                            <button 
-                                class="pending-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
-                                data-meeting-link="${meeting.meeting_link}"
-                                data-meeting-id="${meeting.meeting_id}">
+                            <button class="pending-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                                data-meeting-link="${meeting.meeting_link}" data-meeting-id="${meeting.meeting_id}">
                                 Join Meeting
                             </button>
-
-
-                            <button 
-                                class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
-                                data-meeting-pass="${meeting.meeting_pass}"
-                                data-meeting-id="${meeting.meeting_id}">
+                            <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
+                                data-meeting-pass="${meeting.meeting_pass}" data-meeting-id="${meeting.meeting_id}">
                                 Generate Certificate
                             </button>
+                            ${ratingStars}
                         `;
                     }
 
@@ -323,18 +331,13 @@ function fetchMeetings() {
                             ? 'disabled cursor-not-allowed opacity-50' 
                             : 'cursor-pointer btnCloseMeeting';
 
-                        // Add join button only if active
                         const joinBtn = meeting.meeting_status == 1 ? `
-                            <button 
-                                class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
-                                data-meeting-link="${meeting.meeting_link}"
-                                data-meeting-id="${meeting.meeting_id}">
+                            <button class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                                data-meeting-link="${meeting.meeting_link}" data-meeting-id="${meeting.meeting_id}">
                                 Join Meeting
                             </button>
                         ` : `
-                            <button 
-                                class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
-                                disabled>
+                            <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed" disabled>
                                 Meeting Closed
                             </button>
                         `;
@@ -346,11 +349,11 @@ function fetchMeetings() {
                                 data-meeting-id="${meeting.meeting_id}">
                                 Close Meeting
                             </button>
-
                             <button hidden class="view-logs w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-id="${meeting.meeting_id}">
                                 Meeting Logs
                             </button>
+                            ${ratingStars}
                         `;
                     }
 
@@ -370,73 +373,10 @@ function fetchMeetings() {
                     container.append(card);
                 });
 
-                // =============================
-                // Generate Certificate Logic
-                // =============================
-               $(".generate-cert").click(function() {
-                  const meetingPass = $(this).data("meeting-pass");
-                  const meetingId = $(this).data("meeting-id");
-
-                  Swal.fire({
-                      title: 'Enter Meeting Pass',
-                      input: 'password',
-                      inputLabel: 'Meeting Pass',
-                      inputPlaceholder: 'Enter the meeting pass',
-                      showCancelButton: true,
-                      confirmButtonText: 'Submit',
-                      cancelButtonText: 'Cancel',
-                      inputValidator: (value) => {
-                          if (!value) return 'Meeting pass cannot be empty!';
-                      }
-                  }).then((result) => {
-                      if (result.isConfirmed) {
-                          if (result.value === meetingPass) {
-                              Swal.fire({
-                                  title: 'Sending certificate link...',
-                                  didOpen: () => Swal.showLoading(),
-                                  allowOutsideClick: false
-                              });
-
-                              // Send AJAX request to backend to send email
-                              $.get('../controller/end-points/send_certificate_email.php', {
-                                  meeting_id: meetingId,
-                                  meeting_pass: meetingPass
-                              }, function(response) {
-                                  Swal.close();
-                                  if (response.status === 'success') {
-                                      Swal.fire({
-                                          icon: 'success',
-                                          title: 'Email Sent',
-                                          text: 'The certificate link has been sent to your email.'
-                                      });
-                                  } else {
-                                      Swal.fire({
-                                          icon: 'error',
-                                          title: 'Error',
-                                          text: response.message
-                                      });
-                                  }
-                              }, 'json');
-                          } else {
-                              Swal.fire({
-                                  icon: 'error',
-                                  title: 'Invalid Pass',
-                                  text: 'The meeting pass you entered is incorrect.'
-                              });
-                          }
-                      }
-                  });
-              });
-
-
             } else {
                 container.append(`
                     <div class="col-span-full text-center px-4">
-                        <img 
-                            src="../static/image/no_schedule_banner.png" 
-                            alt="No meetings" 
-                            class="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto" 
-                        />
+                        <img src="../static/image/no_schedule_banner.png" alt="No meetings" class="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg h-auto" />
                         <p class="text-gray-400 mt-4 text-base sm:text-lg md:text-xl">No meetings scheduled.</p>
                     </div>
                 `);
@@ -448,13 +388,96 @@ function fetchMeetings() {
     });
 }
 
+// =============================
+// Star click handler to rate dynamically
+// =============================
+$(document).on("click", ".rating .star", function() {
+    const value = $(this).data("value");
+    const meetingId = $(this).data("meeting-id");
+
+    // Update stars visually
+    $(this).siblings().addBack().each(function() {
+        if ($(this).data("value") <= value) {
+            $(this).removeClass("text-gray-500").addClass("text-yellow-400");
+        } else {
+            $(this).removeClass("text-yellow-400").addClass("text-gray-500");
+        }
+    });
+
+    // Send rating to backend
+    $.post("../controller/end-points/controller.php", { 
+        meeting_id: meetingId, 
+        rating: value,
+        requestType: "ratingMeeting"
+    }, function(response) {
+        if (response.status === "success") {
+            console.log("Rating saved:", value);
+        } else {
+            console.error("Error saving rating:", response.message);
+        }
+    }, "json");
+});
 
 
 
 
 
+ // Generate Certificate Logic
+ // =============================
+   $(document).on("click", ".generate-cert", function() {
+        const meetingPass = $(this).data("meeting-pass");
+        const meetingId = $(this).data("meeting-id");
 
+        Swal.fire({
+            title: 'Enter Meeting Pass',
+            input: 'password',
+            inputLabel: 'Meeting Pass',
+            inputPlaceholder: 'Enter the meeting pass',
+            showCancelButton: true,
+            confirmButtonText: 'Submit',
+            cancelButtonText: 'Cancel',
+            inputValidator: (value) => {
+                if (!value) return 'Meeting pass cannot be empty!';
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                if (result.value === meetingPass) {
+                    Swal.fire({
+                        title: 'Sending certificate link...',
+                        didOpen: () => Swal.showLoading(),
+                        allowOutsideClick: false
+                    });
 
+                    // Send AJAX request to backend to send email
+                    $.get('../controller/end-points/send_certificate_email.php', {
+                        meeting_id: meetingId,
+                        meeting_pass: meetingPass
+                    }, function(response) {
+                        Swal.close();
+                        if (response.status === 'success') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Email Sent',
+                                text: 'The certificate link has been sent to your email.'
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: response.message
+                            });
+                        }
+                    }, 'json');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid Pass',
+                        text: 'The meeting pass you entered is incorrect.'
+                    });
+                }
+            }
+        });
+    });
 
 
 
