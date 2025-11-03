@@ -240,7 +240,6 @@ function fetchAllClaimedCertificates(roomId, room_name) {
 
 
 
-
 function fetchMeetings() {
     $.ajax({
         url: `../controller/end-points/controller.php`,
@@ -274,63 +273,69 @@ function fetchMeetings() {
                     `;
 
                     // =============================
-                    // Generate dynamic rating stars
+                    // Ratings: Separate for participant and creator
                     // =============================
-                    const averageRating = parseFloat(meeting.average_rating) || 0;
-                    const userRating = parseInt(meeting.user_rating) || 0;
+                    let ratingStars = '';
 
-                    let ratingStars = `<div class="rating mt-2 text-yellow-400 flex justify-center space-x-1">`;
-                    for (let i = 1; i <= 5; i++) {
-                        let starClass = "cursor-pointer ";
-                        if (i <= userRating) {
-                            starClass += "text-yellow-400"; // user's rating
-                        } else if (i <= averageRating) {
-                            starClass += "text-yellow-300"; // average rating
-                        } else {
-                            starClass += "text-gray-500"; // empty star
+                    if (response.user_id === meeting.meeting_creator_user_id) {
+                        // Creator sees average rating (read-only)
+                        const averageRating = parseFloat(meeting.average_rating) || 0;
+                        ratingStars = `<div class="average-rating mt-2 text-yellow-300 flex justify-center space-x-1">Average : `;
+                        for (let i = 1; i <= 5; i++) {
+                            const starClass = i <= averageRating ? "text-yellow-300" : "text-gray-500";
+                            ratingStars += `<span class="star avg-star ${starClass}">&#9733;</span>`;
                         }
-                        ratingStars += `<span class="star ${starClass}" data-value="${i}" data-meeting-id="${meeting.meeting_id}">&#9733;</span>`;
-                    }
-                    ratingStars += `</div>`;
-
-                    // =============================
-                    // Action Button (for participants)
-                    // =============================
-                    let actionButton = "";
-                    if (meeting.meeting_status == 0) {
-                        actionButton = `
-                            <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed" disabled>
-                                Meeting Closed
-                            </button>
-                            <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer generate-cert"
-                                data-meeting-pass="${meeting.meeting_pass}" data-meeting-id="${meeting.meeting_id}">
-                                Generate Certificate
-                            </button>
-                            ${ratingStars}
-                        `;
-                    } else if (meeting.meeting_status == 1) {
-                        actionButton = `
-                            <button class="pending-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
-                                data-meeting-link="${meeting.meeting_link}" data-meeting-id="${meeting.meeting_id}">
-                                Join Meeting
-                            </button>
-                            <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
-                                data-meeting-pass="${meeting.meeting_pass}" data-meeting-id="${meeting.meeting_id}">
-                                Generate Certificate
-                            </button>
-                            ${ratingStars}
-                        `;
+                        ratingStars += `</div>`;
+                    } else {
+                        // Participant sees their own rating (clickable)
+                        const userRating = parseInt(meeting.user_rating) || 0;
+                        ratingStars = `<div class="user-rating mt-2 text-yellow-400 flex justify-center space-x-1"> `;
+                        for (let i = 1; i <= 5; i++) {
+                            const starClass = i <= userRating ? "text-yellow-400 cursor-pointer" : "text-gray-500 cursor-pointer";
+                            ratingStars += `<span class="star user-star ${starClass}" data-value="${i}" data-meeting-id="${meeting.meeting_id}">&#9733;</span>`;
+                        }
+                        ratingStars += `</div>`;
                     }
 
                     // =============================
-                    // Creator buttons (for host)
+                    // Action Buttons (participants)
+                    // =============================
+                    let actionButton = '';
+                    if (response.user_id !== meeting.meeting_creator_user_id) {
+                        if (meeting.meeting_status == 0) {
+                            actionButton = `
+                                <p class="text-sm font-medium text-yellow-400">Status: Closed</p>
+                                <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed" disabled>
+                                    Meeting Closed
+                                </button>
+                                <button class="w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer generate-cert"
+                                    data-meeting-pass="${meeting.meeting_pass}" data-meeting-id="${meeting.meeting_id}">
+                                    Generate Certificate
+                                </button>
+                                ${ratingStars}
+                            `;
+                        } else {
+                            actionButton = `
+                                <p class="text-sm font-medium text-yellow-400">Status: Open</p>
+                                <button class="pending-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
+                                    data-meeting-link="${meeting.meeting_link}" data-meeting-id="${meeting.meeting_id}">
+                                    Join Meeting
+                                </button>
+                                <button class="w-full text-center bg-gray-500 text-white py-2 rounded-md opacity-60 cursor-not-allowed"
+                                    data-meeting-pass="${meeting.meeting_pass}" data-meeting-id="${meeting.meeting_id}">
+                                    Generate Certificate
+                                </button>
+                                ${ratingStars}
+                            `;
+                        }
+                    }
+
+                    // =============================
+                    // Host buttons (creator)
                     // =============================
                     let creatorButtons = '';
                     if (response.user_id === meeting.meeting_creator_user_id) {
-                        const closeDisabled = meeting.meeting_status == 0 
-                            ? 'disabled cursor-not-allowed opacity-50' 
-                            : 'cursor-pointer btnCloseMeeting';
-
+                        const closeDisabled = meeting.meeting_status == 0 ? 'disabled cursor-not-allowed opacity-50' : 'cursor-pointer btnCloseMeeting';
                         const joinBtn = meeting.meeting_status == 1 ? `
                             <button class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-link="${meeting.meeting_link}" data-meeting-id="${meeting.meeting_id}">
@@ -341,7 +346,6 @@ function fetchMeetings() {
                                 Meeting Closed
                             </button>
                         `;
-
                         creatorButtons = `
                             <p class="text-yellow-400 font-medium text-sm">Meeting Pass: ${meeting.meeting_pass}</p>
                             ${joinBtn}
@@ -358,7 +362,7 @@ function fetchMeetings() {
                     }
 
                     // =============================
-                    // Card Output
+                    // Render card
                     // =============================
                     const card = `
                         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
@@ -372,7 +376,6 @@ function fetchMeetings() {
                     `;
                     container.append(card);
                 });
-
             } else {
                 container.append(`
                     <div class="col-span-full text-center px-4">
@@ -389,9 +392,9 @@ function fetchMeetings() {
 }
 
 // =============================
-// Star click handler to rate dynamically
+// User rating click handler
 // =============================
-$(document).on("click", ".rating .star", function() {
+$(document).on("click", ".user-rating .star", function() {
     const value = $(this).data("value");
     const meetingId = $(this).data("meeting-id");
 
@@ -411,13 +414,12 @@ $(document).on("click", ".rating .star", function() {
         requestType: "ratingMeeting"
     }, function(response) {
         if (response.status === "success") {
-            console.log("Rating saved:", value);
+            console.log("Your rating saved:", value);
         } else {
             console.error("Error saving rating:", response.message);
         }
     }, "json");
 });
-
 
 
 
