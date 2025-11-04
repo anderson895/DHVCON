@@ -130,14 +130,14 @@ class RegisterUser {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'rodriguezryan325@gmail.com';
-            $mail->Password = 'ofvf yxut wpcc iecx';
+            $mail->Username = 'jessbertsoliguin456@gmail.com'; 
+            $mail->Password = 'fcdc wynb xmsf clnl';
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
-            $mail->setFrom('rodriguezryan325@gmail.com', 'DHVCON');
+            $mail->setFrom('jessbertsoliguin456@gmail.com', 'DHVCON');
             $mail->addAddress($this->email, $fullname);
-            $mail->addReplyTo('rodriguezryan325@gmail.com', 'No Reply');
+            $mail->addReplyTo('jessbertsoliguin456@gmail.com', 'No Reply');
 
             $mail->isHTML(true);
             $mail->Subject = 'DHVCON Verification Code';

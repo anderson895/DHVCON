@@ -65,11 +65,11 @@ try {
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'rodriguezryan325@gmail.com'; 
-    $mail->Password = 'ofvf yxut wpcc iecx';
+    $mail->Username = 'jessbertsoliguin456@gmail.com'; 
+    $mail->Password = 'fcdc wynb xmsf clnl';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
-    $mail->setFrom('rodriguezryan325@gmail.com', 'Meeting Scheduler');
+    $mail->setFrom('jessbertsoliguin456@gmail.com', 'Meeting Scheduler');
     $mail->isHTML(true);
 
     // ✅ Prepare email content
