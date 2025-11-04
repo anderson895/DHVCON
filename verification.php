@@ -20,66 +20,66 @@ if (!isset($user['last_resend_time'])) {
 $resendCooldown = max(0, 300 - (time() - $user['last_resend_time']));
 ?>
 
+<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4 py-8 sm:px-6 lg:px-8">
 
-<div class="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-black px-4">
+  <p class="mb-6 text-blue-400 text-base sm:text-lg font-medium text-center">
+    Verification code expires in: 
+    <span id="timer" class="font-semibold text-white"><?= $timeLeft ?>s</span>
+  </p>
 
-    <p class="mb-4 text-blue-500 text-lg font-medium">
-        Verification code expires in: <span id="timer" class="font-semibold text-white"><?= $timeLeft ?>s</span>
-    </p>
+  <div class="relative z-10 bg-[#2b2d31]/80 backdrop-blur-xl border border-[#3c3f44] shadow-2xl rounded-2xl w-full max-w-md sm:max-w-lg lg:max-w-md p-6 sm:p-8 lg:p-10 space-y-6 sm:space-y-8 transform transition-all hover:scale-[1.01] duration-300">
 
-    <div class="relative z-10 bg-[#2b2d31]/80 backdrop-blur-xl border border-[#3c3f44] shadow-2xl rounded-2xl w-full max-w-md p-10 space-y-8 transform transition-all hover:scale-[1.01] duration-300">
-        <h2 class="text-3xl font-semibold text-white-800 mb-6">Verify Your Account</h2>
+    <h2 class="text-2xl sm:text-3xl font-semibold text-white mb-4 sm:mb-6 text-center">Verify Your Account</h2>
 
-        <!-- Uploaded Requirements Display -->
-        <?php if (!empty($user['requirements'])): ?>
-            <div class="bg-gray-100 p-4 rounded-lg mb-6 text-left border border-gray-300" hidden>
-                <h3 class="text-lg font-semibold text-gray-700 mb-2">Uploaded Requirements:</h3>
-                <ul class="list-disc list-inside text-gray-600 space-y-1">
-                    <?php foreach ($user['requirements'] as $req): ?>
-                        <li>
-                            <span class="font-medium text-gray-800"><?= htmlspecialchars($req['name']) ?></span>
-                            <small class="text-gray-500">
-                                (<?= round($req['size'] / 1024, 2) ?> KB)
-                            </small>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php else: ?>
-            <p class="text-gray-500 mb-6">No uploaded requirements found in session.</p>
-        <?php endif; ?>
-        <!-- End Uploaded Requirements -->
+    <!-- Uploaded Requirements Display -->
+    <?php if (!empty($user['requirements'])): ?>
+      <div class="bg-gray-100 p-4 rounded-lg mb-6 text-left border border-gray-300" hidden>
+        <h3 class="text-lg font-semibold text-gray-700 mb-2">Uploaded Requirements:</h3>
+        <ul class="list-disc list-inside text-gray-600 space-y-1">
+          <?php foreach ($user['requirements'] as $req): ?>
+            <li>
+              <span class="font-medium text-gray-800"><?= htmlspecialchars($req['name']) ?></span>
+              <small class="text-gray-500">(<?= round($req['size'] / 1024, 2) ?> KB)</small>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
+    <?php else: ?>
+      <p class="text-gray-400 text-center">No uploaded requirements found in session.</p>
+    <?php endif; ?>
+    <!-- End Uploaded Requirements -->
 
-        <form id="frmVerify" class="space-y-6">
-            <div class="flex justify-between gap-2">
-                <?php for ($i = 0; $i < 6; $i++): ?>
-                    <input 
-                        type="text" 
-                        maxlength="1" 
-                        class="otp-box w-12 h-12 text-center text-gray-800 bg-gray-100 border border-gray-300 rounded-lg text-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition"
-                    />
-                <?php endfor; ?>
-            </div>
+    <form id="frmVerify" class="space-y-5 sm:space-y-6">
+      <div class="flex justify-center gap-2 sm:gap-3 flex-nowrap">
+        <?php for ($i = 0; $i < 6; $i++): ?>
+            <input 
+            type="text" 
+            maxlength="1" 
+            class="otp-box w-10 h-10 sm:w-12 sm:h-12 text-center text-gray-800 bg-gray-100 border border-gray-300 rounded-md text-lg sm:text-xl focus:outline-none focus:ring-2 focus:ring-blue-400 focus:bg-white transition"
+            />
+        <?php endfor; ?>
+        </div>
 
-            <button 
-                type="submit" 
-                id="btnVerify" 
-                class="cursor-pointer w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-sm transition duration-200"
-            >
-                Verify
-            </button>
 
-            <button 
-                id="resendCode" 
-                class="cursor-pointer w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 rounded-lg transition duration-200"
-                type="button"
-            >
-                Resend Verification Code
-            </button>
-        </form>
-    </div>
+      <button 
+        type="submit" 
+        id="btnVerify" 
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-lg shadow-sm transition duration-200 text-base sm:text-lg"
+      >
+        Verify
+      </button>
+
+      <button 
+        id="resendCode" 
+        type="button"
+        class="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 rounded-lg transition duration-200 text-base sm:text-lg"
+      >
+        Resend Verification Code
+      </button>
+    </form>
+  </div>
 </div>
-            
+
 
 <?php include "src/components/footer.php"; ?>
 
