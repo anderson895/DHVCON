@@ -252,11 +252,26 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
 
 
 
-    public function updateProfile($id, $fullname, $email) {
+    public function updateProfile($id, $fullname, $email, $fileName) {
+        // Prepare the SQL statement with placeholders
+        $stmt = $this->conn->prepare("UPDATE user SET user_fullname=?, user_email=?, user_profile_pict=? WHERE user_id=?");
+        
+        if (!$stmt) {
+            return false; // prepare failed
+        }
 
-        $sql = "UPDATE user SET user_fullname='$fullname', user_email='$email' WHERE user_id=$id";
-        return $this->conn->query($sql) ? true : false;
+        // Bind parameters: s = string, i = integer
+        $stmt->bind_param("sssi", $fullname, $email, $fileName, $id);
+
+        // Execute the statement
+        $result = $stmt->execute();
+
+        // Close the statement
+        $stmt->close();
+
+        return $result;
     }
+
 
     public function updatePassword($id, $old_pass, $new_pass) {
         $old_pass = trim($old_pass);

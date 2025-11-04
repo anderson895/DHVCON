@@ -14,70 +14,142 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
 
 <main class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12">
 
-
 <!-- Profile Container -->
 <div class="bg-[#1a1a1a] p-6 rounded-lg shadow-md border border-gray-700 max-w-2xl mx-auto text-white">
-  <div class="flex flex-col space-y-3">
-    <div>
-      <label class="text-gray-400 block text-sm mb-1">Full Name</label>
-      <p class="text-lg font-semibold capitalize"><?= htmlspecialchars($User['user_fullname']) ?></p>
-    </div>
+  <div class="flex flex-col items-center space-y-4">
+    
+    <!-- Profile Picture -->
+   <div class="w-32 h-32 relative flex items-center justify-center bg-gray-700 rounded-full border-2 border-gray-500 text-white text-3xl font-bold">
+      <?php if (!empty($User['user_profile_pict']) && file_exists("../static/upload/profile/" . $User['user_profile_pict'])): ?>
+          <img 
+              src="../static/upload/profile/<?= htmlspecialchars($User['user_profile_pict']) ?>" 
+              alt="Profile Picture" 
+              class="w-full h-full object-cover rounded-full"
+          >
+      <?php else: ?>
+          <!-- Display first letter if no image -->
+          <?= strtoupper(substr($User['user_fullname'], 0, 1)) ?>
+      <?php endif; ?>
+  </div>
 
-    <div>
-      <label class="text-gray-400 block text-sm mb-1">Email</label>
-      <p class="text-lg font-semibold"><?= htmlspecialchars($User['user_email']) ?></p>
-    </div>
 
-    <div>
-      <label class="text-gray-400 block text-sm mb-1">User Type</label>
-      <p class="text-lg font-semibold capitalize"><?= htmlspecialchars($User['user_type']) ?></p>
-    </div>
+    <div class="flex flex-col space-y-3 w-full">
+      <div>
+        <label class="text-gray-400 block text-sm mb-1">Full Name</label>
+        <p class="text-lg font-semibold capitalize"><?= htmlspecialchars($User['user_fullname']) ?></p>
+      </div>
 
-    <div>
-      <label class="text-gray-400 block text-sm mb-1">Status</label>
-      <p class="text-lg font-semibold <?= $statusColor ?>"><?= $statusText ?></p>
-    </div>
+      <div>
+        <label class="text-gray-400 block text-sm mb-1">Email</label>
+        <p class="text-lg font-semibold"><?= htmlspecialchars($User['user_email']) ?></p>
+      </div>
 
-    <div class="mt-6 flex space-x-3">
-      <button id="editProfileBtn" class="bg-[#FFD700] text-black font-semibold px-5 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">
-        <i class="fa fa-edit mr-1"></i> Edit Profile
-      </button>
-      <button id="changePassBtn" class="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg cursor-pointer">
-        <i class="fa fa-lock mr-1"></i> Change Password
-      </button>
+      <div>
+        <label class="text-gray-400 block text-sm mb-1">User Type</label>
+        <p class="text-lg font-semibold capitalize"><?= htmlspecialchars($User['user_type']) ?></p>
+      </div>
+
+      <div>
+        <label class="text-gray-400 block text-sm mb-1">Status</label>
+        <p class="text-lg font-semibold <?= $statusColor ?>"><?= $statusText ?></p>
+      </div>
+
+      <div class="mt-6 flex space-x-3">
+        <button id="editProfileBtn" class="bg-[#FFD700] text-black font-semibold px-5 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">
+          <i class="fa fa-edit mr-1"></i> Edit Profile
+        </button>
+        <button id="changePassBtn" class="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg cursor-pointer">
+          <i class="fa fa-lock mr-1"></i> Change Password
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
+
 </main>
+
+
 
 <!-- ✨ Edit Profile Modal -->
 <div id="editProfileModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
   <div class="bg-[#1a1a1a]/80 p-6 rounded-xl shadow-2xl w-full max-w-md border border-gray-700 backdrop-blur-md">
     <h3 class="text-xl font-bold text-[#FFD700] mb-4">Edit Profile</h3>
-    <form id="editProfileForm" class="space-y-4">
+    <form id="editProfileForm" class="space-y-4" enctype="multipart/form-data">
+      
+      <!-- Profile Picture Upload -->
+      <div class="flex flex-col items-center space-y-3">
+        <div class="w-24 h-24 rounded-full border-2 border-[#FFD700] bg-gray-700 flex items-center justify-center overflow-hidden text-white text-4xl font-bold relative">
+            <img id="profilePreview" 
+                src="<?= !empty($User['user_profile_pict']) ? '../static/upload/profile/' . htmlspecialchars($User['user_profile_pict']) : '' ?>" 
+                alt="Profile Preview" 
+                class="w-full h-full object-cover rounded-full <?= empty($User['user_profile_pict']) ? 'hidden' : '' ?>">
+
+            <?php if (empty($User['user_profile'])): ?>
+                <!-- First letter of fullname -->
+                <span id="profileInitial"><?= strtoupper(substr($User['user_fullname'], 0, 1)) ?></span>
+            <?php endif; ?>
+        </div>
+
+
+        <label for="profilePic" class="cursor-pointer bg-gray-700/70 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-sm">
+          Choose Photo
+        </label>
+        <input type="file" id="profilePic" name="profilePic" accept="image/*" class="hidden">
+      </div>
+
+      <!-- Full Name -->
       <div>
         <label class="block text-sm text-gray-300 mb-1">Full Name</label>
         <input type="text" name="fullname" id="fullname"
           value="<?= htmlspecialchars($User['user_fullname']) ?>"
           class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
       </div>
+
+      <!-- Email -->
       <div>
         <label class="block text-sm text-gray-300 mb-1">Email</label>
         <input type="email" name="email" id="email"
           value="<?= htmlspecialchars($User['user_email']) ?>"
           class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
       </div>
-      <div class="flex justify-end space-x-2">
+
+      <!-- Buttons -->
+      <div class="flex justify-end space-x-2 pt-2">
         <button type="button" id="closeModal"
-          class="bg-gray-700/70 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer">Cancel</button>
+          class="bg-gray-700/70 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer">
+          Cancel
+        </button>
         <button type="submit"
-          class="bg-[#FFD700] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">Save
-          Changes</button>
+          class="bg-[#FFD700] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">
+          Save Changes
+        </button>
       </div>
     </form>
   </div>
 </div>
+
+<!-- 🧠 JS Preview Script -->
+<script>
+  const profileInput = document.getElementById('profilePic');
+const profilePreview = document.getElementById('profilePreview');
+const profileInitial = document.getElementById('profileInitial');
+
+profileInput.addEventListener('change', function() {
+  const file = this.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      profilePreview.src = e.target.result;
+      profilePreview.classList.remove('hidden'); // ipakita ang image
+      if(profileInitial) profileInitial.style.display = 'none'; // itago ang initial
+    };
+    reader.readAsDataURL(file);
+  }
+});
+
+</script>
+
 
 
 <!-- ✨ Change Password Modal -->
@@ -182,7 +254,9 @@ $(document).ready(function(){
   // === Submit Edit Profile Form ===
   $("#editProfileForm").submit(function(e){
     e.preventDefault();
-    const formData = $(this).serialize() + "&requestType=updateProfile";
+
+    const formData = new FormData(this); // automatically includes file input
+    formData.append("requestType", "updateProfile"); // add extra field
 
     Swal.fire({
       title: "Save Changes?",
@@ -198,6 +272,8 @@ $(document).ready(function(){
           url: "../controller/end-points/controller.php",
           type: "POST",
           data: formData,
+          processData: false, // important for file upload
+          contentType: false, // important for file upload
           dataType: "json",
           success: function(res){
             if(res.success){
@@ -209,7 +285,7 @@ $(document).ready(function(){
               });
               setTimeout(() => location.reload(), 1600);
             } else {
-              Swal.fire("Error!", "Failed to update profile.", "error");
+              Swal.fire("Error!", res.message || "Failed to update profile.", "error");
             }
           },
           error: function(){
@@ -218,7 +294,8 @@ $(document).ready(function(){
         });
       }
     });
-  });
+});
+
 
   // === Submit Change Password Form ===
   $("#changePasswordForm").submit(function(e){
