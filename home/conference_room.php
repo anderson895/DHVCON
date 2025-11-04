@@ -6,7 +6,7 @@ $meeting = $db->check_meeting($meetingCode);
 
 $authorization = ($meeting[0]['meeting_creator_user_id'] != $On_Session[0]['user_id']) ? "hidden" : "";
 
-
+$profile_pict=$On_Session[0]['user_profile_pict'];
 
 ?>
 
@@ -542,8 +542,10 @@ window.addEventListener('resize', () => {
 
 
 <?php 
-$user = "(" . $On_Session[0]['user_id'] . ") " . $On_Session[0]['user_fullname'];
+$user_id = $On_Session[0]['user_id'];
 ?>
+
+
 
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
@@ -555,7 +557,7 @@ let isSharingScreen = false;
 const videoContainer = document.getElementById('video-container');
 const statusBox = document.getElementById('status');
 const meetingCode  = "<?= $meetingCode ?>";
-const userName = `<?= $user ?>`;
+const user_id = `<?= $user_id ?>`;
 
 function setStatus(message, type = '') {
     statusBox.textContent = message;
@@ -567,141 +569,185 @@ function setStatus(message, type = '') {
         statusBox.className = "w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center";
 }
 
+// Helper: Create user wrapper (video + placeholder + name)
+function createUserWrapper(uid, name, isLocal = false) {
+    const wrapper = document.createElement('div');
+    wrapper.id = `wrapper-${uid}`;
+    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
+
+    const videoDiv = document.createElement('div');
+    videoDiv.id = isLocal ? 'local-player' : `player-${uid}`;
+    videoDiv.className = "w-full h-full";
+    wrapper.appendChild(videoDiv);
+
+    const profileDiv = document.createElement('div');
+    profileDiv.id = isLocal ? 'default-user-icon' : `default-icon-${uid}`;
+    profileDiv.className = `absolute inset-0 ${isLocal ? 'hidden' : 'flex'} items-center justify-center text-white text-4xl font-bold rounded-full`;
+    profileDiv.style.fontFamily = 'sans-serif';
+    profileDiv.style.backgroundColor = '#6b7280';
+    wrapper.appendChild(profileDiv);
+
+    const nameTag = document.createElement('div');
+    nameTag.id = `name-tag-${uid}`;
+    nameTag.innerText = name;
+    nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-20";
+    wrapper.appendChild(nameTag);
+
+    return wrapper;
+}
+
+// Fetch user data and update placeholder + name
+function get_each_users_data(userId, isLocal = false) {
+    $.ajax({
+        url: "../controller/end-points/controller.php",
+        type: "GET",
+        data: { requestType: "get_users_data", user_id: userId },
+        dataType: "json",
+        success: function(response) {
+            if(response && response.status === 200 && response.data) {
+                const { user_fullname, user_profile_pict } = response.data;
+                const wrapperId = isLocal ? 'wrapper-local' : `wrapper-${userId}`;
+                const profileId = isLocal ? 'default-user-icon' : `default-icon-${userId}`;
+                const nameTagId = isLocal ? 'name-tag-local' : `name-tag-${userId}`;
+
+                const wrapper = document.getElementById(wrapperId);
+                const profileDiv = wrapper ? wrapper.querySelector(`#${profileId}`) : null;
+                const nameTag = wrapper ? wrapper.querySelector(`#${nameTagId}`) : null;
+
+                if(nameTag) {
+                    nameTag.innerText = isLocal ? `${user_fullname} (You)` : user_fullname;
+                }
+
+                if(profileDiv) {
+                    const size = 150;
+                    profileDiv.style.width = `${size}px`;
+                    profileDiv.style.height = `${size}px`;
+                    profileDiv.style.borderRadius = '50%';
+                    profileDiv.style.position = 'absolute';
+                    profileDiv.style.top = '50%';
+                    profileDiv.style.left = '50%';
+                    profileDiv.style.transform = 'translate(-50%, -50%)';
+                    profileDiv.style.overflow = 'hidden';
+
+                    if(user_profile_pict && user_profile_pict.trim() !== "") {
+                        profileDiv.style.backgroundImage = `url('../static/upload/profile/${user_profile_pict}')`;
+                        profileDiv.style.backgroundSize = 'cover';
+                        profileDiv.style.backgroundPosition = 'center';
+                        profileDiv.textContent = '';
+                    } else {
+                        profileDiv.style.backgroundImage = '';
+                        profileDiv.style.backgroundColor = '#6b7280';
+                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase(); // show full name
+                    }
+
+                    // Show placeholder if video is off
+                    if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
+                        profileDiv.classList.remove('hidden');
+                        profileDiv.classList.add('flex');
+                    }
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error);
+        }
+    });
+}
+
+// Join meeting
 async function joinMeeting(code) {
     try {
         setStatus("Requesting camera & microphone permission...");
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         stream.getTracks().forEach(track => track.stop());
 
-        // ✅ Handle remote users
         client.on('user-published', async (user, mediaType) => {
             await client.subscribe(user, mediaType);
 
             let wrapper = document.getElementById('wrapper-' + user.uid);
-            if (!wrapper) {
-                wrapper = document.createElement('div');
-                wrapper.id = 'wrapper-' + user.uid;
-                wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
-
-                const videoDiv = document.createElement('div');
-                videoDiv.id = 'player-' + user.uid;
-                videoDiv.className = "w-full h-full";
-                wrapper.appendChild(videoDiv);
-
-                const defaultIcon = document.createElement('div');
-                defaultIcon.id = 'default-icon-' + user.uid;
-                defaultIcon.className = "absolute inset-0 flex items-center justify-center bg-black";
-                const iconSpan = document.createElement('span');
-                iconSpan.className = 'material-icons';
-                iconSpan.textContent = 'account_circle';
-                iconSpan.style.fontSize = '8vw';
-                iconSpan.style.color = '#9ca3af';
-                defaultIcon.appendChild(iconSpan);
-                wrapper.appendChild(defaultIcon);
-
-                const nameTag = document.createElement('div');
-                nameTag.innerText = user.uid || `User ${user.uid}`;
-                nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1";
-                wrapper.appendChild(nameTag);
-
+            if(!wrapper) {
+                wrapper = createUserWrapper(user.uid, `User ${user.uid}`);
                 videoContainer.appendChild(wrapper);
             }
 
-            if (mediaType === 'video') {
+            if(mediaType === 'video') {
                 user.videoTrack.play('player-' + user.uid);
                 document.getElementById('player-' + user.uid).style.display = 'block';
                 document.getElementById('default-icon-' + user.uid).classList.add('hidden');
             }
 
-            if (mediaType === 'audio') {
-                user.audioTrack.play();
-            }
+            if(mediaType === 'audio') user.audioTrack.play();
+
+            get_each_users_data(user.uid);
         });
 
-        // ✅ Handle when user disables cam
         client.on('user-unpublished', (user, mediaType) => {
-            if (mediaType === 'video') {
+            if(mediaType === 'video') {
                 const player = document.getElementById('player-' + user.uid);
                 const icon = document.getElementById('default-icon-' + user.uid);
-                if (player && icon) {
+                if(player && icon) {
                     player.style.display = 'none';
                     icon.classList.remove('hidden');
                     icon.classList.add('flex');
+                    get_each_users_data(user.uid); // update fullname/placeholder
                 }
             }
         });
 
-        // Join
-        setStatus(`Joining room: ${code} as ${userName}...`);
-        await client.join(APP_ID, code, null, userName);
+        setStatus(`Joining room: ${code} as ${user_id}...`);
+        await client.join(APP_ID, code, null, user_id);
 
-        // Local tracks
         localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
 
-        // Local wrapper
-        const localWrapper = document.createElement('div');
-        localWrapper.id = 'wrapper-local';
-        localWrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
-
-        const localVideoDiv = document.createElement('div');
-        localVideoDiv.id = 'local-player';
-        localVideoDiv.className = "w-full h-full";
-        localWrapper.appendChild(localVideoDiv);
-
-        const defaultIcon = document.createElement('div');
-        defaultIcon.id = 'default-user-icon';
-        defaultIcon.className = "absolute inset-0 hidden items-center justify-center bg-black";
-        const iconSpan = document.createElement('span');
-        iconSpan.className = 'material-icons';
-        iconSpan.textContent = 'account_circle';
-        iconSpan.style.fontSize = '8vw';
-        iconSpan.style.color = '#9ca3af';
-        defaultIcon.appendChild(iconSpan);
-        localWrapper.appendChild(defaultIcon);
-
-        const localName = document.createElement('div');
-        localName.innerText = `${userName} (You)`;
-        localName.className = "username-label absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-10";
-        localWrapper.appendChild(localName);
-
+        const localWrapper = createUserWrapper('local', `${user_id} (You)`, true);
         videoContainer.appendChild(localWrapper);
 
         await localTracks.videoTrack.play('local-player');
         await client.publish(Object.values(localTracks));
 
-        setStatus(`✅ Joined meeting: ${code} as ${userName}`, "success");
-    } catch (err) {
+        get_each_users_data(user_id, true);
+
+        setStatus(`✅ Joined meeting: ${code} as ${user_id}`, "success");
+
+    } catch(err) {
         console.error(err);
         setStatus("❌ Failed to join meeting: " + err.message, "error");
     }
 }
 
-// ✅ Toggle Cam
+// Toggle camera
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
-    if (!localTracks.videoTrack) return;
+    if(!localTracks.videoTrack) return;
 
     const icon = document.getElementById('iconCam');
     const text = document.getElementById('textCam');
     const defaultIcon = document.getElementById('default-user-icon');
     const localPlayer = document.getElementById('local-player');
 
-    if (localTracks.videoTrack.enabled) {
+    if(localTracks.videoTrack.enabled) {
         await localTracks.videoTrack.setEnabled(false);
         icon.textContent = 'videocam_off';
         text.textContent = 'Turn On Cam';
         localPlayer.style.display = 'none';
-        defaultIcon.classList.remove('hidden');
-        defaultIcon.classList.add('flex');
+        if(defaultIcon) {
+            get_each_users_data(user_id, true); // show fullname/placeholder
+            defaultIcon.classList.remove('hidden');
+            defaultIcon.classList.add('flex');
+        }
     } else {
         await localTracks.videoTrack.setEnabled(true);
         icon.textContent = 'videocam';
         text.textContent = 'Turn Off Cam';
         localPlayer.style.display = 'block';
-        defaultIcon.classList.add('hidden');
-        defaultIcon.classList.remove('flex');
+        if(defaultIcon) {
+            defaultIcon.classList.add('hidden');
+            defaultIcon.classList.remove('flex');
+        }
     }
 });
+
+
 
 // ✅ Toggle Mic
 document.getElementById('btnToggleMic').addEventListener('click', async () => {
@@ -720,6 +766,7 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
         text.textContent = 'Turn Off Mic';
     }
 });
+
 
 // ✅ Share Screen
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
@@ -787,6 +834,14 @@ async function stopScreenShare() {
 
 // ✅ Auto join
 joinMeeting(meetingCode);
+
+
+
+
+
+
+
+
 
 // ✅ Leave room
 $(document).ready(function() {

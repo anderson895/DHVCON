@@ -1062,6 +1062,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
             exit;
 
+        }else if ($_GET['requestType'] == 'get_users_data') {
+            $user_id = $_GET['user_id'] ?? null;
+
+            // Fetch the profile image from DB
+            $result = $db->get_users_data($user_id);
+
+            echo json_encode([
+                "status" => 200,
+                "message" => "Success",
+                "data" => $result ?? null
+            ]);
+            exit;
+
+
+
+
+            exit;
         }else if ($_GET['requestType'] == 'generateMeetingCode') {
 
                function generateCode() {

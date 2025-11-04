@@ -250,6 +250,8 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
     }
 
 
+    
+
 
 
     public function updateProfile($id, $fullname, $email, $fileName) {
@@ -1829,6 +1831,22 @@ public function getDataAnalytics()
 
 
 
+public function get_users_data($user_id) {
+    $user_id = intval($user_id);
+
+    $stmt = $this->conn->prepare("SELECT * FROM user WHERE user_id = ?");
+    if (!$stmt) return null;
+
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+
+    $result = $stmt->get_result();
+    $profile = $result->fetch_assoc();
+
+    $stmt->close();
+
+    return $profile ?: null;
+}
 
 
 
