@@ -1144,17 +1144,22 @@ $(document).on('click', '.delete-btn', function () {
 
 
 
-
-
- $("#frmMeeting").submit(function (e) {
+$("#frmMeeting").submit(function (e) {
     e.preventDefault();
-
-    $('.spinner').show();
-    $('#btnCreateMeeting').prop('disabled', true);
 
     var formData = new FormData(this);
     formData.append('requestType', 'CreateMeeting');
     formData.append('room_id', room_id); 
+
+    // ✅ Show Swal loader
+    Swal.fire({
+        title: 'Creating meeting...',
+        html: 'Please wait while we create the meeting and notify members.',
+        allowOutsideClick: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
 
     $.ajax({
         type: "POST",
@@ -1163,26 +1168,76 @@ $(document).on('click', '.delete-btn', function () {
         processData: false,
         contentType: false,
         dataType: 'json',
-        success: function (response) {
+        success: function(response) {
             console.log(response);
 
             if (response.status === "success") {
-                alertify.success('Created Successfully');
-                setTimeout(function () {
-                    // ✅ Reload page but keep tab
-                    location.reload();
-                }, 1000);
+                // ✅ Now send emails
+                $.ajax({
+                    type: "POST",
+                    url: "../controller/end-points/mailer_scheduler.php",
+                    data: {
+                        meeting_id: response.classwork_id,
+                        room_id: room_id,
+                        start_date: response.start_date,
+                        end_date: response.end_date
+                    },
+                    dataType: 'json',
+                    success: function(mailResponse) {
+                        if(mailResponse.status === "success") {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Meeting Created!',
+                                html: 'Emails sent to all members successfully.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Meeting Created!',
+                                html: 'But email sending failed: ' + mailResponse.message,
+                                confirmButtonText: 'Reload'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Mailer AJAX failed',
+                            html: error,
+                            confirmButtonText: 'Reload'
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
+                });
+
             } else {
-                $('.spinner').hide();
-                $('#btnCreateMeeting').prop('disabled', false);
-                alertify.error(response.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    html: response.message
+                });
             }
+        },
+        error: function(xhr, status, error) {
+            Swal.fire({
+                icon: 'error',
+                title: 'AJAX Error',
+                html: error
+            });
         }
     });
 
 
 
-    const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
+// API AGORA
+const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
 let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
 let localTracks = { videoTrack: null, audioTrack: null };
 let localPlayer;

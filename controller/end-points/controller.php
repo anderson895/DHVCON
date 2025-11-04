@@ -482,12 +482,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if ($insertedId) {
                 echo json_encode([
                     'status' => 'success',
+                    'start_date' => $start_date,
+                    'end_date' => $end_date,
                     'message' => 'Classwork created successfully.',
                     'classwork_id' => $insertedId
                 ]);
             } else {
                 echo json_encode([
                     'status' => 'error',
+                    'start_date' => $start_date,
+                    'end_date' => $end_date,
                     'message' => 'Failed to create classwork.'
                 ]);
             }

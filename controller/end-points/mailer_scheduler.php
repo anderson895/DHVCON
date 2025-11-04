@@ -25,7 +25,7 @@ $db->connect();
 $conn = $db->conn;
 
 // ✅ Get meeting details
-$meetingQuery = $conn->prepare("SELECT * FROM meetings WHERE meeting_id = ?");
+$meetingQuery = $conn->prepare("SELECT * FROM meeting WHERE meeting_id = ?");
 $meetingQuery->bind_param("i", $meeting_id);
 $meetingQuery->execute();
 $meetingResult = $meetingQuery->get_result();
@@ -65,8 +65,8 @@ try {
     $mail->isSMTP();
     $mail->Host = 'smtp.gmail.com';
     $mail->SMTPAuth = true;
-    $mail->Username = 'rodriguezryan325@gmail.com'; // your Gmail
-    $mail->Password = 'ofvf yxut wpcc iecx'; // your App Password (NOT normal password)
+    $mail->Username = 'rodriguezryan325@gmail.com'; 
+    $mail->Password = 'ofvf yxut wpcc iecx';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
     $mail->setFrom('rodriguezryan325@gmail.com', 'Meeting Scheduler');
