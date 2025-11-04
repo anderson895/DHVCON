@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 04, 2025 at 09:21 AM
+-- Generation Time: Nov 04, 2025 at 01:12 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -168,7 +168,8 @@ CREATE TABLE `meeting_member` (
 --
 
 INSERT INTO `meeting_member` (`jr_id`, `jr_meeting_id`, `jr_user_id`, `jr_status`, `jr_requested_at`) VALUES
-(26, 18, 22, 'approved', '2025-11-04 07:30:13');
+(26, 18, 22, 'approved', '2025-11-04 07:30:13'),
+(27, 18, 16, 'approved', '2025-11-04 10:16:07');
 
 -- --------------------------------------------------------
 
@@ -281,9 +282,9 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_profile_pict`, `user_status`) VALUES
 (1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, NULL, 1),
-(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$aaV7.u070wWhP2QZyd55EO/2ScxmADcC6V0xa.rZxb07KYbNtNf46', 'teacher', NULL, 'classwork_6909b2671c5457.43436741.jpg', 1),
-(16, 'san jose', 'masterparj@gmail.com\n', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', NULL, NULL, 1),
-(22, 'april jane', 'padillajoshuaanderson.pdm@gmail.com', '$2y$10$lrrhk5bEA6IRcYxPEI9KheHuA8TYaPoKj.K8ZDJG0A3uGTk2Kn03a', 'student', '[\"6907778db0bd4_bini-desktop-wallpapers-v0-v1z43kmivtbd1.webp\",\"6907778db0e6b_dbd95cee-40e9-420e-a3f0-0b63d7073197.webp\",\"6907778db1176_Exercise-04.docs.pdf\"]', NULL, 1);
+(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$aaV7.u070wWhP2QZyd55EO/2ScxmADcC6V0xa.rZxb07KYbNtNf46', 'teacher', NULL, NULL, 1),
+(16, 'san jose', 'masterparj@gmail.com', '$2y$10$jwEF4zulPduxjA28gqgRS.8ZfWeFrp03blGD9PGIHWO57bEKWiJM.', 'student', NULL, NULL, 1),
+(22, 'april jane', 'padillajoshuaanderson.pdm@gmail.com', '$2y$10$lrrhk5bEA6IRcYxPEI9KheHuA8TYaPoKj.K8ZDJG0A3uGTk2Kn03a', 'student', '[\"6907778db0bd4_bini-desktop-wallpapers-v0-v1z43kmivtbd1.webp\",\"6907778db0e6b_dbd95cee-40e9-420e-a3f0-0b63d7073197.webp\",\"6907778db1176_Exercise-04.docs.pdf\"]', 'profile_6909c07c45a1c5.44233590.webp', 1);
 
 --
 -- Indexes for dumped tables
@@ -412,7 +413,7 @@ ALTER TABLE `meeting_logs`
 -- AUTO_INCREMENT for table `meeting_member`
 --
 ALTER TABLE `meeting_member`
-  MODIFY `jr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `jr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `meeting_ratings`
