@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 03, 2025 at 04:07 AM
+-- Generation Time: Nov 04, 2025 at 09:21 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -33,13 +33,6 @@ CREATE TABLE `claimed_certificate` (
   `claimed_user_id` int(11) NOT NULL,
   `claimed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `claimed_certificate`
---
-
-INSERT INTO `claimed_certificate` (`claimed_id`, `claimed_meeting_id`, `claimed_user_id`, `claimed_date`) VALUES
-(4, 12, 22, '2025-11-03 01:59:03');
 
 -- --------------------------------------------------------
 
@@ -91,9 +84,9 @@ CREATE TABLE `meeting` (
 --
 
 INSERT INTO `meeting` (`meeting_id`, `meeting_link`, `meeting_title`, `meeting_description`, `meeting_start`, `meeting_end`, `meeting_room_id`, `meeting_creator_user_id`, `meeting_pass`, `meeting_status`, `rating`) VALUES
-(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0, 3.5),
-(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0, 3.5),
-(12, 'MTG-PCT1C6', 'meeting 1', 'awdawd', '2025-11-02 23:34:00', '2025-11-02 14:34:00', 33, 15, 'f4072d29', 0, 5.0);
+(9, 'MTG-VJWB1N', 'test 111', 'awdawd', '2025-10-29 20:46:00', '2025-10-29 21:46:00', 33, 15, '56f6f028', 0, 4.5),
+(10, 'MTG-FHQT98', 'DHVCON testing', 'awdawd', '2025-10-29 20:54:00', '2025-10-29 21:54:00', 33, 15, '707ce748', 0, 5.0),
+(18, 'MTG-B5J68Y', 'test mailer', 'ad', '2025-11-03 21:54:00', '2025-11-04 21:54:00', 33, 15, '883c3878', 1, 4.0);
 
 -- --------------------------------------------------------
 
@@ -154,9 +147,7 @@ CREATE TABLE `meeting_logs` (
 INSERT INTO `meeting_logs` (`ml_id`, `ml_user_id`, `ml_date_joined`, `ml_meeting_id`) VALUES
 (34, 15, '2025-10-29 12:58:58', 9),
 (35, 15, '2025-10-29 13:08:16', 10),
-(38, 16, '2025-11-02 12:51:18', 10),
-(39, 22, '2025-11-02 15:34:52', 12),
-(40, 15, '2025-11-02 15:35:50', 12);
+(38, 16, '2025-11-02 12:51:18', 10);
 
 -- --------------------------------------------------------
 
@@ -177,7 +168,7 @@ CREATE TABLE `meeting_member` (
 --
 
 INSERT INTO `meeting_member` (`jr_id`, `jr_meeting_id`, `jr_user_id`, `jr_status`, `jr_requested_at`) VALUES
-(25, 12, 22, 'approved', '2025-11-02 18:51:04');
+(26, 18, 22, 'approved', '2025-11-04 07:30:13');
 
 -- --------------------------------------------------------
 
@@ -199,11 +190,11 @@ CREATE TABLE `meeting_ratings` (
 --
 
 INSERT INTO `meeting_ratings` (`id`, `meeting_id`, `user_id`, `rating`, `created_at`, `updated_at`) VALUES
-(5, 9, 22, 3, '2025-11-03 02:59:25', '2025-11-03 02:59:25'),
+(5, 9, 22, 5, '2025-11-03 02:59:25', '2025-11-04 07:29:41'),
 (6, 9, 16, 4, '2025-11-03 02:59:37', '2025-11-03 02:59:37'),
-(7, 10, 22, 2, '2025-11-03 03:04:04', '2025-11-03 03:04:05'),
+(7, 10, 22, 5, '2025-11-03 03:04:04', '2025-11-04 07:26:41'),
 (8, 10, 16, 5, '2025-11-03 03:04:12', '2025-11-03 03:04:12'),
-(9, 12, 16, 5, '2025-11-03 03:06:36', '2025-11-03 03:06:36');
+(10, 18, 22, 4, '2025-11-04 06:53:23', '2025-11-04 06:56:07');
 
 -- --------------------------------------------------------
 
@@ -280,6 +271,7 @@ CREATE TABLE `user` (
   `user_password` varchar(255) NOT NULL,
   `user_type` enum('admin','teacher','student','') NOT NULL,
   `user_requirements` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`user_requirements`)),
+  `user_profile_pict` varchar(255) DEFAULT NULL,
   `user_status` int(11) NOT NULL DEFAULT 0 COMMENT '0=for-approval,1=active,2=disabled'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -287,11 +279,11 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_status`) VALUES
-(1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, 1),
-(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$aaV7.u070wWhP2QZyd55EO/2ScxmADcC6V0xa.rZxb07KYbNtNf46', 'teacher', NULL, 1),
-(16, 'san jose', 'sanjosekylie@yahoo.com', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', NULL, 1),
-(22, 'april jane', 'padillajoshuaanderson.pdm@gmail.com', '$2y$10$lrrhk5bEA6IRcYxPEI9KheHuA8TYaPoKj.K8ZDJG0A3uGTk2Kn03a', 'student', '[\"6907778db0bd4_bini-desktop-wallpapers-v0-v1z43kmivtbd1.webp\",\"6907778db0e6b_dbd95cee-40e9-420e-a3f0-0b63d7073197.webp\",\"6907778db1176_Exercise-04.docs.pdf\"]', 1);
+INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_profile_pict`, `user_status`) VALUES
+(1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, NULL, 1),
+(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$aaV7.u070wWhP2QZyd55EO/2ScxmADcC6V0xa.rZxb07KYbNtNf46', 'teacher', NULL, 'classwork_6909b2671c5457.43436741.jpg', 1),
+(16, 'san jose', 'masterparj@gmail.com\n', '$2y$10$SkVHrwVre/pLy.qmOcMotuS8oGa7Gzj6PampHpT1HMbrPMPxXK8jm', 'student', NULL, NULL, 1),
+(22, 'april jane', 'padillajoshuaanderson.pdm@gmail.com', '$2y$10$lrrhk5bEA6IRcYxPEI9KheHuA8TYaPoKj.K8ZDJG0A3uGTk2Kn03a', 'student', '[\"6907778db0bd4_bini-desktop-wallpapers-v0-v1z43kmivtbd1.webp\",\"6907778db0e6b_dbd95cee-40e9-420e-a3f0-0b63d7073197.webp\",\"6907778db1176_Exercise-04.docs.pdf\"]', NULL, 1);
 
 --
 -- Indexes for dumped tables
@@ -402,7 +394,7 @@ ALTER TABLE `classwork`
 -- AUTO_INCREMENT for table `meeting`
 --
 ALTER TABLE `meeting`
-  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `meeting_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `meeting_chats`
@@ -420,13 +412,13 @@ ALTER TABLE `meeting_logs`
 -- AUTO_INCREMENT for table `meeting_member`
 --
 ALTER TABLE `meeting_member`
-  MODIFY `jr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `jr_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `meeting_ratings`
 --
 ALTER TABLE `meeting_ratings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `room`
