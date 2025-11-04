@@ -52,15 +52,24 @@ $meeting = $db->check_meeting($meetingCode );
             Ready to join
         </div>
 
-        <!-- Controls: Cam / Mic -->
+                <!-- Controls: Cam / Mic / Screen -->
         <div class="flex gap-4 mb-4">
+            <!-- Toggle Camera -->
             <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
                 <span id="iconCam" class="material-icons">videocam</span>
                 <span id="textCam">Turn Off Cam</span>
             </button>
+
+            <!-- Toggle Mic -->
             <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
                 <span id="iconMic" class="material-icons">mic</span>
                 <span id="textMic">Turn Off Mic</span>
+            </button>
+
+            <!-- Share Screen -->
+            <button id="btnShareScreen" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+                <span id="iconScreen" class="material-icons">screen_share</span>
+                <span id="textScreen">Share Screen</span>
             </button>
         </div>
 
@@ -521,6 +530,9 @@ $user = "(" . $On_Session[0]['user_id'] . ") " . $On_Session[0]['user_fullname']
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
 let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
 let localTracks = { videoTrack: null, audioTrack: null };
+let screenTrack = null;
+let isSharingScreen = false;
+
 const videoContainer = document.getElementById('video-container');
 const statusBox = document.getElementById('status');
 const meetingCode  = "<?= $meetingCode ?>";
@@ -544,57 +556,52 @@ async function joinMeeting(code) {
 
         // ✅ Handle remote users
         client.on('user-published', async (user, mediaType) => {
-        await client.subscribe(user, mediaType);
+            await client.subscribe(user, mediaType);
 
-        let wrapper = document.getElementById('wrapper-' + user.uid);
-        if (!wrapper) {
-            wrapper = document.createElement('div');
-            wrapper.id = 'wrapper-' + user.uid;
-            wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
+            let wrapper = document.getElementById('wrapper-' + user.uid);
+            if (!wrapper) {
+                wrapper = document.createElement('div');
+                wrapper.id = 'wrapper-' + user.uid;
+                wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
 
-            // Video div
-            const videoDiv = document.createElement('div');
-            videoDiv.id = 'player-' + user.uid;
-            videoDiv.className = "w-full h-full";
-            wrapper.appendChild(videoDiv);
+                const videoDiv = document.createElement('div');
+                videoDiv.id = 'player-' + user.uid;
+                videoDiv.className = "w-full h-full";
+                wrapper.appendChild(videoDiv);
 
-            // Default icon
-            const defaultIcon = document.createElement('div');
-            defaultIcon.id = 'default-icon-' + user.uid;
-            defaultIcon.className = "absolute inset-0 flex items-center justify-center bg-black";
-            const iconSpan = document.createElement('span');
-            iconSpan.className = 'material-icons';
-            iconSpan.textContent = 'account_circle';
-            iconSpan.style.fontSize = '8vw';
-            iconSpan.style.color = '#9ca3af';
-            defaultIcon.appendChild(iconSpan);
-            wrapper.appendChild(defaultIcon);
+                const defaultIcon = document.createElement('div');
+                defaultIcon.id = 'default-icon-' + user.uid;
+                defaultIcon.className = "absolute inset-0 flex items-center justify-center bg-black";
+                const iconSpan = document.createElement('span');
+                iconSpan.className = 'material-icons';
+                iconSpan.textContent = 'account_circle';
+                iconSpan.style.fontSize = '8vw';
+                iconSpan.style.color = '#9ca3af';
+                defaultIcon.appendChild(iconSpan);
+                wrapper.appendChild(defaultIcon);
 
-            // Username label
-            const nameTag = document.createElement('div');
-            nameTag.innerText = user.uid || `User ${user.uid}`;
-            nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1";
-            wrapper.appendChild(nameTag);
+                const nameTag = document.createElement('div');
+                nameTag.innerText = user.uid || `User ${user.uid}`;
+                nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1";
+                wrapper.appendChild(nameTag);
 
-            videoContainer.appendChild(wrapper);
-        }
+                videoContainer.appendChild(wrapper);
+            }
 
-        if (mediaType === 'video') {
-            user.videoTrack.play('player-' + user.uid);
-            document.getElementById('player-' + user.uid).style.display = 'block';
-            document.getElementById('default-icon-' + user.uid).classList.add('hidden'); // hide default
-        }
+            if (mediaType === 'video') {
+                user.videoTrack.play('player-' + user.uid);
+                document.getElementById('player-' + user.uid).style.display = 'block';
+                document.getElementById('default-icon-' + user.uid).classList.add('hidden');
+            }
 
-        if (mediaType === 'audio') {
-            user.audioTrack.play();
-        }
-    });
-
+            if (mediaType === 'audio') {
+                user.audioTrack.play();
+            }
+        });
 
         // ✅ Handle when user disables cam
         client.on('user-unpublished', (user, mediaType) => {
             if (mediaType === 'video') {
-                // Don’t remove — just show icon
                 const player = document.getElementById('player-' + user.uid);
                 const icon = document.getElementById('default-icon-' + user.uid);
                 if (player && icon) {
@@ -602,9 +609,6 @@ async function joinMeeting(code) {
                     icon.classList.remove('hidden');
                     icon.classList.add('flex');
                 }
-            }
-            if (mediaType === 'audio') {
-                // Optional: mute their audio
             }
         });
 
@@ -621,13 +625,11 @@ async function joinMeeting(code) {
         localWrapper.id = 'wrapper-local';
         localWrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
 
-        // Video div
         const localVideoDiv = document.createElement('div');
         localVideoDiv.id = 'local-player';
         localVideoDiv.className = "w-full h-full";
         localWrapper.appendChild(localVideoDiv);
 
-        // Default user icon (hidden initially)
         const defaultIcon = document.createElement('div');
         defaultIcon.id = 'default-user-icon';
         defaultIcon.className = "absolute inset-0 hidden items-center justify-center bg-black";
@@ -639,7 +641,6 @@ async function joinMeeting(code) {
         defaultIcon.appendChild(iconSpan);
         localWrapper.appendChild(defaultIcon);
 
-        // Username label (always visible)
         const localName = document.createElement('div');
         localName.innerText = `${userName} (You)`;
         localName.className = "username-label absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-10";
@@ -647,20 +648,17 @@ async function joinMeeting(code) {
 
         videoContainer.appendChild(localWrapper);
 
-        // Play and publish
         await localTracks.videoTrack.play('local-player');
         await client.publish(Object.values(localTracks));
 
         setStatus(`✅ Joined meeting: ${code} as ${userName}`, "success");
-
     } catch (err) {
         console.error(err);
         setStatus("❌ Failed to join meeting: " + err.message, "error");
     }
 }
 
-
-// ✅ Toggle Cam (local only)
+// ✅ Toggle Cam
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
     if (!localTracks.videoTrack) return;
 
@@ -673,7 +671,6 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
         await localTracks.videoTrack.setEnabled(false);
         icon.textContent = 'videocam_off';
         text.textContent = 'Turn On Cam';
-
         localPlayer.style.display = 'none';
         defaultIcon.classList.remove('hidden');
         defaultIcon.classList.add('flex');
@@ -681,13 +678,11 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
         await localTracks.videoTrack.setEnabled(true);
         icon.textContent = 'videocam';
         text.textContent = 'Turn Off Cam';
-
         localPlayer.style.display = 'block';
         defaultIcon.classList.add('hidden');
         defaultIcon.classList.remove('flex');
     }
 });
-
 
 // ✅ Toggle Mic
 document.getElementById('btnToggleMic').addEventListener('click', async () => {
@@ -707,10 +702,72 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
     }
 });
 
+// ✅ Share Screen
+document.getElementById('btnShareScreen').addEventListener('click', async () => {
+    const icon = document.getElementById('iconScreen');
+    const text = document.getElementById('textScreen');
+
+    try {
+        if (!isSharingScreen) {
+            // Start screen share
+            screenTrack = await AgoraRTC.createScreenVideoTrack({
+                encoderConfig: "1080p_1",
+            });
+
+            // Unpublish camera
+            if (localTracks.videoTrack) {
+                await client.unpublish(localTracks.videoTrack);
+                localTracks.videoTrack.stop();
+                localTracks.videoTrack.close();
+            }
+
+            // Publish screen
+            await client.publish(screenTrack);
+            await screenTrack.play('local-player');
+
+            icon.textContent = 'stop_screen_share';
+            text.textContent = 'Stop Sharing';
+            isSharingScreen = true;
+            setStatus("🖥️ Screen sharing started.", "success");
+
+            // Handle when user stops sharing via browser UI
+            screenTrack.on('track-ended', async () => {
+                await stopScreenShare();
+            });
+
+        } else {
+            await stopScreenShare();
+        }
+    } catch (err) {
+        console.error("Error sharing screen:", err);
+        setStatus("❌ Failed to start screen sharing: " + err.message, "error");
+    }
+});
+
+async function stopScreenShare() {
+    const icon = document.getElementById('iconScreen');
+    const text = document.getElementById('textScreen');
+
+    if (screenTrack) {
+        await client.unpublish(screenTrack);
+        screenTrack.stop();
+        screenTrack.close();
+        screenTrack = null;
+    }
+
+    // Re-enable camera after stopping screen share
+    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+    await client.publish(localTracks.videoTrack);
+    await localTracks.videoTrack.play('local-player');
+
+    icon.textContent = 'screen_share';
+    text.textContent = 'Share Screen';
+    isSharingScreen = false;
+    setStatus("🖥️ Screen sharing stopped.", "success");
+}
 
 // ✅ Auto join
 joinMeeting(meetingCode);
-
 
 // ✅ Leave room
 $(document).ready(function() {
