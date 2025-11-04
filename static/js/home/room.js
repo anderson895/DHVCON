@@ -927,8 +927,7 @@ $(document).on('click', '.see-more-btn', function() {
 
 
 
-
-  // 🧩 Render members
+// 🧩 Render members (responsive)
 function renderMembers(members) {
   const container = $('#membersList');
   container.empty();
@@ -948,20 +947,21 @@ function renderMembers(members) {
       : 'Date not available';
 
     const memberItem = `
-      <div class="flex items-center justify-between bg-[#1f2024] p-4 rounded-xl shadow transition">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between bg-[#1f2024] p-4 rounded-xl shadow transition space-y-3 sm:space-y-0">
+        
         <!-- Left side: name & email -->
-        <div class="flex items-center gap-4">
-          <div>
-            <h3 class="capitalize text-white font-semibold">${fullName}</h3>
-            <p class="text-gray-400 text-sm">${email}</p>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:gap-4">
+          <div class="text-center sm:text-left">
+            <h3 class="capitalize text-white font-semibold text-base sm:text-lg">${fullName}</h3>
+            <p class="text-gray-400 text-sm break-all">${email}</p>
           </div>
         </div>
 
-       <!-- Right side: date joined -->
-        <div class="flex items-center gap-2 text-gray-400 text-sm">
-            <span class="material-icons-round text-[16px] text-gray-400">schedule</span>
-                <span class="text-gray-500">Date Joined:</span> 
-            <span class="text-gray-300">${joinedText}</span>
+        <!-- Right side: date joined -->
+        <div class="flex items-center justify-center sm:justify-end gap-2 text-gray-400 text-sm">
+          <span class="material-icons-round text-[16px] text-gray-400">schedule</span>
+          <span class="hidden sm:inline text-gray-500">Date Joined:</span> 
+          <span class="text-gray-300">${joinedText}</span>
         </div>
 
       </div>`;
@@ -969,6 +969,7 @@ function renderMembers(members) {
     container.append(memberItem);
   });
 }
+
 
 
 
