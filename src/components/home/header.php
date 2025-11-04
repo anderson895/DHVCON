@@ -85,23 +85,51 @@ include "../plugins/PageSpinner.php";
       <div id="joinedRooms" class="flex flex-col gap-1"></div>
     </nav>
 
+
+    
     <!-- User Section -->
     <div class="mt-auto pt-4 border-t border-gray-700 relative">
       <div class="flex items-center gap-3 px-3 py-2">
-        <div>
-          <div class="flex flex-col">
-            <p class="text-sm font-semibold text-white"><?= ucfirst($On_Session[0]['user_fullname']); ?></p>
-            <p class="text-xs text-gray-400 capitalize"><?= $On_Session[0]['user_type'] ?></p>
-          </div>
+              <!-- Profile Picture -->
+        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600 flex items-center justify-center bg-gray-700 text-white font-semibold text-lg relative">
+          <?php if (!empty($On_Session[0]['user_profile_pict'])): ?>
+            <!-- Display actual image -->
+            <img 
+              src="<?= '../static/upload/profile/' . htmlspecialchars($On_Session[0]['user_profile_pict']); ?>" 
+              alt="Profile Picture" 
+              class="w-full h-full object-cover"
+            >
+          <?php else: ?>
+            <!-- Display first letter if no picture -->
+            <span id="profileInitial">
+              <?= strtoupper(substr($On_Session[0]['user_fullname'], 0, 1)); ?>
+            </span>
+          <?php endif; ?>
         </div>
-        <span id="settings-btn" class="material-icons-outlined text-gray-400 text-xl cursor-pointer ml-auto hover:text-white">settings</span>
+
+        <!-- User Info -->
+        <div class="flex flex-col">
+          <p class="text-sm font-semibold text-white">
+            <?= ucfirst($On_Session[0]['user_fullname']); ?>
+          </p>
+          <p class="text-xs text-gray-400 capitalize">
+            <?= $On_Session[0]['user_type'] ?>
+          </p>
+        </div>
+
+        <!-- Settings Button -->
+        <span id="settings-btn" class="material-icons-outlined text-gray-400 text-xl cursor-pointer ml-auto hover:text-white">
+          settings
+        </span>
       </div>
 
       <!-- Dropdown Menu -->
       <div id="settings-menu" class="hidden absolute bottom-14 left-0 right-0 bg-[#2b2d31] border-t border-gray-700 shadow-lg">
-        <a href="profile" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition">profile</a>
+        <a href="profile" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition">Profile</a>
         <a href="logout.php" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition text-red-400">Logout</a>
       </div>
+    </div>
+
     </div>
   </aside>
 
