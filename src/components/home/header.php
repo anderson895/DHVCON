@@ -91,7 +91,7 @@ include "../plugins/PageSpinner.php";
         <div>
           <div class="flex flex-col">
             <p class="text-sm font-semibold text-white"><?= ucfirst($On_Session[0]['user_fullname']); ?></p>
-            <p class="text-xs text-gray-400"><?= $On_Session[0]['user_type'] ?></p>
+            <p class="text-xs text-gray-400 capitalize"><?= $On_Session[0]['user_type'] ?></p>
           </div>
         </div>
         <span id="settings-btn" class="material-icons-outlined text-gray-400 text-xl cursor-pointer ml-auto hover:text-white">settings</span>
