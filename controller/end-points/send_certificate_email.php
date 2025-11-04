@@ -44,12 +44,12 @@ if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
             $mail->isSMTP();
             $mail->Host = 'smtp.gmail.com';
             $mail->SMTPAuth = true;
-            $mail->Username = 'rodriguezryan325@gmail.com';
-            $mail->Password = 'ofvf yxut wpcc iecx'; // consider using env variable
+            $mail->Username = 'jessbertsoliguin456@gmail.com';
+            $mail->Password = 'fcdc wynb xmsf clnl'; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
 
-            $mail->setFrom('rodriguezryan325@gmail.com', 'Certificate System');
+            $mail->setFrom('jessbertsoliguin456@gmail.com', 'Certificate System');
             $mail->addAddress($userEmail);
             $mail->isHTML(true);
             $mail->Subject = 'Your Certificate Link';
