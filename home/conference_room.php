@@ -2,11 +2,28 @@
 include "../src/components/home/header.php";
 $meetingCode  = $_GET['code']; 
 
-$meeting = $db->check_meeting($meetingCode );
+$meeting = $db->check_meeting($meetingCode);
+
+$authorization = ($meeting[0]['meeting_creator_user_id'] != $On_Session[0]['user_id']) ? "hidden" : "";
+
+
+
 ?>
 
     <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
+<?php
 
+// echo "<pre>";
+// print_r($On_Session);
+// echo "</pre>";
+
+
+// echo "<pre>";
+// print_r($meeting);
+// echo "</pre>";
+
+
+?>
 <!-- Header -->
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
     <!-- Title -->
@@ -21,15 +38,17 @@ $meeting = $db->check_meeting($meetingCode );
 
         <!-- Buttons Row (scrollable on mobile) -->
         <div class="flex flex-row gap-2 overflow-x-auto md:overflow-visible">
+
+            
             <!-- Pending Requests Button -->
-            <button id="pendingRequestsBtn" class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
+            <button id="pendingRequestsBtn" <?=$authorization; ?> class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
                 <span class="material-icons text-base">person_add</span>
                 <span class="truncate">Requests</span>
                 <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
             </button>
 
             <!-- View Attendance Button -->
-            <button id="viewAttendanceBtn" class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
+            <button id="viewAttendanceBtn" <?=$authorization; ?> class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
                 <span class="material-icons text-base">groups</span>
                 <span class="truncate">Attendance</span>
             </button>

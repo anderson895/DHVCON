@@ -360,7 +360,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $fullname = trim($_POST['fullname']);
             $email = trim($_POST['email']);
 
-            $res = $db->updateProfile($user_id, $fullname, $email);
+
+
+            $file_upload = $_FILES['profilePic'];
+            $uploadDir = '../../static/upload/profile/';
+            $fileName = null;
+
+            if (isset($file_upload) && $file_upload['error'] === UPLOAD_ERR_OK) {
+                // Get original file extension
+                $fileExtension = pathinfo($file_upload['name'], PATHINFO_EXTENSION);
+                // Create a clean, unique filename
+                $fileName = uniqid('profile_', true) . '.' . strtolower($fileExtension);
+                $filePath = $uploadDir . $fileName;
+
+                // Move the uploaded file
+                if (!move_uploaded_file($file_upload['tmp_name'], $filePath)) {
+                    echo json_encode([
+                        'status' => 500,
+                        'message' => 'Error uploading file.'
+                    ]);
+                    exit;
+                }
+            } elseif ($file_upload['error'] !== UPLOAD_ERR_NO_FILE && $file_upload['error'] !== 0) {
+                echo json_encode([
+                    'status' => 400,
+                    'message' => 'Invalid file upload.'
+                ]);
+                exit;
+            }
+
+
+            $res = $db->updateProfile($user_id, $fullname, $email,$fileName);
             echo json_encode(['success' => $res]);
            
             
