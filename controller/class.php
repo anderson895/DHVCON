@@ -14,51 +14,52 @@ class global_class extends db_connect
     }
 
 
- public function ratingMeeting($meeting_id, $rating, $user_id) {
-        $meeting_id = intval($meeting_id);
-        $rating = intval($rating);
+    public function ratingMeeting($meeting_id, $rating, $user_id, $comment = null) {
+    $meeting_id = intval($meeting_id);
+    $rating = intval($rating);
+    $comment = trim($comment ?? '');
 
-        if ($rating < 1 || $rating > 5) {
-            return ['status' => 'error', 'message' => 'Invalid rating value.'];
-        }
-
-        // Check if user has already rated this meeting
-        $stmt = $this->conn->prepare("SELECT * FROM meeting_ratings WHERE meeting_id = ? AND user_id = ?");
-        $stmt->bind_param("ii", $meeting_id, $user_id);
-        $stmt->execute();
-        $existing = $stmt->get_result()->fetch_assoc();
-        $stmt->close();
-
-        if ($existing) {
-            // Update existing rating
-            $stmt = $this->conn->prepare("UPDATE meeting_ratings SET rating = ? WHERE meeting_id = ? AND user_id = ?");
-            $stmt->bind_param("iii", $rating, $meeting_id, $user_id);
-            $stmt->execute();
-            $stmt->close();
-        } else {
-            // Insert new rating
-            $stmt = $this->conn->prepare("INSERT INTO meeting_ratings (meeting_id, user_id, rating) VALUES (?, ?, ?)");
-            $stmt->bind_param("iii", $meeting_id, $user_id, $rating);
-            $stmt->execute();
-            $stmt->close();
-        }
-
-        // Update the average rating in meetings table
-        $stmt = $this->conn->prepare("
-            UPDATE meeting m
-            SET m.rating = (
-                SELECT ROUND(AVG(rating), 1) 
-                FROM meeting_ratings 
-                WHERE meeting_id = m.meeting_id
-            )
-            WHERE m.meeting_id = ?
-        ");
-        $stmt->bind_param("i", $meeting_id);
-        $stmt->execute();
-        $stmt->close();
-
-        return ['status' => 'success', 'message' => 'Rating saved successfully.'];
+    if ($rating < 1 || $rating > 5) {
+        return ['status' => 'error', 'message' => 'Invalid rating value.'];
     }
+
+    // Check if user has already rated this meeting
+    $stmt = $this->conn->prepare("SELECT * FROM meeting_ratings WHERE meeting_id = ? AND user_id = ?");
+    $stmt->bind_param("ii", $meeting_id, $user_id);
+    $stmt->execute();
+    $existing = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if ($existing) {
+        // Update existing rating and comment
+        $stmt = $this->conn->prepare("UPDATE meeting_ratings SET rating = ?, comment = ? WHERE meeting_id = ? AND user_id = ?");
+        $stmt->bind_param("isii", $rating, $comment, $meeting_id, $user_id);
+        $stmt->execute();
+        $stmt->close();
+    } else {
+        // Insert new rating and comment
+        $stmt = $this->conn->prepare("INSERT INTO meeting_ratings (meeting_id, user_id, rating, comment) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("iiis", $meeting_id, $user_id, $rating, $comment);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    // Update the average rating in meetings table
+    $stmt = $this->conn->prepare("
+        UPDATE meeting m
+        SET m.rating = (
+            SELECT ROUND(AVG(rating), 1)
+            FROM meeting_ratings
+            WHERE meeting_id = m.meeting_id
+        )
+        WHERE m.meeting_id = ?
+    ");
+    $stmt->bind_param("i", $meeting_id);
+    $stmt->execute();
+    $stmt->close();
+
+    return ['status' => 'success', 'message' => 'Rating and comment saved successfully.'];
+}
 
 
 
@@ -100,25 +101,51 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
         die("Prepare failed: " . $this->conn->error);
     }
 
-    // Ensure $user_id is an integer
     $user_id = intval($user_id);
     $room_id = intval($room_id);
-
     $stmt->bind_param("ii", $user_id, $room_id);
     $stmt->execute();
     $result = $stmt->get_result();
 
     $meetings = [];
+
     while ($row = $result->fetch_assoc()) {
-        // Convert ratings to numeric types
         $row['average_rating'] = floatval($row['average_rating']);
         $row['user_rating'] = intval($row['user_rating']);
+
+        // 🔹 Fetch all ratings + comments for this meeting
+        $ratingsQuery = "
+            SELECT 
+                r.rating, 
+                r.comment, 
+                u.user_fullname AS username,
+                u.user_profile_pict
+            FROM meeting_ratings r
+            JOIN user u ON u.user_id = r.user_id
+            WHERE r.meeting_id = ?
+            ORDER BY r.created_at DESC
+        ";
+
+        $ratingsStmt = $this->conn->prepare($ratingsQuery);
+        $ratingsStmt->bind_param("i", $row['meeting_id']);
+        $ratingsStmt->execute();
+        $ratingsResult = $ratingsStmt->get_result();
+
+        $ratings = [];
+        while ($ratingRow = $ratingsResult->fetch_assoc()) {
+            $ratings[] = $ratingRow;
+        }
+        $ratingsStmt->close();
+
+        $row['ratings'] = $ratings; // Attach to meeting
+
         $meetings[] = $row;
     }
 
     $stmt->close();
     return $meetings;
 }
+
 
 
 

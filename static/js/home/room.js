@@ -239,7 +239,6 @@ function fetchAllClaimedCertificates(roomId, room_name) {
 
 
 
-
 function fetchMeetings() {
     $.ajax({
         url: `../controller/end-points/controller.php`,
@@ -255,7 +254,9 @@ function fetchMeetings() {
 
             if (response.status === 200 && response.data.length > 0) {
                 response.data.forEach(meeting => {
+                    // =============================
                     // Format Start & End Date
+                    // =============================
                     const startDate = new Date(meeting.meeting_start);
                     const endDate = new Date(meeting.meeting_end);
                     const formattedStart = startDate.toLocaleString('en-PH', { 
@@ -273,32 +274,46 @@ function fetchMeetings() {
                     `;
 
                     // =============================
-                    // Ratings: Separate for participant and creator
+                    // Ratings Display (Average or User)
                     // =============================
                     let ratingStars = '';
-
                     if (response.user_id === meeting.meeting_creator_user_id) {
-                        // Creator sees average rating (read-only)
-                        const averageRating = parseFloat(meeting.average_rating) || 0;
-                        ratingStars = `<div class="average-rating mt-2 text-yellow-300 flex justify-center space-x-1">Average : `;
-                        for (let i = 1; i <= 5; i++) {
-                            const starClass = i <= averageRating ? "text-yellow-300" : "text-gray-500";
-                            ratingStars += `<span class="star avg-star ${starClass}">&#9733;</span>`;
-                        }
-                        ratingStars += `</div>`;
+                                                      // Host sees average rating
+                              const avgRating = parseFloat(meeting.average_rating) || 0;
+
+                              // Round to 1 decimal place for display
+                              const avgRatingDisplay = avgRating.toFixed(1);
+
+                              ratingStars = `
+                                  <div class="average-rating mt-2 flex items-center space-x-2 text-yellow-300">
+                                      <span class="font-semibold">Average:</span>
+                                      <div class="flex space-x-1">
+                                          ${[1,2,3,4,5].map(i => {
+                                              const starClass = i <= avgRating ? "text-yellow-300" : "text-gray-500";
+                                              return `<span class="${starClass}">&#9733;</span>`; // removed 'star avg-star'
+                                          }).join('')}
+                                      </div>
+                                      <span class="ml-2 text-white font-medium">(${avgRatingDisplay})</span>
+                                  </div>
+                              `;
+
+
                     } else {
-                        // Participant sees their own rating (clickable)
-                        const userRating = parseInt(meeting.user_rating) || 0;
-                        ratingStars = `<div class="user-rating mt-2 text-yellow-400 flex justify-center space-x-1"> `;
+                        // Participant sees their own rating
+                       const userRating = parseInt(meeting.user_rating) || 0;
+                        ratingStars = `<div class="user-rating mt-4 text-yellow-400 flex justify-center space-x-2 text-4xl">`; // centered & bigger
                         for (let i = 1; i <= 5; i++) {
-                            const starClass = i <= userRating ? "text-yellow-400 cursor-pointer" : "text-gray-500 cursor-pointer";
+                            const starClass = i <= userRating 
+                                ? "text-yellow-400 cursor-pointer hover:text-yellow-300 transition" 
+                                : "text-gray-500 cursor-pointer hover:text-yellow-300 transition";
                             ratingStars += `<span class="star user-star ${starClass}" data-value="${i}" data-meeting-id="${meeting.meeting_id}">&#9733;</span>`;
                         }
                         ratingStars += `</div>`;
+
                     }
 
                     // =============================
-                    // Action Buttons (participants)
+                    // Action Buttons for Participants
                     // =============================
                     let actionButton = '';
                     if (response.user_id !== meeting.meeting_creator_user_id) {
@@ -331,11 +346,13 @@ function fetchMeetings() {
                     }
 
                     // =============================
-                    // Host buttons (creator)
+                    // Host Buttons
                     // =============================
                     let creatorButtons = '';
                     if (response.user_id === meeting.meeting_creator_user_id) {
-                        const closeDisabled = meeting.meeting_status == 0 ? 'disabled cursor-not-allowed opacity-50' : 'cursor-pointer btnCloseMeeting';
+                        const closeDisabled = meeting.meeting_status == 0 
+                            ? 'disabled cursor-not-allowed opacity-50' 
+                            : 'cursor-pointer btnCloseMeeting';
                         const joinBtn = meeting.meeting_status == 1 ? `
                             <button class="join-meeting w-full text-center bg-[#5865f2] text-white py-2 rounded-md hover:bg-[#4752c4] transition cursor-pointer"
                                 data-meeting-link="${meeting.meeting_link}" data-meeting-id="${meeting.meeting_id}">
@@ -362,7 +379,67 @@ function fetchMeetings() {
                     }
 
                     // =============================
-                    // Render card
+                    // Display Ratings + Comments (Scrollable)
+                    // =============================
+                    let commentsHTML = "";
+                    if (meeting.ratings && meeting.ratings.length > 0) {
+                        commentsHTML = `
+                            <div class="mt-3 bg-[#1e1f22] p-3 rounded-lg">
+                                <p class="text-yellow-400 text-sm font-semibold mb-2">Feedbacks:</p>
+                                <div class="max-h-40 overflow-y-auto pr-2 custom-scrollbar">
+                                    ${meeting.ratings.map(r => {
+                                        // Create visual star rating
+                                        let stars = "";
+                                        for (let i = 1; i <= 5; i++) {
+                                            const starClass = i <= r.rating ? "text-yellow-400" : "text-gray-600";
+                                            stars += `<span class="${starClass}">&#9733;</span>`;
+                                        }
+
+                                        // Profile picture or first letter icon
+                                        let userAvatar = "";
+                                        if (r.user_profile_pict) {
+                                            userAvatar = `<img src="../static/upload/profile/${r.user_profile_pict}" alt="${r.username}" class="w-8 h-8 rounded-full object-cover mt-1">`;
+                                        } else {
+                                            const firstLetter = r.username.charAt(0).toUpperCase();
+                                            userAvatar = `
+                                                <div class="w-8 h-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-semibold mt-1">
+                                                    ${firstLetter}
+                                                </div>
+                                            `;
+                                        }
+
+                                        return `
+                                            <div class="mb-2 border-b border-gray-600 pb-2 flex items-start space-x-3">
+                                                ${userAvatar}
+                                                <div class="flex-1">
+                                                    <p class="text-gray-300 text-sm font-semibold mb-1">${r.username}</p>
+                                                    <div class="flex space-x-1 mb-1">${stars}</div>
+                                                    ${r.comment 
+                                                        ? `<p class="text-gray-400 text-sm italic">"${r.comment}"</p>` 
+                                                        : `<p class="text-gray-500 text-xs">No comment.</p>`}
+                                                </div>
+                                            </div>
+                                        `;
+                                    }).join("")}
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // No feedback
+                        commentsHTML = `
+                            <div class="mt-3 bg-[#1e1f22] p-3 rounded-lg text-center">
+                                <p class="text-gray-400 text-sm italic">No feedback available for this meeting.</p>
+                            </div>
+                        `;
+                    }
+
+
+
+
+
+
+                    // =============================
+                    // Render Meeting Card
                     // =============================
                     const card = `
                         <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md">
@@ -371,6 +448,7 @@ function fetchMeetings() {
                                 ${dateInfo}
                                 <p class="text-sm text-gray-300">${meeting.meeting_description}</p>
                                 ${creatorButtons || actionButton}
+                                ${commentsHTML}
                             </div>
                         </div>
                     `;
@@ -386,19 +464,31 @@ function fetchMeetings() {
             }
         },
         error: function(xhr, status, error) {
-            console.error(error);
+            console.error("Error fetching meetings:", error);
         }
     });
 }
 
+
 // =============================
 // User rating click handler
 // =============================
+// When user clicks stars on meeting card
 $(document).on("click", ".user-rating .star", function() {
     const value = $(this).data("value");
     const meetingId = $(this).data("meeting-id");
 
-    // Update stars visually
+    // Store data in modal
+    $("#commentModal").data("meeting-id", meetingId);
+    $("#commentModal").data("rating", value);
+
+    // Render stars inside modal (clickable)
+    renderModalStars(value);
+
+    // Show modal
+    $("#commentModal").removeClass("hidden");
+
+    // Update stars visually on main card
     $(this).siblings().addBack().each(function() {
         if ($(this).data("value") <= value) {
             $(this).removeClass("text-gray-500").addClass("text-yellow-400");
@@ -406,20 +496,117 @@ $(document).on("click", ".user-rating .star", function() {
             $(this).removeClass("text-yellow-400").addClass("text-gray-500");
         }
     });
+});
 
-    // Send rating to backend
-    $.post("../controller/end-points/controller.php", { 
-        meeting_id: meetingId, 
-        rating: value,
-        requestType: "ratingMeeting"
+function renderModalStars(selectedValue) {
+    let starsHTML = "";
+    for (let i = 1; i <= 5; i++) {
+        const starClass = i <= selectedValue 
+            ? "text-yellow-400 cursor-pointer hover:text-yellow-300 transition" 
+            : "text-gray-600 cursor-pointer hover:text-yellow-300 transition";
+        starsHTML += `<span class="modal-star ${starClass}" data-value="${i}">&#9733;</span>`;
+    }
+    $("#selectedStars").html(starsHTML);
+}
+
+
+
+$(document).on("click", ".modal-star", function() {
+    const newValue = $(this).data("value");
+    $("#commentModal").data("rating", newValue); // update stored rating
+    renderModalStars(newValue); // refresh stars visually
+});
+
+
+// Cancel button
+$("#cancelComment").on("click", function() {
+    $("#commentText").val("");
+    $("#selectedStars").empty();
+    $("#commentModal").addClass("hidden");
+});
+
+
+// Submit button
+$("#submitComment").on("click", function() {
+    const comment = $("#commentText").val().trim();
+    const meetingId = $("#commentModal").data("meeting-id");
+    const rating = $("#commentModal").data("rating");
+
+    if (comment === "") {
+        alert("Please enter your comment before submitting.");
+        return;
+    }
+
+    // Send rating and comment to backend
+   $.post("../controller/end-points/controller.php", { 
+    meeting_id: meetingId, 
+    rating: rating,
+    comment: comment,
+    requestType: "ratingMeeting"
     }, function(response) {
         if (response.status === "success") {
-            console.log("Your rating saved:", value);
+            console.log("Rating and comment saved:", rating, comment);
+            Swal.fire({
+                title: "Thank you!",
+                text: "Your feedback has been saved successfully.",
+                icon: "success",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#3085d6"
+            }).then(() => {
+                location.reload();
+            });
         } else {
-            console.error("Error saving rating:", response.message);
+            console.error("Error saving:", response.message);
+            Swal.fire({
+                title: "Error",
+                text: "Something went wrong while saving your comment.",
+                icon: "error",
+                confirmButtonText: "Try Again",
+                confirmButtonColor: "#d33"
+            });
         }
-    }, "json");
+    }, "json").fail(function() {
+        Swal.fire({
+            title: "Connection Error",
+            text: "Unable to reach the server. Please try again later.",
+            icon: "warning",
+            confirmButtonText: "OK",
+            confirmButtonColor: "#f39c12"
+        });
+    });
+
 });
+
+
+
+// Highlight stars on hover
+$(document).on("mouseenter", ".star, .modal-star", function() {
+    const value = $(this).data("value");
+    $(this).siblings().addBack().each(function() {
+        if ($(this).data("value") <= value) {
+            $(this).removeClass("text-gray-500 text-gray-600").addClass("text-yellow-300");
+        } else {
+            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500 text-gray-600");
+        }
+    });
+});
+
+// Reset stars when hover out (revert to selected value)
+$(document).on("mouseleave", ".star, .modal-star", function() {
+    const container = $(this).closest(".user-rating, .modal-star").length ? $(this).parent() : $(this).parent();
+    container.children().each(function() {
+        const selectedValue = $(this).closest("#commentModal").data("rating") || $(this).parent().data("selected") || 0;
+        if ($(this).data("value") <= selectedValue) {
+            $(this).removeClass("text-gray-500 text-gray-600").addClass("text-yellow-400");
+        } else {
+            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500 text-gray-600");
+        }
+    });
+});
+
+
+
+
 
 
 

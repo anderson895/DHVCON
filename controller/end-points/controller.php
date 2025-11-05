@@ -119,12 +119,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
         }else if ($_POST['requestType'] == 'ratingMeeting') {
-               $user_id = $_SESSION['user_id'];
+                $user_id = $_SESSION['user_id'];
                 $meeting_id = $_POST['meeting_id'];
                 $rating = $_POST['rating'];
+                $comment = isset($_POST['comment']) ? trim($_POST['comment']) : null;
 
-                // Correct parameter order
-                $result = $db->ratingMeeting($meeting_id, $rating, $user_id);
+                $result = $db->ratingMeeting($meeting_id, $rating, $user_id, $comment);
 
                 if ($result['status'] === 'success') {
                     echo json_encode([
@@ -137,6 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'message' => $result['message']
                     ]);
                 }
+
 
 
         }else if ($_POST['requestType'] == 'updateJoinRequest') {
@@ -852,9 +853,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
         }else if ($_GET['requestType'] === 'getMeetingsByRoom') {
                     $room_id = intval($_GET['room_id']);
-                    $user_id = $_SESSION['user_id']; // current logged-in user
+                    $user_id = $_SESSION['user_id'];
 
-                    $response = $db->GetMeetingsByRoom($room_id, $user_id); // ✅ pass user_id
+                    $response = $db->GetMeetingsByRoom($room_id, $user_id); 
 
                     if ($response) {
                         echo json_encode([
