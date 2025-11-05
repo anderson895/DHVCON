@@ -19,6 +19,11 @@ $(document).ready(function () {
         $('#spinner').hide();
         $('#btnLogin').prop('disabled', false);
 
+        const darkSwal = {
+          background: "#2c2c2c", // dark background
+          color: "#f1f1f1",      // light text
+        };
+
         if (response.status === "success") {
           Swal.fire({
             icon: "success",
@@ -27,18 +32,18 @@ $(document).ready(function () {
             confirmButtonColor: "#28a745",
             timer: 2000,
             timerProgressBar: true,
-            showConfirmButton: false
+            showConfirmButton: false,
+            ...darkSwal,
+            iconColor: "#4caf50"
           }).then(() => {
-            // ✅ Redirect based on user_type safely
             if (response.data && response.data.user_type) {
-              const userType = response.data.user_type.toLowerCase(); // normalize
+              const userType = response.data.user_type.toLowerCase(); 
               if (userType === "admin") {
                 window.location.href = "admin/dashboard";
               } else {
                 window.location.href = "home/";
               }
             } else {
-              // fallback if user_type not returned
               window.location.href = "home/";
             }
           });
@@ -51,21 +56,27 @@ $(document).ready(function () {
               icon: "info",
               title: "Account Pending Approval",
               text: msg,
-              confirmButtonColor: "#3085d6"
+              confirmButtonColor: "#3085d6",
+              ...darkSwal,
+              iconColor: "#17a2b8"
             });
           } else if (msg.toLowerCase().includes("disabled")) {
             Swal.fire({
               icon: "error",
               title: "Account Disabled",
               text: msg,
-              confirmButtonColor: "#d33"
+              confirmButtonColor: "#d33",
+              ...darkSwal,
+              iconColor: "#e74c3c"
             });
           } else {
             Swal.fire({
               icon: "error",
               title: "Login Failed",
               text: msg,
-              confirmButtonColor: "#d33"
+              confirmButtonColor: "#d33",
+              ...darkSwal,
+              iconColor: "#e74c3c"
             });
           }
         }
@@ -78,7 +89,10 @@ $(document).ready(function () {
           icon: "error",
           title: "Error",
           text: "An unexpected error occurred. Please try again.",
-          confirmButtonColor: "#d33"
+          confirmButtonColor: "#d33",
+          background: "#2c2c2c",
+          color: "#f1f1f1",
+          iconColor: "#e74c3c"
         });
       }
     });

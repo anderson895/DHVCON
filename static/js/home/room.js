@@ -576,42 +576,52 @@ $("#submitComment").on("click", function() {
     }
 
     // Send rating and comment to backend
-   $.post("../controller/end-points/controller.php", { 
-    meeting_id: meetingId, 
-    rating: rating,
-    comment: comment,
-    requestType: "ratingMeeting"
-    }, function(response) {
-        if (response.status === "success") {
-            console.log("Rating and comment saved:", rating, comment);
-            Swal.fire({
-                title: "Thank you!",
-                text: "Your feedback has been saved successfully.",
-                icon: "success",
-                confirmButtonText: "OK",
-                confirmButtonColor: "#3085d6"
-            }).then(() => {
-                location.reload();
-            });
-        } else {
-            console.error("Error saving:", response.message);
-            Swal.fire({
-                title: "Error",
-                text: "Something went wrong while saving your comment.",
-                icon: "error",
-                confirmButtonText: "Try Again",
-                confirmButtonColor: "#d33"
-            });
-        }
-    }, "json").fail(function() {
-        Swal.fire({
-            title: "Connection Error",
-            text: "Unable to reach the server. Please try again later.",
-            icon: "warning",
-            confirmButtonText: "OK",
-            confirmButtonColor: "#f39c12"
-        });
-    });
+    $.post("../controller/end-points/controller.php", { 
+      meeting_id: meetingId, 
+      rating: rating,
+      comment: comment,
+      requestType: "ratingMeeting"
+  }, function(response) {
+      if (response.status === "success") {
+          console.log("Rating and comment saved:", rating, comment);
+          Swal.fire({
+              title: "Thank you!",
+              text: "Your feedback has been saved successfully.",
+              icon: "success",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#3085d6",
+              background: "#2c2c2c", // dark background
+              color: "#f1f1f1", // light text
+              iconColor: "#4caf50" // icon color for success
+          }).then(() => {
+              location.reload();
+          });
+      } else {
+          console.error("Error saving:", response.message);
+          Swal.fire({
+              title: "Error",
+              text: "Something went wrong while saving your comment.",
+              icon: "error",
+              confirmButtonText: "Try Again",
+              confirmButtonColor: "#d33",
+              background: "#2c2c2c",
+              color: "#f1f1f1",
+              iconColor: "#e74c3c"
+          });
+      }
+  }, "json").fail(function() {
+      Swal.fire({
+          title: "Connection Error",
+          text: "Unable to reach the server. Please try again later.",
+          icon: "warning",
+          confirmButtonText: "OK",
+          confirmButtonColor: "#f39c12",
+          background: "#2c2c2c",
+          color: "#f1f1f1",
+          iconColor: "#f39c12"
+      });
+  });
+
 
 });
 
