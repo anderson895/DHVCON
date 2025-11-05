@@ -31,6 +31,13 @@ $meetingQuery->execute();
 $meetingResult = $meetingQuery->get_result();
 $meeting = $meetingResult->fetch_assoc();
 
+
+
+$start = date("F j, Y g:i A", strtotime($meeting['meeting_start']));
+$end = date("F j, Y g:i A", strtotime($meeting['meeting_end']));
+$meetingLink = "https://dhvcon.space/DHVCON/home/conference_room?code=" . $meeting['meeting_link'];
+
+
 if (!$meeting) {
     echo json_encode([
         'status' => 'error',
@@ -74,13 +81,17 @@ try {
 
     // ✅ Prepare email content
     $subject = "New Meeting: " . $meeting['meeting_title'];
+    
+
+   
+
     $body = "
         <h2>New Meeting Scheduled</h2>
         <p><strong>Title:</strong> {$meeting['meeting_title']}</p>
         <p><strong>Description:</strong> {$meeting['meeting_description']}</p>
-        <p><strong>Start:</strong> {$meeting['start_date']}</p>
-        <p><strong>End:</strong> {$meeting['end_date']}</p>
-        <p><strong>Meeting Link:</strong> <a href='{$meeting['meeting_link']}'>{$meeting['meeting_link']}</a></p>
+        <p><strong>Start:</strong> {$start}</p>
+        <p><strong>End:</strong> {$end}</p>
+        <p><strong>Meeting Link:</strong> <a href='{$meetingLink}'>{$meeting['meeting_link']}</a></p>
         <br>
         <p>Thank you,<br>Meeting Scheduler System</p>
     ";
