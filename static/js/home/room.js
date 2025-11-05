@@ -300,8 +300,9 @@ function fetchMeetings() {
 
                     } else {
                         // Participant sees their own rating
-                       const userRating = parseInt(meeting.user_rating) || 0;
-                        ratingStars = `<div class="user-rating mt-4 text-yellow-400 flex justify-center space-x-2 text-4xl">`; // centered & bigger
+                      const userRating = parseInt(meeting.user_rating) || 0;
+                      ratingStars = `<div class="user-rating mt-4 flex justify-center space-x-2 text-4xl" data-selected="${userRating}">`;
+
                         for (let i = 1; i <= 5; i++) {
                             const starClass = i <= userRating 
                                 ? "text-yellow-400 cursor-pointer hover:text-yellow-300 transition" 
@@ -470,6 +471,35 @@ function fetchMeetings() {
 }
 
 
+// Highlight stars on hover
+$(document).on("mouseenter", ".star, .modal-star", function() {
+    const value = $(this).data("value");
+    $(this).siblings().addBack().each(function() {
+        if ($(this).data("value") <= value) {
+            $(this).removeClass("text-gray-500 text-gray-600").addClass("text-yellow-300");
+        } else {
+            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500 text-gray-600");
+        }
+    });
+});
+
+// Reset stars when hover out (revert to selected value)
+$(document).on("mouseleave", ".star, .modal-star", function() {
+    const container = $(this).closest(".user-rating, .modal-star");
+    const selectedValue = parseInt(container.data("selected")) || 0;
+
+    container.children().each(function() {
+        if ($(this).data("value") <= selectedValue) {
+            $(this).removeClass("text-gray-500 text-gray-600 text-yellow-300").addClass("text-yellow-400");
+        } else {
+            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500");
+        }
+    });
+});
+
+
+
+
 // =============================
 // User rating click handler
 // =============================
@@ -489,14 +519,18 @@ $(document).on("click", ".user-rating .star", function() {
     $("#commentModal").removeClass("hidden");
 
     // Update stars visually on main card
-    $(this).siblings().addBack().each(function() {
+    const container = $(this).parent(); // .user-rating
+    container.data("selected", value); // <-- store current value
+
+    container.children().each(function() {
         if ($(this).data("value") <= value) {
-            $(this).removeClass("text-gray-500").addClass("text-yellow-400");
+            $(this).removeClass("text-gray-500 text-gray-600 text-yellow-300").addClass("text-yellow-400");
         } else {
-            $(this).removeClass("text-yellow-400").addClass("text-gray-500");
+            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500");
         }
     });
 });
+
 
 function renderModalStars(selectedValue) {
     let starsHTML = "";
@@ -507,7 +541,11 @@ function renderModalStars(selectedValue) {
         starsHTML += `<span class="modal-star ${starClass}" data-value="${i}">&#9733;</span>`;
     }
     $("#selectedStars").html(starsHTML);
+
+    // Store current selected value on the container
+    $("#selectedStars").data("selected", selectedValue);
 }
+
 
 
 
@@ -579,30 +617,6 @@ $("#submitComment").on("click", function() {
 
 
 
-// Highlight stars on hover
-$(document).on("mouseenter", ".star, .modal-star", function() {
-    const value = $(this).data("value");
-    $(this).siblings().addBack().each(function() {
-        if ($(this).data("value") <= value) {
-            $(this).removeClass("text-gray-500 text-gray-600").addClass("text-yellow-300");
-        } else {
-            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500 text-gray-600");
-        }
-    });
-});
-
-// Reset stars when hover out (revert to selected value)
-$(document).on("mouseleave", ".star, .modal-star", function() {
-    const container = $(this).closest(".user-rating, .modal-star").length ? $(this).parent() : $(this).parent();
-    container.children().each(function() {
-        const selectedValue = $(this).closest("#commentModal").data("rating") || $(this).parent().data("selected") || 0;
-        if ($(this).data("value") <= selectedValue) {
-            $(this).removeClass("text-gray-500 text-gray-600").addClass("text-yellow-400");
-        } else {
-            $(this).removeClass("text-yellow-400 text-yellow-300").addClass("text-gray-500 text-gray-600");
-        }
-    });
-});
 
 
 
