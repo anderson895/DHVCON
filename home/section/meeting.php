@@ -52,3 +52,23 @@
 
     
   </section>
+
+
+<!-- Comment Modal -->
+<div id="commentModal" class="hidden fixed inset-0 flex items-center justify-center z-50" style="background-color: rgba(0, 0, 0, 0.5);">
+  <div class="bg-[rgba(43,45,49,0.9)] rounded-xl shadow-lg w-96 p-6 text-white">
+    <h3 class="text-lg font-semibold mb-3">Leave a Comment</h3>
+
+    <!-- Clickable stars inside modal -->
+    <div id="selectedStars" class="flex justify-center space-x-1 mb-4 text-2xl cursor-pointer">
+      <!-- Stars will be rendered here -->
+    </div>
+
+    <textarea id="commentText" rows="4" class="w-full p-2 rounded-md bg-[rgba(55,65,81,0.7)] text-white placeholder-gray-400" placeholder="Write your comment here..."></textarea>
+    
+    <div class="flex justify-end mt-4 space-x-2">
+      <button id="cancelComment" class="cursor-pointer bg-[rgba(107,114,128,0.8)] px-4 py-2 rounded-md hover:bg-[rgba(75,85,99,0.9)]">Cancel</button>
+      <button id="submitComment" class="cursor-pointer bg-[rgba(88,101,242,0.9)] px-4 py-2 rounded-md hover:bg-[rgba(71,82,196,1)]">Submit</button>
+    </div>
+  </div>
+</div>

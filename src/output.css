@@ -460,6 +460,9 @@
   .ml-1 {
     margin-left: calc(var(--spacing) * 1);
   }
+  .ml-2 {
+    margin-left: calc(var(--spacing) * 2);
+  }
   .ml-8 {
     margin-left: calc(var(--spacing) * 8);
   }
@@ -489,6 +492,9 @@
   }
   .h-6 {
     height: calc(var(--spacing) * 6);
+  }
+  .h-8 {
+    height: calc(var(--spacing) * 8);
   }
   .h-10 {
     height: calc(var(--spacing) * 10);
@@ -541,6 +547,9 @@
   .max-h-24 {
     max-height: calc(var(--spacing) * 24);
   }
+  .max-h-40 {
+    max-height: calc(var(--spacing) * 40);
+  }
   .max-h-48 {
     max-height: calc(var(--spacing) * 48);
   }
@@ -573,6 +582,9 @@
   }
   .w-6 {
     width: calc(var(--spacing) * 6);
+  }
+  .w-8 {
+    width: calc(var(--spacing) * 8);
   }
   .w-10 {
     width: calc(var(--spacing) * 10);
@@ -1083,6 +1095,9 @@
   .bg-\[\#5865f2\] {
     background-color: #5865f2;
   }
+  .bg-\[\#5865f2\]\/80 {
+    background-color: color-mix(in oklab, #5865f2 80%, transparent);
+  }
   .bg-\[\#26272b\] {
     background-color: #26272b;
   }
@@ -1100,6 +1115,18 @@
   }
   .bg-\[rgba\(0\,0\,0\,0\.5\)\] {
     background-color: rgba(0,0,0,0.5);
+  }
+  .bg-\[rgba\(43\,45\,49\,0\.9\)\] {
+    background-color: rgba(43,45,49,0.9);
+  }
+  .bg-\[rgba\(55\,65\,81\,0\.7\)\] {
+    background-color: rgba(55,65,81,0.7);
+  }
+  .bg-\[rgba\(88\,101\,242\,0\.9\)\] {
+    background-color: rgba(88,101,242,0.9);
+  }
+  .bg-\[rgba\(107\,114\,128\,0\.8\)\] {
+    background-color: rgba(107,114,128,0.8);
   }
   .bg-black {
     background-color: var(--color-black);
@@ -1142,6 +1169,12 @@
   }
   .bg-gray-500 {
     background-color: var(--color-gray-500);
+  }
+  .bg-gray-500\/70 {
+    background-color: color-mix(in srgb, oklch(55.1% 0.027 264.364) 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-gray-500) 70%, transparent);
+    }
   }
   .bg-gray-600 {
     background-color: var(--color-gray-600);
@@ -1362,6 +1395,9 @@
   .pr-1 {
     padding-right: calc(var(--spacing) * 1);
   }
+  .pr-2 {
+    padding-right: calc(var(--spacing) * 2);
+  }
   .pr-3 {
     padding-right: calc(var(--spacing) * 3);
   }
@@ -1511,9 +1547,6 @@
   .text-blue-400 {
     color: var(--color-blue-400);
   }
-  .text-blue-500 {
-    color: var(--color-blue-500);
-  }
   .text-blue-600 {
     color: var(--color-blue-600);
   }
@@ -1594,6 +1627,11 @@
   }
   .decoration-yellow-500 {
     text-decoration-color: var(--color-yellow-500);
+  }
+  .placeholder-gray-400 {
+    &::placeholder {
+      color: var(--color-gray-400);
+    }
   }
   .opacity-10 {
     opacity: 10%;
@@ -1807,6 +1845,27 @@
       }
     }
   }
+  .hover\:bg-\[\#4752c4\]\/90 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in oklab, #4752c4 90%, transparent);
+      }
+    }
+  }
+  .hover\:bg-\[rgba\(71\,82\,196\,1\)\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: rgba(71,82,196,1);
+      }
+    }
+  }
+  .hover\:bg-\[rgba\(75\,85\,99\,0\.9\)\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: rgba(75,85,99,0.9);
+      }
+    }
+  }
   .hover\:bg-blue-600 {
     &:hover {
       @media (hover: hover) {
@@ -1846,6 +1905,16 @@
     &:hover {
       @media (hover: hover) {
         background-color: var(--color-gray-600);
+      }
+    }
+  }
+  .hover\:bg-gray-600\/80 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: color-mix(in srgb, oklch(44.6% 0.03 256.802) 80%, transparent);
+        @supports (color: color-mix(in lab, red, red)) {
+          background-color: color-mix(in oklab, var(--color-gray-600) 80%, transparent);
+        }
       }
     }
   }
@@ -1988,6 +2057,13 @@
       }
     }
   }
+  .hover\:text-yellow-300 {
+    &:hover {
+      @media (hover: hover) {
+        color: var(--color-yellow-300);
+      }
+    }
+  }
   .hover\:underline {
     &:hover {
       @media (hover: hover) {
@@ -2095,11 +2171,6 @@
       height: calc(var(--spacing) * 12);
     }
   }
-  .sm\:h-14 {
-    @media (width >= 40rem) {
-      height: calc(var(--spacing) * 14);
-    }
-  }
   .sm\:w-3\/4 {
     @media (width >= 40rem) {
       width: calc(3/4 * 100%);
@@ -2113,11 +2184,6 @@
   .sm\:w-12 {
     @media (width >= 40rem) {
       width: calc(var(--spacing) * 12);
-    }
-  }
-  .sm\:w-14 {
-    @media (width >= 40rem) {
-      width: calc(var(--spacing) * 14);
     }
   }
   .sm\:w-80 {
@@ -2158,11 +2224,6 @@
   .sm\:flex-row {
     @media (width >= 40rem) {
       flex-direction: row;
-    }
-  }
-  .sm\:flex-nowrap {
-    @media (width >= 40rem) {
-      flex-wrap: nowrap;
     }
   }
   .sm\:items-center {
