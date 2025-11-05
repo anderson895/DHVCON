@@ -91,7 +91,7 @@ try {
         <p><strong>Description:</strong> {$meeting['meeting_description']}</p>
         <p><strong>Start:</strong> {$start}</p>
         <p><strong>End:</strong> {$end}</p>
-        <p><strong>Meeting Link:</strong> <a href='{$meetingLink}'>{$meeting['meeting_link']}</a></p>
+        <p><strong>Meeting Link:</strong> <a href='{$meetingLink}'>{$meetingLink}</a></p>
         <br>
         <p>Thank you,<br>Meeting Scheduler System</p>
     ";
