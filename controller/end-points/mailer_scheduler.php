@@ -35,7 +35,7 @@ $meeting = $meetingResult->fetch_assoc();
 
 $start = date("F j, Y g:i A", strtotime($meeting['meeting_start']));
 $end = date("F j, Y g:i A", strtotime($meeting['meeting_end']));
-$meetingLink = "https://dhvcon.space/DHVCON/home/conference_room?code=" . $meeting['meeting_link'];
+$meetingLink = "https://dhvcon.space/home/conference_room?code=" . $meeting['meeting_link'];
 
 
 if (!$meeting) {
