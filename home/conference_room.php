@@ -762,12 +762,21 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
 
     // Feature detection only
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        setStatus("❌ Screen sharing not supported on this browser/device.", "error");
+        console.warn("Screen sharing not supported on this browser/device.");
+        setStatus("❌ Screen sharing not supported on this browser/device. Using camera instead.", "error");
+
+        // Fallback: ensure camera is active
+        if (!localTracks.videoTrack) {
+            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+            await client.publish(localTracks.videoTrack);
+            await localTracks.videoTrack.play('local-player');
+        }
         return;
     }
 
     try {
         if (!isSharingScreen) {
+            // Create screen track
             screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
 
             // Stop camera if active
@@ -777,6 +786,7 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
                 localTracks.videoTrack.close();
             }
 
+            // Publish screen track
             await client.publish(screenTrack);
             await screenTrack.play('local-player');
 
@@ -785,7 +795,7 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
             isSharingScreen = true;
             setStatus("🖥️ Screen sharing started.", "success");
 
-            // When user stops screen sharing from browser UI
+            // Handle user stopping screen share from browser UI
             screenTrack.on('track-ended', async () => { await stopScreenShare(); });
 
         } else {
@@ -794,6 +804,13 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
     } catch (err) {
         console.error("Error sharing screen:", err);
         setStatus("❌ Failed to start screen sharing: " + err.message, "error");
+
+        // Fallback: restore camera
+        if (!localTracks.videoTrack) {
+            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+            await client.publish(localTracks.videoTrack);
+            await localTracks.videoTrack.play('local-player');
+        }
     }
 });
 
@@ -809,15 +826,18 @@ async function stopScreenShare() {
     }
 
     // Restore camera
-    localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-    await client.publish(localTracks.videoTrack);
-    await localTracks.videoTrack.play('local-player');
+    if (!localTracks.videoTrack) {
+        localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+        await client.publish(localTracks.videoTrack);
+        await localTracks.videoTrack.play('local-player');
+    }
 
     icon.textContent = 'screen_share';
     text.textContent = 'Share Screen';
     isSharingScreen = false;
     setStatus("🖥️ Screen sharing stopped.", "success");
 }
+
 
 
 // ---------------------- Auto join ----------------------
