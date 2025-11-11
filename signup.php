@@ -85,11 +85,22 @@
         <p class="text-xs text-gray-400 mt-1">You can upload multiple files (PDF, DOCX, JPG, PNG).</p>
       </div>
 
+     <!-- Terms and Conditions Checkbox -->
+      <div class="flex items-center space-x-3">
+        <input type="checkbox" name="terms" id="terms" class="w-4 h-4 text-indigo-600 bg-gray-700 border-gray-600 rounded focus:ring-indigo-500" >
+        <label for="terms" class="text-gray-400 text-sm">
+          I agree to the 
+          <span id="termsLink" class="text-indigo-400 hover:underline cursor-pointer">Terms and Conditions</span>
+        </label>
+      </div>
+
+
       <!-- Submit Button -->
       <button type="submit" class="w-full flex items-center justify-center gap-2 cursor-pointer bg-indigo-600 hover:bg-indigo-500 font-semibold py-3 rounded-full shadow-lg transition transform hover:scale-[1.02]">
         <span class="material-icons">person_add</span>
         Sign Up
       </button>
+
     </form>
 
     <!-- Footer -->
@@ -104,6 +115,60 @@
 <?php 
   include "src/components/footer.php";
 ?>
+
+
+
+
+
+
+
+
+
+<!-- Terms and Conditions Modal -->
+<div id="termsModal" class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 hidden">
+  <div class="bg-[#1f2023]/90 text-white rounded-2xl shadow-2xl w-11/12 max-w-lg p-6 relative max-h-[90vh] overflow-y-auto">
+    <!-- Close Button -->
+    <button id="closeTerms" class="absolute top-3 right-3 text-gray-400 hover:text-white cursor-pointer">
+      <span class="material-icons">close</span>
+    </button>
+
+    <h2 class="text-2xl font-bold mb-4">Terms and Conditions</h2>
+    <div class="text-gray-300 text-sm space-y-3">
+      <p><strong>1. Information Collection:</strong> By using DHVCON, you agree that we may collect your personal information including name, email, and uploaded files for account creation and verification purposes.</p>
+      <p><strong>2. Video Calls:</strong> You consent to participate in video calls via DHVCON. All video and audio data may be temporarily transmitted through our servers to facilitate the call but will not be stored permanently.</p>
+      <p><strong>3. Use of Data:</strong> Collected information will only be used to provide services, improve user experience, and for internal analytics. We will not share your data with third parties without consent except as required by law.</p>
+      <p><strong>4. Account Responsibility:</strong> You are responsible for maintaining the confidentiality of your account credentials. Any activity through your account is your responsibility.</p>
+      <p><strong>5. Agreement:</strong> By signing up, you acknowledge that you have read and agree to these Terms and Conditions.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Show Terms Modal
+  const termsLink = document.getElementById('termsLink');
+  const termsModal = document.getElementById('termsModal');
+  const closeTerms = document.getElementById('closeTerms');
+
+  termsLink.addEventListener('click', () => {
+    termsModal.classList.remove('hidden');
+  });
+
+  closeTerms.addEventListener('click', () => {
+    termsModal.classList.add('hidden');
+  });
+
+  // Close modal when clicking outside
+  termsModal.addEventListener('click', (e) => {
+    if (e.target === termsModal) {
+      termsModal.classList.add('hidden');
+    }
+  });
+</script>
+
+
+
+
+
 
 
 <script>
