@@ -770,6 +770,13 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
 
 // ✅ Share Screen
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        setStatus("❌ Screen sharing not supported on mobile browsers.", "error");
+        return;
+    }
+
+
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
