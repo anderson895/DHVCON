@@ -17,34 +17,53 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-  </style>
-
   <title>DHVCON</title>
 </head>
-<body class="bg-[#1e1f22] text-white min-h-screen flex flex-col">
+<body class="bg-[#121215] text-white min-h-screen flex flex-col font-inter">
 
   <!-- Header -->
-  <header class="flex justify-between items-center px-8 py-4 bg-[#232428] border-b border-gray-700 shadow-md">
-    <!-- Left Side -->
-    <div class="flex items-center space-x-3">
-      <!-- Logo -->
-      <img src="static/image/logo1.png" alt="Logo" class="h-10 w-10 rounded-full border-2 border-[#3c3f44] shadow-lg" />
-      <h1 class="text-xl font-semibold text-white tracking-wide">DHVCON</h1>
+  <header class="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 border-b border-gray-700 shadow-lg">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+    
+    <!-- Logo sa kaliwa -->
+    <a href="admin/../" class="flex items-center space-x-3">
+      <img src="static/image/logo1.png" alt="Logo" class="h-10 w-10 rounded-full border-2 border-gray-700 shadow-lg">
+      <span class="text-2xl font-bold tracking-wide">DHVCON</span>
+    </a>
+
+    <!-- Menu sa kanan -->
+    <div class="hidden md:flex items-center space-x-4">
+      <a href="signin" class="flex items-center space-x-1 px-4 py-2 text-gray-300 hover:text-white transition">
+        <span class="material-icons-outlined text-lg">person</span>
+        <span class="font-medium">Sign In</span>
+      </a>
+      <a href="signup" class="flex items-center space-x-1 px-4 py-2 text-gray-300 hover:text-white transition">
+        <span class="material-icons-outlined text-lg">person_add</span>
+        <span class="font-medium">Sign Up</span>
+      </a>
     </div>
 
-    <!-- Right Side (Logo + Sign In) -->
-    <div class="flex items-center space-x-4">
-      <a href="signin">
-        <button class="cursor-pointer flex items-center space-x-1 text-gray-300 hover:text-white transition">
-          <span class="material-icons-outlined text-lg">person</span>
-          <span class="font-medium">Sign in</span>
-        </button>
-      </a> 
+    <!-- Mobile Menu Button (right) -->
+    <div class="md:hidden flex items-center">
+      <button id="mobile-menu-button" class="text-gray-300 hover:text-white focus:outline-none">
+        <span class="material-icons-outlined text-3xl">menu</span>
+      </button>
     </div>
-  </header>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="md:hidden hidden px-4 pb-4 space-y-2">
+    <a href="signin" class="block px-4 py-2 text-gray-300 hover:text-white rounded transition">Sign In</a>
+    <a href="signup" class="block px-4 py-2 text-gray-300 hover:text-white rounded transition">Sign Up</a>
+  </div>
+</header>
+
+
+  <script>
+    const menuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    menuButton.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
