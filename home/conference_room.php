@@ -64,38 +64,33 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
             <!-- Toggle Camera -->
             <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
                 <span id="iconCam" class="material-icons">videocam</span>
-                <span id="textCam">Turn Off Cam</span>
+                <span id="textCam" hidden>Turn Off Cam</span>
             </button>
 
             <!-- Toggle Mic -->
             <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
                 <span id="iconMic" class="material-icons">mic</span>
-                <span id="textMic">Turn Off Mic</span>
+                <span id="textMic" hidden>Turn Off Mic</span>
             </button>
 
             <!-- Share Screen -->
             <button id="btnShareScreen" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
                 <span id="iconScreen" class="material-icons">screen_share</span>
-                <span id="textScreen">Share Screen</span>
+                <span id="textScreen" hidden>Share Screen</span>
             </button>
         </div>
 
 
             <!-- Main Content: Video + Chat -->
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-
-    <!-- Wrapper for video container and chat separation -->
-    <div class="flex-1 flex flex-col md:flex-row gap-4">
-
-            <!-- Video Section Wrapper -->
-            <div class="flex-1 flex flex-col overflow-hidden">
-                <!-- Video Container (scrollable on mobile) -->
-                <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto">
-                    <!-- Video players will appear here -->
-                </div>
+            
+            <!-- Video Section -->
+            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen">
+                <!-- Video players will appear here -->
             </div>
 
-            <!-- Chat Section -->
+                                    <!-- Chat Section -->
+                                <!-- Chat Section -->
             <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
 
                 <!-- Chat Header -->
@@ -121,10 +116,7 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
                     </button>
                 </form>
             </div>
-
         </div>
-    </div>
-
 
 
     </main>
@@ -139,7 +131,7 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 <!-- Modal Overlay -->
 <div id="joinerModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
   <!-- Modal Content -->
-  <div class="bg-white/10 backdrop-blur-md text-gray-100 rounded-lg shadow-xl w-11/12 sm:w-96 p-6 relative border border-gray-700">
+  <div class="bg-[#232428] backdrop-blur-md text-gray-100 rounded-lg shadow-xl w-11/12 sm:w-3/4 md:w-2/3 lg:w-1/2 p-6 relative border border-gray-700">
       
       <!-- Close Button -->
       <button id="closeModal" class="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-white">
@@ -339,18 +331,19 @@ checkMemberStatus();
                 } else {
                     res.data.forEach(user => {
                         container.append(`
-                            <div class="flex justify-between items-center bg-gray backdrop-blur-md p-4 rounded-md border border-gray-700 shadow transition" data-user-id="${user.jr_user_id}">
-                                <div>
-                                    <p class="font-semibold">${user.user_fullname}</p>
-                                    <p class="text-xs text-gray-400">${user.user_email}</p>
-                                    <p class="text-xs text-gray-400">Joined: ${formatDateTime(user.jr_requested_at)}</p>
+                           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-800 backdrop-blur-md p-4 rounded-md border border-gray-700 shadow transition" data-user-id="${user.jr_user_id}">
+                                <div class="mb-3 sm:mb-0">
+                                    <p class="font-semibold text-sm sm:text-base">${user.user_fullname}</p>
+                                    <p class="text-xs sm:text-sm text-gray-400">${user.user_email}</p>
+                                    <p class="text-xs sm:text-sm text-gray-400">Joined: ${formatDateTime(user.jr_requested_at)}</p>
                                 </div>
-                                <div class="flex flex-col gap-2 items-end">
-                                    <button class="removeMemberBtn cursor-pointer px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm">
-                                        Remove Member
+                                <div class="flex sm:flex-col gap-2 w-full sm:w-auto items-start sm:items-end">
+                                    <button class="removeMemberBtn cursor-pointer px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm w-full sm:w-auto">
+                                        Remove
                                     </button>
                                 </div>
                             </div>
+
                         `);
                     });
                 }
