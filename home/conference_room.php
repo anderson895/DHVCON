@@ -85,8 +85,8 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
             
             <!-- Video Section -->
-            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2">
-                <!-- Videos will be appended here by JS -->
+            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-auto max-h-[80vh] p-2">
+                <!-- Video players will appear here -->
             </div>
 
 
@@ -565,8 +565,7 @@ function setStatus(message, type = '') {
 function createUserWrapper(uid, name, isLocal = false) {
     const wrapper = document.createElement('div');
     wrapper.id = `wrapper-${uid}`;
-    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black";
-
+    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
 
     const videoDiv = document.createElement('div');
     videoDiv.id = isLocal ? 'local-player' : `player-${uid}`;
