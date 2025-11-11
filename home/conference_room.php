@@ -569,7 +569,7 @@ function setStatus(message, type = '') {
         statusBox.className = "w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center";
 }
 
-// Helper: Create user wrapper (video + placeholder + name)
+// ---------------------- Helper: Create user wrapper ----------------------
 function createUserWrapper(uid, name, isLocal = false) {
     const wrapper = document.createElement('div');
     wrapper.id = `wrapper-${uid}`;
@@ -593,10 +593,17 @@ function createUserWrapper(uid, name, isLocal = false) {
     nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-20";
     wrapper.appendChild(nameTag);
 
+    // ---------------------- Mic Status ----------------------
+    const micStatus = document.createElement('div');
+    micStatus.id = `mic-status-${uid}`;
+    micStatus.className = "absolute top-2 right-2 text-white text-xl bg-black/50 rounded-full p-1";
+    micStatus.textContent = "🎤"; // default mic ON
+    wrapper.appendChild(micStatus);
+
     return wrapper;
 }
 
-// Fetch user data and update placeholder + name
+// ---------------------- Fetch user data ----------------------
 function get_each_users_data(userId, isLocal = false) {
     $.ajax({
         url: "../controller/end-points/controller.php",
@@ -637,10 +644,9 @@ function get_each_users_data(userId, isLocal = false) {
                     } else {
                         profileDiv.style.backgroundImage = '';
                         profileDiv.style.backgroundColor = '#6b7280';
-                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase(); // show full name
+                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase();
                     }
 
-                    // Show placeholder if video is off
                     if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
                         profileDiv.classList.remove('hidden');
                         profileDiv.classList.add('flex');
@@ -654,7 +660,7 @@ function get_each_users_data(userId, isLocal = false) {
     });
 }
 
-// Join meeting
+// ---------------------- Join meeting ----------------------
 async function joinMeeting(code) {
     try {
         setStatus("Requesting camera & microphone permission...");
@@ -676,7 +682,11 @@ async function joinMeeting(code) {
                 document.getElementById('default-icon-' + user.uid).classList.add('hidden');
             }
 
-            if(mediaType === 'audio') user.audioTrack.play();
+            if(mediaType === 'audio') {
+                user.audioTrack.play();
+                const micIndicator = document.getElementById(`mic-status-${user.uid}`);
+                if(micIndicator) micIndicator.textContent = "🎤"; // mic ON
+            }
 
             get_each_users_data(user.uid);
         });
@@ -689,8 +699,11 @@ async function joinMeeting(code) {
                     player.style.display = 'none';
                     icon.classList.remove('hidden');
                     icon.classList.add('flex');
-                    get_each_users_data(user.uid); // update fullname/placeholder
+                    get_each_users_data(user.uid);
                 }
+            } else if (mediaType === 'audio') {
+                const micIndicator = document.getElementById(`mic-status-${user.uid}`);
+                if(micIndicator) micIndicator.textContent = "🔇"; // mic OFF
             }
         });
 
@@ -716,7 +729,7 @@ async function joinMeeting(code) {
     }
 }
 
-// Toggle camera
+// ---------------------- Toggle Camera ----------------------
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
     if(!localTracks.videoTrack) return;
 
@@ -731,7 +744,7 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
         text.textContent = 'Turn On Cam';
         localPlayer.style.display = 'none';
         if(defaultIcon) {
-            get_each_users_data(user_id, true); // show fullname/placeholder
+            get_each_users_data(user_id, true);
             defaultIcon.classList.remove('hidden');
             defaultIcon.classList.add('flex');
         }
@@ -747,78 +760,56 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
     }
 });
 
-
-
-// ✅ Toggle Mic
+// ---------------------- Toggle Mic ----------------------
 document.getElementById('btnToggleMic').addEventListener('click', async () => {
     if (!localTracks.audioTrack) return;
 
     const icon = document.getElementById('iconMic');
     const text = document.getElementById('textMic');
+    const micIndicator = document.getElementById('mic-status-local');
 
     if (localTracks.audioTrack.enabled) {
-        localTracks.audioTrack.setEnabled(false);
+        await localTracks.audioTrack.setEnabled(false);
         icon.textContent = 'mic_off';
         text.textContent = 'Turn On Mic';
+        if(micIndicator) micIndicator.textContent = "🔇";
     } else {
-        localTracks.audioTrack.setEnabled(true);
+        await localTracks.audioTrack.setEnabled(true);
         icon.textContent = 'mic';
         text.textContent = 'Turn Off Mic';
+        if(micIndicator) micIndicator.textContent = "🎤";
     }
 });
 
-
-// ✅ Share Screen
+// ---------------------- Share Screen ----------------------
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        setStatus("❌ Screen sharing not supported on mobile browsers.", "error");
+        return;
+    }
+
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
-    // Detect mobile device
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
     try {
         if (!isSharingScreen) {
+            screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
 
-            // Stop camera if active
             if (localTracks.videoTrack) {
                 await client.unpublish(localTracks.videoTrack);
                 localTracks.videoTrack.stop();
                 localTracks.videoTrack.close();
             }
 
-            if (isMobile) {
-                // 📱 Mobile fallback: use camera as "screen share"
-                setStatus("📱 Using camera as screen share (mobile fallback).", "info");
-                screenTrack = await AgoraRTC.createCameraVideoTrack();
-            } else {
-                // 🖥️ Desktop: use real screen sharing
-                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-                    setStatus("❌ Screen sharing not supported on this browser.", "error");
-                    return;
-                }
-
-                screenTrack = await AgoraRTC.createScreenVideoTrack({
-                    encoderConfig: "1080p_1",
-                });
-            }
-
-            // Publish the track
             await client.publish(screenTrack);
             await screenTrack.play('local-player');
 
             icon.textContent = 'stop_screen_share';
             text.textContent = 'Stop Sharing';
             isSharingScreen = true;
+            setStatus("🖥️ Screen sharing started.", "success");
 
-            setStatus(isMobile ? "📷 Camera sharing started (mobile fallback)." : "🖥️ Screen sharing started.", "success");
-
-            // Handle when user stops sharing via browser UI
-            if (!isMobile) {
-                screenTrack.on('track-ended', async () => {
-                    await stopScreenShare();
-                });
-            }
-
+            screenTrack.on('track-ended', async () => { await stopScreenShare(); });
         } else {
             await stopScreenShare();
         }
@@ -839,7 +830,6 @@ async function stopScreenShare() {
         screenTrack = null;
     }
 
-    // Re-enable camera after stopping
     localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
     await client.publish(localTracks.videoTrack);
     await localTracks.videoTrack.play('local-player');
@@ -850,11 +840,8 @@ async function stopScreenShare() {
     setStatus("🖥️ Screen sharing stopped.", "success");
 }
 
-
-// ✅ Auto join
+// ---------------------- Auto join ----------------------
 joinMeeting(meetingCode);
-
-
 
 
 
