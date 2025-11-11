@@ -10,6 +10,8 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
 ?>
 
+
+
 <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
 
 <!-- Header -->
@@ -81,15 +83,29 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
         </div>
 
 
-            <!-- Main Content: Video + Chat -->
+        <!-- Main Content: Video + Chat -->
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-            
+        
+            <!-- Highlights Screen -->
+            <div id="highlight-screen" class="w-full mb-4 hidden">
+                <div class="relative aspect-video rounded-lg overflow-hidden shadow-lg border border-gray-700 bg-black">
+                    <div id="highlight-player" class="w-full h-full"></div>
+                    <button id="remove-highlight"
+                    class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-md px-2 py-1 text-xs">
+                    Remove Highlight
+                    </button>
+                </div>
+            </div>
+
+        
+
             <!-- Video Section -->
             <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen">
                 <!-- Video players will appear here -->
             </div>
 
-                                    <!-- Chat Section -->
+
+
                                 <!-- Chat Section -->
             <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
 
@@ -120,392 +136,6 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
 
     </main>
-
-
-
-
-
-
-
-
-<!-- Modal Overlay -->
-<div id="joinerModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-  <!-- Modal Content -->
-  <div class="bg-[#232428] backdrop-blur-md text-gray-100 rounded-lg shadow-xl w-11/12 sm:w-3/4 md:w-2/3 lg:w-1/2 p-6 relative border border-gray-700">
-      
-      <!-- Close Button -->
-      <button id="closeModal" class="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-white">
-        <span class="material-icons">close</span>
-      </button>
-
-      <!-- Modal Title -->
-      <h2 class="text-xl font-semibold mb-4">Request Approvals</h2>
-
-      <!-- Joiner List -->
-      <div class="space-y-3 max-h-96 overflow-y-auto">
-        <!-- Joiner Card -->
-      </div>
-  </div>
-</div>
-
-
-<!-- Attendance Modal -->
-<div id="attendanceModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
-    <div class="bg-[#232428] backdrop-blur-md text-gray-100 rounded-lg shadow-xl w-11/12 sm:w-3/4 md:w-2/3 lg:w-1/2 p-6 relative border border-gray-700">
-        
-        <!-- Close Button -->
-        <button id="closeAttendanceModal" class="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-white">
-            <span class="material-icons">close</span>
-        </button>
-
-        <!-- Modal Title -->
-        <h2 class="text-2xl font-semibold mb-6">Attendance</h2>
-
-        <!-- Attendance List -->
-        <div class="space-y-4 max-h-[70vh] overflow-y-auto" id="attendanceList">
-          
-        </div>
-    </div>
-</div>
-
-
-
-
-<script>
-
-
-
-
-
-
-$(document).ready(function() {
-    const controllerUrl = "../controller/end-points/controller.php";
-    const meeting_id = "<?= $meeting[0]['meeting_id'] ?>"; 
-
-// Function to poll server for approval status
-function checkMemberStatus() {
-    const interval = setInterval(function() {
-        $.ajax({
-            url: "../controller/end-points/controller.php",
-            type: "GET",
-            data: {
-                requestType: "checkMemberStatus",
-                meeting_id: meeting_id,
-            },
-            dataType: "json",
-            success: function(res) {
-                console.log(res);
-
-                if (res.status === 200) {
-                    const status = res.data.join_request_status;
-
-                    if (status === "Not member") {
-                        clearInterval(interval); // stop polling
-                        // Redirect to kick page
-                        window.location.href = "kick.php?code=<?=$meetingCode?>";
-                    } 
-                    // Optional: handle pending/approved/rejected if needed
-                    else if (status === "creator") {
-                        console.log("You are the meeting creator.");
-                    } else {
-                        console.log("Join request status:", status);
-                    }
-                } else {
-                    console.warn("Server returned status:", res.status);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-                clearInterval(interval);
-                Swal.fire({
-                    icon: "error",
-                    title: "Approval Request Error",
-                    text: "Something went wrong while checking approval."
-                });
-            }
-        });
-    }, 3000); // Poll every 3 seconds
-}
-
-checkMemberStatus();
-
-
-
-
-
-
-
-
-
-    // Helper function to format timestamp nicely
-    function formatDateTime(datetimeStr) {
-        const date = new Date(datetimeStr);
-        if (isNaN(date)) return datetimeStr; 
-        const options = { 
-            year: 'numeric', month: 'short', day: 'numeric',
-            hour: '2-digit', minute: '2-digit', hour12: true 
-        };
-        return date.toLocaleString('en-US', options); 
-    }
-
-    // Function to fetch pending count
-    function fetchPendingCount() {
-        $.get(controllerUrl, { requestType: "checkPendingRequests", meeting_id: meeting_id }, function(res) {
-            if (res.status === 200 && res.data.pending_count > 0) {
-                $("#pendingCount").text(res.data.pending_count).removeClass("hidden");
-            } else {
-                $("#pendingCount").addClass("hidden");
-            }
-        }, "json");
-    }
-
-    // Poll every 5 seconds
-    setInterval(fetchPendingCount, 5000);
-    fetchPendingCount(); // initial call
-
-    // Show modal when clicking notification button
-    $("#pendingRequestsBtn").on("click", function() {
-        $.get(controllerUrl, { requestType: "getPendingRequestsDetails", meeting_id: meeting_id }, function(res) {
-            if (res.status === 200) {
-                const container = $("#joinerModal .space-y-3");
-                container.empty(); // clear existing
-                if (res.data.length === 0) {
-                    container.append('<p class="text-gray-300 text-center">No pending requests</p>');
-                } else {
-                    res.data.forEach(user => {
-                        container.append(`
-                            <div class="flex justify-between items-center bg-white/10 backdrop-blur-md p-3 rounded-md border border-gray-700 shadow hover:bg-white/20 transition" data-jr-id="${user.jr_id}">
-                                <div>
-                                    <p class="font-semibold">${user.user_fullname}</p>
-                                    <p class="text-xs text-gray-400">Requested: ${formatDateTime(user.jr_requested_at)}</p>
-                                </div>
-                                <div class="flex flex-col gap-2 items-end">
-                                    <span class="px-2 py-1 rounded-full bg-yellow-600 text-xs">Pending</span>
-                                    <div class="flex gap-1 mt-1">
-                                        <button class="approveBtn cursor-pointer px-2 py-1 bg-green-600 hover:bg-green-700 rounded-md text-white">Approve</button>
-                                        <button class="rejectBtn cursor-pointer px-2 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white">Reject</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `);
-                    });
-                }
-                $("#joinerModal").removeClass("hidden");
-            }
-        }, "json");
-    });
-
-    // Close modal
-    $("#closeModal").on("click", function() {
-        $("#joinerModal").addClass("hidden");
-    });
-
-    // Handle Approve/Reject buttons
-    $(document).on("click", ".approveBtn, .rejectBtn", function() {
-        const jrCard = $(this).closest("[data-jr-id]");
-        const jr_id = jrCard.data("jr-id");
-        const action = $(this).hasClass("approveBtn") ? "approved" : "rejected";
-
-        $.post(controllerUrl, { requestType: "updateJoinRequest", jr_id: jr_id, action: action }, function(res) {
-            if (res.status === 200) {
-                jrCard.remove(); // remove the request from modal
-                fetchPendingCount(); // update notification count
-            } else {
-                alert(res.message);
-            }
-        }, "json");
-    });
-
-
-
-
-    // View Attendance
-    $("#viewAttendanceBtn").on("click", function() {
-        $.get(controllerUrl, { requestType: "getApprovedUsers", meeting_id: meeting_id }, function(res) {
-            if (res.status === 200) {
-                const container = $("#attendanceList");
-                container.empty();
-
-                if (res.data.length === 0) {
-                    container.append('<p class="text-gray-300 text-center">No approved participants yet</p>');
-                } else {
-                    res.data.forEach(user => {
-                        container.append(`
-                           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-800 backdrop-blur-md p-4 rounded-md border border-gray-700 shadow transition" data-user-id="${user.jr_user_id}">
-                                <div class="mb-3 sm:mb-0">
-                                    <p class="font-semibold text-sm sm:text-base">${user.user_fullname}</p>
-                                    <p class="text-xs sm:text-sm text-gray-400">${user.user_email}</p>
-                                    <p class="text-xs sm:text-sm text-gray-400">Joined: ${formatDateTime(user.jr_requested_at)}</p>
-                                </div>
-                                <div class="flex sm:flex-col gap-2 w-full sm:w-auto items-start sm:items-end">
-                                    <button class="removeMemberBtn cursor-pointer px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm w-full sm:w-auto">
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-
-                        `);
-                    });
-                }
-
-                $("#attendanceModal").removeClass("hidden");
-            }
-        }, "json");
-    });
-
-    // Close Attendance Modal
-    $("#closeAttendanceModal").on("click", function() {
-        $("#attendanceModal").addClass("hidden");
-    });
-
-        // Handle Remove Member button
-$(document).on("click", ".removeMemberBtn", function() {
-    const userCard = $(this).closest("[data-user-id]");
-    const user_id = userCard.data("user-id");
-
-    Swal.fire({
-        title: "Are you sure?",
-        text: "Do you really want to remove this member?",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, remove",
-        cancelButtonText: "Cancel",
-        reverseButtons: true,
-        background: "#1e1f22", // dark background
-        color: "#ffffff",       // white text
-        confirmButtonColor: "#d33", // red confirm button
-        cancelButtonColor: "#6c757d", // gray cancel button
-        customClass: {
-            title: 'swal-title-dark',
-            content: 'swal-content-dark',
-            popup: 'swal-popup-dark'
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Send request to remove member
-            $.post(controllerUrl, { 
-                requestType: "removeUserFromMeeting", 
-                meeting_id: meeting_id, 
-                user_id: user_id 
-            }, function(res) {
-                if (res.status === 200) {
-                    userCard.remove(); // remove from modal
-                    Swal.fire({
-                        icon: "success",
-                        title: "Removed",
-                        text: "Member has been removed successfully.",
-                        timer: 1500,
-                        showConfirmButton: false,
-                        background: "#1e1f22",
-                        color: "#ffffff"
-                    });
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: res.message,
-                        background: "#1e1f22",
-                        color: "#ffffff"
-                    });
-                }
-            }, "json");
-        }
-    });
-});
-
-
-
-
-
-    // Close Attendance Modal
-    $("#closeAttendanceModal").on("click", function() {
-        $("#attendanceModal").addClass("hidden");
-    });
-
-});
-</script>
-
-
-
-
-
-
-
-    
-
-   <script>
-const chatToggle = document.getElementById('chat-toggle');
-const chatIcon = document.getElementById('chat-toggle-icon');
-const chatMessagesWrapper = document.getElementById('chat-messages-wrapper');
-const chatInput = document.getElementById('chat-input');
-const chatForm = document.getElementById('chat-form');
-
-let isCollapsed = window.innerWidth < 640;
-let inputFocused = false;
-let submitting = false;
-
-// Initialize chat state
-function initChat() {
-    if (isCollapsed && !inputFocused) {
-        chatMessagesWrapper.style.maxHeight = '0';
-        chatIcon.textContent = 'expand_more';
-    } else {
-        chatMessagesWrapper.style.maxHeight = '60vh';
-        chatIcon.textContent = 'expand_less';
-    }
-}
-initChat();
-
-// Toggle messages container manually
-chatToggle.addEventListener('click', () => {
-    if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
-        chatMessagesWrapper.style.maxHeight = '60vh';
-        chatIcon.textContent = 'expand_less';
-    } else {
-        chatMessagesWrapper.style.maxHeight = '0';
-        chatIcon.textContent = 'expand_more';
-    }
-});
-
-// Keep chat expanded while typing
-chatInput.addEventListener('focus', () => {
-    inputFocused = true;
-    chatMessagesWrapper.style.maxHeight = '60vh';
-    chatIcon.textContent = 'expand_less';
-});
-
-chatInput.addEventListener('blur', () => {
-    if (!submitting) {  // only collapse if not submitting
-        inputFocused = false;
-        if (isCollapsed) {
-            chatMessagesWrapper.style.maxHeight = '0';
-            chatIcon.textContent = 'expand_more';
-        }
-    }
-});
-
-// Prevent collapse when submitting
-chatForm.addEventListener('submit', (e) => {
-    submitting = true;
-    inputFocused = true;  // keep expanded
-    chatMessagesWrapper.style.maxHeight = '60vh';
-    chatIcon.textContent = 'expand_less';
-    
-    // allow some delay before resetting
-    setTimeout(() => {
-        submitting = false;
-    }, 100); // adjust if needed
-});
-
-// Update on resize
-window.addEventListener('resize', () => {
-    isCollapsed = window.innerWidth < 640;
-    initChat();
-});
-</script>
-
-
-
 
 
 
@@ -785,7 +415,6 @@ async function stopScreenShare() {
 }
 
 
-
 // ---------------------- Auto join ----------------------
 joinMeeting(meetingCode);
 
@@ -793,6 +422,327 @@ joinMeeting(meetingCode);
 
 
 
+// ---------------------- Highlight Feature ----------------------
+function addHighlight(uid) {
+    const player = document.getElementById(`player-${uid}`);
+    if (!player) return;
+
+    const highlight = document.getElementById('highlight-screen');
+    const highlightPlayer = document.getElementById('highlight-player');
+    highlight.classList.remove('hidden');
+
+    // Clear previous highlight
+    highlightPlayer.innerHTML = '';
+    const clone = player.cloneNode(true);
+    clone.id = `highlight-${uid}`;
+    clone.className = "w-full h-full object-cover";
+    highlightPlayer.appendChild(clone);
+
+    // Play the same video track
+    const user = remoteUsers[uid];
+    if (user && user.videoTrack) {
+        user.videoTrack.play(clone.id);
+    }
+}
+
+// Remove highlight
+document.getElementById('remove-highlight').addEventListener('click', () => {
+    const highlight = document.getElementById('highlight-screen');
+    highlight.classList.add('hidden');
+    document.getElementById('highlight-player').innerHTML = '';
+});
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+
+
+$(document).ready(function() {
+    const controllerUrl = "../controller/end-points/controller.php";
+    const meeting_id = "<?= $meeting[0]['meeting_id'] ?>"; 
+
+// Function to poll server for approval status
+function checkMemberStatus() {
+    const interval = setInterval(function() {
+        $.ajax({
+            url: "../controller/end-points/controller.php",
+            type: "GET",
+            data: {
+                requestType: "checkMemberStatus",
+                meeting_id: meeting_id,
+            },
+            dataType: "json",
+            success: function(res) {
+                console.log(res);
+
+                if (res.status === 200) {
+                    const status = res.data.join_request_status;
+
+                    if (status === "Not member") {
+                        clearInterval(interval); // stop polling
+                        // Redirect to kick page
+                        window.location.href = "kick.php?code=<?=$meetingCode?>";
+                    } 
+                    // Optional: handle pending/approved/rejected if needed
+                    else if (status === "creator") {
+                        console.log("You are the meeting creator.");
+                    } else {
+                        console.log("Join request status:", status);
+                    }
+                } else {
+                    console.warn("Server returned status:", res.status);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error);
+                clearInterval(interval);
+                Swal.fire({
+                    icon: "error",
+                    title: "Approval Request Error",
+                    text: "Something went wrong while checking approval."
+                });
+            }
+        });
+    }, 3000); // Poll every 3 seconds
+}
+
+checkMemberStatus();
+
+
+
+
+
+
+
+
+
+    // Helper function to format timestamp nicely
+    function formatDateTime(datetimeStr) {
+        const date = new Date(datetimeStr);
+        if (isNaN(date)) return datetimeStr; 
+        const options = { 
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit', hour12: true 
+        };
+        return date.toLocaleString('en-US', options); 
+    }
+
+    // Function to fetch pending count
+    function fetchPendingCount() {
+        $.get(controllerUrl, { requestType: "checkPendingRequests", meeting_id: meeting_id }, function(res) {
+            if (res.status === 200 && res.data.pending_count > 0) {
+                $("#pendingCount").text(res.data.pending_count).removeClass("hidden");
+            } else {
+                $("#pendingCount").addClass("hidden");
+            }
+        }, "json");
+    }
+
+    // Poll every 5 seconds
+    setInterval(fetchPendingCount, 5000);
+    fetchPendingCount(); // initial call
+
+    // Show modal when clicking notification button
+    $("#pendingRequestsBtn").on("click", function() {
+        $.get(controllerUrl, { requestType: "getPendingRequestsDetails", meeting_id: meeting_id }, function(res) {
+            if (res.status === 200) {
+                const container = $("#joinerModal .space-y-3");
+                container.empty(); // clear existing
+                if (res.data.length === 0) {
+                    container.append('<p class="text-gray-300 text-center">No pending requests</p>');
+                } else {
+                    res.data.forEach(user => {
+                        container.append(`
+                            <div class="flex justify-between items-center bg-white/10 backdrop-blur-md p-3 rounded-md border border-gray-700 shadow hover:bg-white/20 transition" data-jr-id="${user.jr_id}">
+                                <div>
+                                    <p class="font-semibold">${user.user_fullname}</p>
+                                    <p class="text-xs text-gray-400">Requested: ${formatDateTime(user.jr_requested_at)}</p>
+                                </div>
+                                <div class="flex flex-col gap-2 items-end">
+                                    <span class="px-2 py-1 rounded-full bg-yellow-600 text-xs">Pending</span>
+                                    <div class="flex gap-1 mt-1">
+                                        <button class="approveBtn cursor-pointer px-2 py-1 bg-green-600 hover:bg-green-700 rounded-md text-white">Approve</button>
+                                        <button class="rejectBtn cursor-pointer px-2 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white">Reject</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                }
+                $("#joinerModal").removeClass("hidden");
+            }
+        }, "json");
+    });
+
+    // Close modal
+    $("#closeModal").on("click", function() {
+        $("#joinerModal").addClass("hidden");
+    });
+
+    // Handle Approve/Reject buttons
+    $(document).on("click", ".approveBtn, .rejectBtn", function() {
+        const jrCard = $(this).closest("[data-jr-id]");
+        const jr_id = jrCard.data("jr-id");
+        const action = $(this).hasClass("approveBtn") ? "approved" : "rejected";
+
+        $.post(controllerUrl, { requestType: "updateJoinRequest", jr_id: jr_id, action: action }, function(res) {
+            if (res.status === 200) {
+                jrCard.remove(); // remove the request from modal
+                fetchPendingCount(); // update notification count
+            } else {
+                alert(res.message);
+            }
+        }, "json");
+    });
+
+
+
+
+    // View Attendance
+    $("#viewAttendanceBtn").on("click", function() {
+        $.get(controllerUrl, { requestType: "getApprovedUsers", meeting_id: meeting_id }, function(res) {
+            if (res.status === 200) {
+                const container = $("#attendanceList");
+                container.empty();
+
+                if (res.data.length === 0) {
+                    container.append('<p class="text-gray-300 text-center">No approved participants yet</p>');
+                } else {
+                    res.data.forEach(user => {
+                        container.append(`
+                           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-800 backdrop-blur-md p-4 rounded-md border border-gray-700 shadow transition" data-user-id="${user.jr_user_id}">
+                                <div class="mb-3 sm:mb-0">
+                                    <p class="font-semibold text-sm sm:text-base">${user.user_fullname}</p>
+                                    <p class="text-xs sm:text-sm text-gray-400">${user.user_email}</p>
+                                    <p class="text-xs sm:text-sm text-gray-400">Joined: ${formatDateTime(user.jr_requested_at)}</p>
+                                </div>
+                                <div class="flex sm:flex-col gap-2 w-full sm:w-auto items-start sm:items-end">
+                                    <button class="removeMemberBtn cursor-pointer px-3 py-1 bg-red-600 hover:bg-red-700 rounded-md text-white text-sm w-full sm:w-auto">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+
+                        `);
+                    });
+                }
+
+                $("#attendanceModal").removeClass("hidden");
+            }
+        }, "json");
+    });
+
+    // Close Attendance Modal
+    $("#closeAttendanceModal").on("click", function() {
+        $("#attendanceModal").addClass("hidden");
+    });
+
+        // Handle Remove Member button
+$(document).on("click", ".removeMemberBtn", function() {
+    const userCard = $(this).closest("[data-user-id]");
+    const user_id = userCard.data("user-id");
+
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Do you really want to remove this member?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, remove",
+        cancelButtonText: "Cancel",
+        reverseButtons: true,
+        background: "#1e1f22", // dark background
+        color: "#ffffff",       // white text
+        confirmButtonColor: "#d33", // red confirm button
+        cancelButtonColor: "#6c757d", // gray cancel button
+        customClass: {
+            title: 'swal-title-dark',
+            content: 'swal-content-dark',
+            popup: 'swal-popup-dark'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Send request to remove member
+            $.post(controllerUrl, { 
+                requestType: "removeUserFromMeeting", 
+                meeting_id: meeting_id, 
+                user_id: user_id 
+            }, function(res) {
+                if (res.status === 200) {
+                    userCard.remove(); // remove from modal
+                    Swal.fire({
+                        icon: "success",
+                        title: "Removed",
+                        text: "Member has been removed successfully.",
+                        timer: 1500,
+                        showConfirmButton: false,
+                        background: "#1e1f22",
+                        color: "#ffffff"
+                    });
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error",
+                        text: res.message,
+                        background: "#1e1f22",
+                        color: "#ffffff"
+                    });
+                }
+            }, "json");
+        }
+    });
+});
+
+
+
+
+
+    // Close Attendance Modal
+    $("#closeAttendanceModal").on("click", function() {
+        $("#attendanceModal").addClass("hidden");
+    });
+
+});
+</script>
+
+
+
+
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+<script>
 // ---------------------- Fetch user data ----------------------
 function get_each_users_data(userId, isLocal = false) {
     $.ajax({
@@ -876,6 +826,127 @@ $(document).ready(function() {
     });
 });
 </script>
+
+
+
+
+
+
+
+
+   <script>
+const chatToggle = document.getElementById('chat-toggle');
+const chatIcon = document.getElementById('chat-toggle-icon');
+const chatMessagesWrapper = document.getElementById('chat-messages-wrapper');
+const chatInput = document.getElementById('chat-input');
+const chatForm = document.getElementById('chat-form');
+
+let isCollapsed = window.innerWidth < 640;
+let inputFocused = false;
+let submitting = false;
+
+// Initialize chat state
+function initChat() {
+    if (isCollapsed && !inputFocused) {
+        chatMessagesWrapper.style.maxHeight = '0';
+        chatIcon.textContent = 'expand_more';
+    } else {
+        chatMessagesWrapper.style.maxHeight = '60vh';
+        chatIcon.textContent = 'expand_less';
+    }
+}
+initChat();
+
+// Toggle messages container manually
+chatToggle.addEventListener('click', () => {
+    if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
+        chatMessagesWrapper.style.maxHeight = '60vh';
+        chatIcon.textContent = 'expand_less';
+    } else {
+        chatMessagesWrapper.style.maxHeight = '0';
+        chatIcon.textContent = 'expand_more';
+    }
+});
+
+// Keep chat expanded while typing
+chatInput.addEventListener('focus', () => {
+    inputFocused = true;
+    chatMessagesWrapper.style.maxHeight = '60vh';
+    chatIcon.textContent = 'expand_less';
+});
+
+chatInput.addEventListener('blur', () => {
+    if (!submitting) {  // only collapse if not submitting
+        inputFocused = false;
+        if (isCollapsed) {
+            chatMessagesWrapper.style.maxHeight = '0';
+            chatIcon.textContent = 'expand_more';
+        }
+    }
+});
+
+// Prevent collapse when submitting
+chatForm.addEventListener('submit', (e) => {
+    submitting = true;
+    inputFocused = true;  // keep expanded
+    chatMessagesWrapper.style.maxHeight = '60vh';
+    chatIcon.textContent = 'expand_less';
+    
+    // allow some delay before resetting
+    setTimeout(() => {
+        submitting = false;
+    }, 100); // adjust if needed
+});
+
+// Update on resize
+window.addEventListener('resize', () => {
+    isCollapsed = window.innerWidth < 640;
+    initChat();
+});
+</script>
+
+
+
+
+<!-- Modal Overlay -->
+<div id="joinerModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+  <!-- Modal Content -->
+  <div class="bg-[#232428] backdrop-blur-md text-gray-100 rounded-lg shadow-xl w-11/12 sm:w-3/4 md:w-2/3 lg:w-1/2 p-6 relative border border-gray-700">
+      
+      <!-- Close Button -->
+      <button id="closeModal" class="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-white">
+        <span class="material-icons">close</span>
+      </button>
+
+      <!-- Modal Title -->
+      <h2 class="text-xl font-semibold mb-4">Request Approvals</h2>
+
+      <!-- Joiner List -->
+      <div class="space-y-3 max-h-96 overflow-y-auto">
+        <!-- Joiner Card -->
+      </div>
+  </div>
+</div>
+
+
+<!-- Attendance Modal -->
+<div id="attendanceModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+    <div class="bg-[#232428] backdrop-blur-md text-gray-100 rounded-lg shadow-xl w-11/12 sm:w-3/4 md:w-2/3 lg:w-1/2 p-6 relative border border-gray-700">
+        
+        <!-- Close Button -->
+        <button id="closeAttendanceModal" class="cursor-pointer absolute top-3 right-3 text-gray-400 hover:text-white">
+            <span class="material-icons">close</span>
+        </button>
+
+        <!-- Modal Title -->
+        <h2 class="text-2xl font-semibold mb-6">Attendance</h2>
+
+        <!-- Attendance List -->
+        <div class="space-y-4 max-h-[70vh] overflow-y-auto" id="attendanceList">
+          
+        </div>
+    </div>
+</div>
 
 
 
