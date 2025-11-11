@@ -760,21 +760,17 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    const isChrome = /Chrome/i.test(navigator.userAgent) && !/Edg/i.test(navigator.userAgent);
-
-    // Check if screen sharing is supported
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia || !(isAndroid && isChrome) && !isDesktop()) {
+    // Feature detection only
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
         setStatus("❌ Screen sharing not supported on this browser/device.", "error");
         return;
     }
 
     try {
         if (!isSharingScreen) {
-            // Create screen track
             screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
 
-            // Stop current camera track if exists
+            // Stop camera if active
             if (localTracks.videoTrack) {
                 await client.unpublish(localTracks.videoTrack);
                 localTracks.videoTrack.stop();
@@ -789,7 +785,7 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
             isSharingScreen = true;
             setStatus("🖥️ Screen sharing started.", "success");
 
-            // Handle when user stops screen sharing from browser
+            // When user stops screen sharing from browser UI
             screenTrack.on('track-ended', async () => { await stopScreenShare(); });
 
         } else {
@@ -800,10 +796,6 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
         setStatus("❌ Failed to start screen sharing: " + err.message, "error");
     }
 });
-
-function isDesktop() {
-    return !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-}
 
 async function stopScreenShare() {
     const icon = document.getElementById('iconScreen');
