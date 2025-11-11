@@ -83,59 +83,46 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
             <!-- Main Content: Video + Chat -->
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-            
-            <!-- Video Section -->
-            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-auto max-h-[80vh] p-2">
-                <!-- Video players will appear here -->
-            </div>
 
+                <!-- Wrapper between video and chat -->
+                <div class="flex-1 flex flex-col max-h-screen overflow-hidden">
 
-                                    <!-- Chat Section -->
-                                <!-- Chat Section -->
-            <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
-
-                <!-- Chat Header -->
-                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
-                    <span>Chat</span>
-                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
-                </div>
-
-                <!-- Chat Messages (collapsible) -->
-                <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
-                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
-                        <!-- Messages appear here -->
+                    <!-- Video Section (scrollable) -->
+                    <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto p-2">
+                        <!-- Video players will appear here -->
                     </div>
+
                 </div>
 
-                <!-- Chat Form (always visible) -->
-                <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
-                    <input type="text" id="chat-input" placeholder="Type a message..." 
-                        class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-                        Send
-                    </button>
-                </form>
+                <!-- Chat Section -->
+                <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
+
+                    <!-- Chat Header -->
+                    <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
+                        <span>Chat</span>
+                        <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
+                    </div>
+
+                    <!-- Chat Messages (collapsible) -->
+                    <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
+                        <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
+                            <!-- Messages appear here -->
+                        </div>
+                    </div>
+
+                    <!-- Chat Form (always visible) -->
+                    <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
+                        <input type="text" id="chat-input" placeholder="Type a message..." 
+                            class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
+                            Send
+                        </button>
+                    </form>
+                </div>
+
             </div>
 
-
-
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-        </div>
 
 
     </main>
