@@ -565,7 +565,8 @@ function setStatus(message, type = '') {
 function createUserWrapper(uid, name, isLocal = false) {
     const wrapper = document.createElement('div');
     wrapper.id = `wrapper-${uid}`;
-    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
+    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black";
+
 
     const videoDiv = document.createElement('div');
     videoDiv.id = isLocal ? 'local-player' : `player-${uid}`;
