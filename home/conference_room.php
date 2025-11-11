@@ -10,20 +10,8 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
 ?>
 
-    <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
-<?php
+<main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
 
-// echo "<pre>";
-// print_r($On_Session);
-// echo "</pre>";
-
-
-// echo "<pre>";
-// print_r($meeting);
-// echo "</pre>";
-
-
-?>
 <!-- Header -->
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
     <!-- Title -->
@@ -97,9 +85,10 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
             
             <!-- Video Section -->
-            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                <!-- Video players will appear here -->
+            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-2">
+                <!-- Videos will be appended here by JS -->
             </div>
+
 
                                     <!-- Chat Section -->
                                 <!-- Chat Section -->
@@ -576,7 +565,8 @@ function setStatus(message, type = '') {
 function createUserWrapper(uid, name, isLocal = false) {
     const wrapper = document.createElement('div');
     wrapper.id = `wrapper-${uid}`;
-    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
+    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black";
+
 
     const videoDiv = document.createElement('div');
     videoDiv.id = isLocal ? 'local-player' : `player-${uid}`;
