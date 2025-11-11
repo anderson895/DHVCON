@@ -86,17 +86,7 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
         <!-- Main Content: Video + Chat -->
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
         
-            <!-- Highlights Screen -->
-            <div id="highlight-screen" class="w-full mb-4 hidden">
-                <div class="relative aspect-video rounded-lg overflow-hidden shadow-lg border border-gray-700 bg-black">
-                    <div id="highlight-player" class="w-full h-full"></div>
-                    <button id="remove-highlight"
-                    class="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded-md px-2 py-1 text-xs">
-                    Remove Highlight
-                    </button>
-                </div>
-            </div>
-
+        
         
 
             <!-- Video Section -->
@@ -417,45 +407,6 @@ async function stopScreenShare() {
 
 // ---------------------- Auto join ----------------------
 joinMeeting(meetingCode);
-
-
-
-
-
-// ---------------------- Highlight Feature ----------------------
-function addHighlight(uid) {
-    const player = document.getElementById(`player-${uid}`);
-    if (!player) return;
-
-    const highlight = document.getElementById('highlight-screen');
-    const highlightPlayer = document.getElementById('highlight-player');
-    highlight.classList.remove('hidden');
-
-    // Clear previous highlight
-    highlightPlayer.innerHTML = '';
-    const clone = player.cloneNode(true);
-    clone.id = `highlight-${uid}`;
-    clone.className = "w-full h-full object-cover";
-    highlightPlayer.appendChild(clone);
-
-    // Play the same video track
-    const user = remoteUsers[uid];
-    if (user && user.videoTrack) {
-        user.videoTrack.play(clone.id);
-    }
-}
-
-// Remove highlight
-document.getElementById('remove-highlight').addEventListener('click', () => {
-    const highlight = document.getElementById('highlight-screen');
-    highlight.classList.add('hidden');
-    document.getElementById('highlight-player').innerHTML = '';
-});
-
-
-
-
-
 </script>
 
 
