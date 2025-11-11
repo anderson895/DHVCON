@@ -770,43 +770,54 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
 
 // ✅ Share Screen
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        setStatus("❌ Screen sharing not supported on mobile browsers.", "error");
-        return;
-    }
-
-
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
+    // Detect mobile device
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+
     try {
         if (!isSharingScreen) {
-            // Start screen share
-            screenTrack = await AgoraRTC.createScreenVideoTrack({
-                encoderConfig: "1080p_1",
-            });
 
-            // Unpublish camera
+            // Stop camera if active
             if (localTracks.videoTrack) {
                 await client.unpublish(localTracks.videoTrack);
                 localTracks.videoTrack.stop();
                 localTracks.videoTrack.close();
             }
 
-            // Publish screen
+            if (isMobile) {
+                // 📱 Mobile fallback: use camera as "screen share"
+                setStatus("📱 Using camera as screen share (mobile fallback).", "info");
+                screenTrack = await AgoraRTC.createCameraVideoTrack();
+            } else {
+                // 🖥️ Desktop: use real screen sharing
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+                    setStatus("❌ Screen sharing not supported on this browser.", "error");
+                    return;
+                }
+
+                screenTrack = await AgoraRTC.createScreenVideoTrack({
+                    encoderConfig: "1080p_1",
+                });
+            }
+
+            // Publish the track
             await client.publish(screenTrack);
             await screenTrack.play('local-player');
 
             icon.textContent = 'stop_screen_share';
             text.textContent = 'Stop Sharing';
             isSharingScreen = true;
-            setStatus("🖥️ Screen sharing started.", "success");
+
+            setStatus(isMobile ? "📷 Camera sharing started (mobile fallback)." : "🖥️ Screen sharing started.", "success");
 
             // Handle when user stops sharing via browser UI
-            screenTrack.on('track-ended', async () => {
-                await stopScreenShare();
-            });
+            if (!isMobile) {
+                screenTrack.on('track-ended', async () => {
+                    await stopScreenShare();
+                });
+            }
 
         } else {
             await stopScreenShare();
@@ -828,7 +839,7 @@ async function stopScreenShare() {
         screenTrack = null;
     }
 
-    // Re-enable camera after stopping screen share
+    // Re-enable camera after stopping
     localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
     await client.publish(localTracks.videoTrack);
     await localTracks.videoTrack.play('local-player');
@@ -838,6 +849,7 @@ async function stopScreenShare() {
     isSharingScreen = false;
     setStatus("🖥️ Screen sharing stopped.", "success");
 }
+
 
 // ✅ Auto join
 joinMeeting(meetingCode);
