@@ -547,6 +547,9 @@ $user_id = $On_Session[0]['user_id'];
 
 
 
+<!-- Add this in your <head> if not already included -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
 let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
@@ -594,10 +597,10 @@ function createUserWrapper(uid, name, isLocal = false) {
     wrapper.appendChild(nameTag);
 
     // ---------------------- Mic Status ----------------------
-    const micStatus = document.createElement('div');
+    const micStatus = document.createElement('span');
     micStatus.id = `mic-status-${uid}`;
-    micStatus.className = "absolute top-2 right-2 text-white text-xl bg-black/50 rounded-full p-1";
-    micStatus.textContent = "🎤"; // default mic ON
+    micStatus.className = "material-icons absolute top-2 right-2 text-white bg-black/50 rounded-full p-1";
+    micStatus.textContent = "mic"; // default mic ON
     wrapper.appendChild(micStatus);
 
     return wrapper;
@@ -685,7 +688,7 @@ async function joinMeeting(code) {
             if(mediaType === 'audio') {
                 user.audioTrack.play();
                 const micIndicator = document.getElementById(`mic-status-${user.uid}`);
-                if(micIndicator) micIndicator.textContent = "🎤"; // mic ON
+                if(micIndicator) micIndicator.textContent = "mic"; // mic ON
             }
 
             get_each_users_data(user.uid);
@@ -703,7 +706,7 @@ async function joinMeeting(code) {
                 }
             } else if (mediaType === 'audio') {
                 const micIndicator = document.getElementById(`mic-status-${user.uid}`);
-                if(micIndicator) micIndicator.textContent = "🔇"; // mic OFF
+                if(micIndicator) micIndicator.textContent = "mic_off"; // mic OFF
             }
         });
 
@@ -772,12 +775,12 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
         await localTracks.audioTrack.setEnabled(false);
         icon.textContent = 'mic_off';
         text.textContent = 'Turn On Mic';
-        if(micIndicator) micIndicator.textContent = "🔇";
+        if(micIndicator) micIndicator.textContent = "mic_off";
     } else {
         await localTracks.audioTrack.setEnabled(true);
         icon.textContent = 'mic';
         text.textContent = 'Turn Off Mic';
-        if(micIndicator) micIndicator.textContent = "🎤";
+        if(micIndicator) micIndicator.textContent = "mic";
     }
 });
 
@@ -842,6 +845,8 @@ async function stopScreenShare() {
 
 // ---------------------- Auto join ----------------------
 joinMeeting(meetingCode);
+
+
 
 
 
