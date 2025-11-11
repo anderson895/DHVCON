@@ -3,6 +3,17 @@ $(document).ready(function () {
     $("#frmSignup").submit(function (e) {
         e.preventDefault();
 
+        // Check if Terms and Conditions is checked
+        if (!$("#terms").is(":checked")) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Terms and Conditions',
+                text: 'You must agree to the Terms and Conditions before registering.',
+                confirmButtonColor: '#3085d6',
+            });
+            return; // stop form submission
+        }
+
         const password = $("#password").val();
         const confirmPassword = $("#confirm_password").val();
 
@@ -24,7 +35,7 @@ $(document).ready(function () {
             didOpen: () => Swal.showLoading()
         });
 
-        // ✅ Create FormData to support file uploads
+        // Create FormData to support file uploads
         const formData = new FormData(this);
         formData.append('requestType', 'Register'); // ensure requestType is sent
 
@@ -32,8 +43,8 @@ $(document).ready(function () {
             type: "POST",
             url: "controller/end-points/mailer.php",
             data: formData,
-            processData: false, // ✅ required for FormData
-            contentType: false, // ✅ required for FormData
+            processData: false, // required for FormData
+            contentType: false, // required for FormData
             dataType: 'json',
             success: function (response) {
                 Swal.close(); // close the loader
