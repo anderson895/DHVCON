@@ -6,7 +6,6 @@
   <link rel="icon" type="image/x-icon" href="static/image/favicon.ico">
   <link href="./src/output.css" rel="stylesheet" />
   <link href="src/alertifyconfig.css" rel="stylesheet" />
-
   <!-- Alertify -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/AlertifyJS/1.13.1/css/alertify.css" integrity="sha512-MpdEaY2YQ3EokN6lCD6bnWMl5Gwk7RjBbpKLovlrH6X+DRokrPRAF3zQJl1hZUiLXfo2e9MrOt+udOnHCAmi5w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
