@@ -518,8 +518,6 @@ $user_id = $On_Session[0]['user_id'];
 
 
 
-<!-- Add this in your <head> if not already included -->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
@@ -577,62 +575,7 @@ function createUserWrapper(uid, name, isLocal = false) {
     return wrapper;
 }
 
-// ---------------------- Fetch user data ----------------------
-function get_each_users_data(userId, isLocal = false) {
-    $.ajax({
-        url: "../controller/end-points/controller.php",
-        type: "GET",
-        data: { requestType: "get_users_data", user_id: userId },
-        dataType: "json",
-        success: function(response) {
-            if(response && response.status === 200 && response.data) {
-                const { user_fullname, user_profile_pict } = response.data;
-                const wrapperId = isLocal ? 'wrapper-local' : `wrapper-${userId}`;
-                const profileId = isLocal ? 'default-user-icon' : `default-icon-${userId}`;
-                const nameTagId = isLocal ? 'name-tag-local' : `name-tag-${userId}`;
 
-                const wrapper = document.getElementById(wrapperId);
-                const profileDiv = wrapper ? wrapper.querySelector(`#${profileId}`) : null;
-                const nameTag = wrapper ? wrapper.querySelector(`#${nameTagId}`) : null;
-
-                if(nameTag) {
-                    nameTag.innerText = isLocal ? `${user_fullname} (You)` : user_fullname;
-                }
-
-                if(profileDiv) {
-                    const size = 150;
-                    profileDiv.style.width = `${size}px`;
-                    profileDiv.style.height = `${size}px`;
-                    profileDiv.style.borderRadius = '50%';
-                    profileDiv.style.position = 'absolute';
-                    profileDiv.style.top = '50%';
-                    profileDiv.style.left = '50%';
-                    profileDiv.style.transform = 'translate(-50%, -50%)';
-                    profileDiv.style.overflow = 'hidden';
-
-                    if(user_profile_pict && user_profile_pict.trim() !== "") {
-                        profileDiv.style.backgroundImage = `url('../static/upload/profile/${user_profile_pict}')`;
-                        profileDiv.style.backgroundSize = 'cover';
-                        profileDiv.style.backgroundPosition = 'center';
-                        profileDiv.textContent = '';
-                    } else {
-                        profileDiv.style.backgroundImage = '';
-                        profileDiv.style.backgroundColor = '#6b7280';
-                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase();
-                    }
-
-                    if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
-                        profileDiv.classList.remove('hidden');
-                        profileDiv.classList.add('flex');
-                    }
-                }
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", error);
-        }
-    });
-}
 
 // ---------------------- Join meeting ----------------------
 async function joinMeeting(code) {
@@ -755,22 +698,15 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
     }
 });
 
+
+
 // ---------------------- Share Screen ----------------------
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
-    // Feature detection only
     if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        console.warn("Screen sharing not supported on this browser/device.");
-        setStatus("❌ Screen sharing not supported on this browser/device. Using camera instead.", "error");
-
-        // Fallback: ensure camera is active
-        if (!localTracks.videoTrack) {
-            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-            await client.publish(localTracks.videoTrack);
-            await localTracks.videoTrack.play('local-player');
-        }
+        setStatus("❌ Screen sharing not supported on this browser/device.", "error");
         return;
     }
 
@@ -779,38 +715,34 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
             // Create screen track
             screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
 
-            // Stop camera if active
+            // Stop and release camera track cleanly
             if (localTracks.videoTrack) {
-                await client.unpublish(localTracks.videoTrack);
+                try {
+                    await client.unpublish(localTracks.videoTrack);
+                } catch {}
                 localTracks.videoTrack.stop();
                 localTracks.videoTrack.close();
+                localTracks.videoTrack = null;
             }
 
-            // Publish screen track
+            // Publish and play screen
             await client.publish(screenTrack);
-            await screenTrack.play('local-player');
+            screenTrack.play('local-player');
 
             icon.textContent = 'stop_screen_share';
             text.textContent = 'Stop Sharing';
             isSharingScreen = true;
             setStatus("🖥️ Screen sharing started.", "success");
 
-            // Handle user stopping screen share from browser UI
-            screenTrack.on('track-ended', async () => { await stopScreenShare(); });
-
+            // If user stops from browser UI
+            screenTrack.on('track-ended', async () => await stopScreenShare());
         } else {
             await stopScreenShare();
         }
     } catch (err) {
         console.error("Error sharing screen:", err);
         setStatus("❌ Failed to start screen sharing: " + err.message, "error");
-
-        // Fallback: restore camera
-        if (!localTracks.videoTrack) {
-            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-            await client.publish(localTracks.videoTrack);
-            await localTracks.videoTrack.play('local-player');
-        }
+        await stopScreenShare();
     }
 });
 
@@ -818,24 +750,38 @@ async function stopScreenShare() {
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
-    if (screenTrack) {
-        await client.unpublish(screenTrack);
-        screenTrack.stop();
-        screenTrack.close();
-        screenTrack = null;
-    }
+    try {
+        // Unpublish and close screen track safely
+        if (screenTrack) {
+            try {
+                await client.unpublish(screenTrack);
+            } catch {}
+            screenTrack.stop();
+            screenTrack.close();
+            screenTrack = null;
+        }
 
-    // Restore camera
-    if (!localTracks.videoTrack) {
+        // Always create a fresh camera track (never reuse closed one)
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+
         await client.publish(localTracks.videoTrack);
         await localTracks.videoTrack.play('local-player');
-    }
 
-    icon.textContent = 'screen_share';
-    text.textContent = 'Share Screen';
-    isSharingScreen = false;
-    setStatus("🖥️ Screen sharing stopped.", "success");
+        // Reset UI
+        const defaultIcon = document.getElementById('default-user-icon');
+        if (defaultIcon) {
+            defaultIcon.classList.add('hidden');
+            defaultIcon.classList.remove('flex');
+        }
+
+        icon.textContent = 'screen_share';
+        text.textContent = 'Share Screen';
+        isSharingScreen = false;
+        setStatus("🖥️ Screen sharing stopped. Camera restored.", "success");
+    } catch (err) {
+        console.error("Error stopping screen share:", err);
+        setStatus("❌ Error restoring camera: " + err.message, "error");
+    }
 }
 
 
@@ -847,7 +793,62 @@ joinMeeting(meetingCode);
 
 
 
+// ---------------------- Fetch user data ----------------------
+function get_each_users_data(userId, isLocal = false) {
+    $.ajax({
+        url: "../controller/end-points/controller.php",
+        type: "GET",
+        data: { requestType: "get_users_data", user_id: userId },
+        dataType: "json",
+        success: function(response) {
+            if(response && response.status === 200 && response.data) {
+                const { user_fullname, user_profile_pict } = response.data;
+                const wrapperId = isLocal ? 'wrapper-local' : `wrapper-${userId}`;
+                const profileId = isLocal ? 'default-user-icon' : `default-icon-${userId}`;
+                const nameTagId = isLocal ? 'name-tag-local' : `name-tag-${userId}`;
 
+                const wrapper = document.getElementById(wrapperId);
+                const profileDiv = wrapper ? wrapper.querySelector(`#${profileId}`) : null;
+                const nameTag = wrapper ? wrapper.querySelector(`#${nameTagId}`) : null;
+
+                if(nameTag) {
+                    nameTag.innerText = isLocal ? `${user_fullname} (You)` : user_fullname;
+                }
+
+                if(profileDiv) {
+                    const size = 150;
+                    profileDiv.style.width = `${size}px`;
+                    profileDiv.style.height = `${size}px`;
+                    profileDiv.style.borderRadius = '50%';
+                    profileDiv.style.position = 'absolute';
+                    profileDiv.style.top = '50%';
+                    profileDiv.style.left = '50%';
+                    profileDiv.style.transform = 'translate(-50%, -50%)';
+                    profileDiv.style.overflow = 'hidden';
+
+                    if(user_profile_pict && user_profile_pict.trim() !== "") {
+                        profileDiv.style.backgroundImage = `url('../static/upload/profile/${user_profile_pict}')`;
+                        profileDiv.style.backgroundSize = 'cover';
+                        profileDiv.style.backgroundPosition = 'center';
+                        profileDiv.textContent = '';
+                    } else {
+                        profileDiv.style.backgroundImage = '';
+                        profileDiv.style.backgroundColor = '#6b7280';
+                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase();
+                    }
+
+                    if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
+                        profileDiv.classList.remove('hidden');
+                        profileDiv.classList.add('flex');
+                    }
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error);
+        }
+    });
+}
 
 
 
