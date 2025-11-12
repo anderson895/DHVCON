@@ -1,68 +1,94 @@
 <?php 
 include "../src/components/home/header.php";
 $meetingCode  = $_GET['code']; 
-
 $meeting = $db->check_meeting($meetingCode);
-
 $authorization = ($meeting[0]['meeting_creator_user_id'] != $On_Session[0]['user_id']) ? "hidden" : "";
-
 $profile_pict=$On_Session[0]['user_profile_pict'];
-
+$user_id = $On_Session[0]['user_id'];
 ?>
-
-
-
 <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
+            <!-- Title -->
+            <h1 class="text-2xl md:text-xl text-gray-100 font-semibold truncate w-full md:w-auto">Conference Room</h1>
+            <!-- Right Controls -->
+            <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full md:w-auto">
+                <!-- Room Code -->
+                <div class="text-gray-400 text-sm md:text-base truncate md:mr-4 flex-shrink-0">
+                    Room Code: <span class="text-gray-100 font-medium"><?= $meetingCode ?></span>
+                </div>
+                <!-- Buttons Row (scrollable on mobile) -->
+                <div class="flex flex-row gap-2 overflow-x-auto md:overflow-visible">
+                    <!-- Pending Requests Button -->
+                    <button id="pendingRequestsBtn" <?=$authorization; ?> class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
+                        <span class="material-icons text-base">person_add</span>
+                        <span class="truncate">Requests</span>
+                        <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                    </button>
+                    <!-- View Attendance Button -->
+                    <button id="viewAttendanceBtn" <?=$authorization; ?> class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
+                        <span class="material-icons text-base">groups</span>
+                        <span class="truncate">Attendance</span>
+                    </button>
 
-<!-- Header -->
-<div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
-    <!-- Title -->
-    <h1 class="text-2xl md:text-xl text-gray-100 font-semibold truncate w-full md:w-auto">Conference Room</h1>
-
-    <!-- Right Controls -->
-    <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full md:w-auto">
-        <!-- Room Code -->
-        <div class="text-gray-400 text-sm md:text-base truncate md:mr-4 flex-shrink-0">
-            Room Code: <span class="text-gray-100 font-medium"><?= $meetingCode ?></span>
+                    <!-- Leave Room Button -->
+                    <button id="btnLeaveRoom" class="joiner-only cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md flex-shrink-0">
+                        <span class="material-icons text-base">exit_to_app</span>
+                        <span class="hidden sm:inline truncate">Leave Room</span>
+                    </button>
+                </div>
+            </div>
         </div>
-
-        <!-- Buttons Row (scrollable on mobile) -->
-        <div class="flex flex-row gap-2 overflow-x-auto md:overflow-visible">
-
-            
-            <!-- Pending Requests Button -->
-            <button id="pendingRequestsBtn" <?=$authorization; ?> class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
-                <span class="material-icons text-base">person_add</span>
-                <span class="truncate">Requests</span>
-                <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
-            </button>
-
-            <!-- View Attendance Button -->
-            <button id="viewAttendanceBtn" <?=$authorization; ?> class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
-                <span class="material-icons text-base">groups</span>
-                <span class="truncate">Attendance</span>
-            </button>
-
-            <!-- Leave Room Button -->
-            <button id="btnLeaveRoom" class="joiner-only cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md flex-shrink-0">
-                <span class="material-icons text-base">exit_to_app</span>
-                <span class="hidden sm:inline truncate">Leave Room</span>
-            </button>
-        </div>
-    </div>
-</div>
-
-
-
-
-
         <!-- Status -->
         <div id="status" class="w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center">
             Ready to join
         </div>
 
-                <!-- Controls: Cam / Mic / Screen -->
-        <div class="flex gap-4 mb-4">
+        
+
+        <!-- Main Content: Video + Chat -->
+        <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
+
+        
+            <!-- Video Section -->
+            <div class="flex-1 flex flex-col gap-4">
+                <!-- Spotlight Section -->
+                <div id="spotlight-container" class="w-full aspect-video rounded-md overflow-hidden shadow-lg bg-black hidden mb-4">
+                    <!-- Spotlight video will appear here -->
+                </div>
+
+                <!-- Video Grid -->
+                <div id="video-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen">
+                    <!-- Video players will appear here -->
+                </div>
+            </div>
+            <!-- Chat Section -->
+            <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
+                <!-- Chat Header -->
+                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
+                    <span>Chat</span>
+                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
+                </div>
+                <!-- Chat Messages (collapsible) -->
+                <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
+                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
+                        <!-- Messages appear here -->
+                    </div>
+                </div>
+                <!-- Chat Form (always visible) -->
+                <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
+                    <input type="text" id="chat-input" placeholder="Type a message..." 
+                        class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button type="submit" 
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
+                        Send
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Controls: Cam / Mic / Screen -->
+        <div class="flex justify-center gap-4 mb-4">
             <!-- Toggle Camera -->
             <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
                 <span id="iconCam" class="material-icons">videocam</span>
@@ -77,68 +103,15 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
             <!-- Share Screen -->
             <button id="btnShareScreen" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-                <span id="iconScreen" class="material-icons">screen_share</span>
+                <span id="iconScreen" class="material-icons">stop_screen_share</span>
                 <span id="textScreen" hidden>Share Screen</span>
             </button>
         </div>
-
-
-        <!-- Main Content: Video + Chat -->
-        <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-        
-        
-        
-
-            <!-- Video Section -->
-            <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen">
-                <!-- Video players will appear here -->
-            </div>
-
-
-
-                                <!-- Chat Section -->
-            <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
-
-                <!-- Chat Header -->
-                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
-                    <span>Chat</span>
-                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
-                </div>
-
-                <!-- Chat Messages (collapsible) -->
-                <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
-                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
-                        <!-- Messages appear here -->
-                    </div>
-                </div>
-
-                <!-- Chat Form (always visible) -->
-                <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
-                    <input type="text" id="chat-input" placeholder="Type a message..." 
-                        class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-                        Send
-                    </button>
-                </form>
-            </div>
-        </div>
-
-
-    </main>
+</main>
 
 
 
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
-
-
-<?php 
-$user_id = $On_Session[0]['user_id'];
-?>
-
-
-
-
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
 let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
@@ -151,6 +124,7 @@ const statusBox = document.getElementById('status');
 const meetingCode  = "<?= $meetingCode ?>";
 const user_id = `<?= $user_id ?>`;
 
+// ---------------------- Helper Functions ----------------------
 function setStatus(message, type = '') {
     statusBox.textContent = message;
     if(type === "success") 
@@ -161,7 +135,17 @@ function setStatus(message, type = '') {
         statusBox.className = "w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center";
 }
 
-// ---------------------- Helper: Create user wrapper ----------------------
+function disableButton(id, disabled, reason = '') {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.disabled = disabled;
+    btn.style.opacity = disabled ? "0.5" : "1";
+    btn.style.cursor = disabled ? "not-allowed" : "pointer";
+    btn.title = reason || '';
+}
+
+let pinnedUserId = null;
+
 function createUserWrapper(uid, name, isLocal = false) {
     const wrapper = document.createElement('div');
     wrapper.id = `wrapper-${uid}`;
@@ -185,19 +169,54 @@ function createUserWrapper(uid, name, isLocal = false) {
     nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-20";
     wrapper.appendChild(nameTag);
 
-    // ---------------------- Mic Status ----------------------
     const micStatus = document.createElement('span');
     micStatus.id = `mic-status-${uid}`;
-    micStatus.className = "material-icons absolute top-2 right-2 text-white bg-black/50 rounded-full p-1";
-    micStatus.textContent = "mic"; // default mic ON
+    micStatus.className = "material-icons absolute top-2 right-2 text-white bg-black/50 rounded-full p-1 cursor-pointer";
+    micStatus.textContent = "mic";
     wrapper.appendChild(micStatus);
+
+    const pinButton = document.createElement('span');
+    pinButton.id = `pin-btn-${uid}`;
+    pinButton.className = "material-icons absolute top-2 left-2 text-white bg-black/50 rounded-full p-1 cursor-pointer";
+    pinButton.textContent = "push_pin";
+    pinButton.title = "Pin User";
+    wrapper.appendChild(pinButton);
+
+    pinButton.addEventListener('click', () => {
+        pinnedUserId = pinnedUserId === uid ? null : uid;
+        updatePins();
+    });
 
     return wrapper;
 }
 
+function updatePins() {
+    const spotlight = document.getElementById('spotlight-container');
+    document.querySelectorAll('[id^="pin-btn-"]').forEach(btn => {
+        const uid = btn.id.replace('pin-btn-', '');
+        const wrapper = document.getElementById(`wrapper-${uid}`);
+        if (uid === pinnedUserId) {
+            btn.style.color = "#facc15";
+            wrapper.style.border = "3px solid #facc15";
+            wrapper.style.zIndex = 10;
+            if (wrapper && spotlight) {
+                spotlight.innerHTML = '';
+                spotlight.appendChild(wrapper);
+                spotlight.classList.remove('hidden');
+            }
+        } else {
+            btn.style.color = "white";
+            wrapper.style.border = "none";
+            wrapper.style.zIndex = 1;
+            if (wrapper && spotlight.contains(wrapper)) {
+                videoContainer.appendChild(wrapper);
+                spotlight.classList.add('hidden');
+            }
+        }
+    });
+}
 
-
-// ---------------------- Join meeting ----------------------
+// ---------------------- Join Meeting ----------------------
 async function joinMeeting(code) {
     try {
         setStatus("Requesting camera & microphone permission...");
@@ -206,33 +225,29 @@ async function joinMeeting(code) {
 
         client.on('user-published', async (user, mediaType) => {
             await client.subscribe(user, mediaType);
-
             let wrapper = document.getElementById('wrapper-' + user.uid);
-            if(!wrapper) {
+            if (!wrapper) {
                 wrapper = createUserWrapper(user.uid, `User ${user.uid}`);
                 videoContainer.appendChild(wrapper);
             }
-
-            if(mediaType === 'video') {
+            if (mediaType === 'video') {
                 user.videoTrack.play('player-' + user.uid);
                 document.getElementById('player-' + user.uid).style.display = 'block';
                 document.getElementById('default-icon-' + user.uid).classList.add('hidden');
             }
-
-            if(mediaType === 'audio') {
+            if (mediaType === 'audio') {
                 user.audioTrack.play();
                 const micIndicator = document.getElementById(`mic-status-${user.uid}`);
-                if(micIndicator) micIndicator.textContent = "mic"; // mic ON
+                if (micIndicator) micIndicator.textContent = "mic";
             }
-
             get_each_users_data(user.uid);
         });
 
         client.on('user-unpublished', (user, mediaType) => {
-            if(mediaType === 'video') {
+            if (mediaType === 'video') {
                 const player = document.getElementById('player-' + user.uid);
                 const icon = document.getElementById('default-icon-' + user.uid);
-                if(player && icon) {
+                if (player && icon) {
                     player.style.display = 'none';
                     icon.classList.remove('hidden');
                     icon.classList.add('flex');
@@ -240,7 +255,7 @@ async function joinMeeting(code) {
                 }
             } else if (mediaType === 'audio') {
                 const micIndicator = document.getElementById(`mic-status-${user.uid}`);
-                if(micIndicator) micIndicator.textContent = "mic_off"; // mic OFF
+                if (micIndicator) micIndicator.textContent = "mic_off";
             }
         });
 
@@ -248,19 +263,31 @@ async function joinMeeting(code) {
         await client.join(APP_ID, code, null, user_id);
 
         localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        await client.publish([localTracks.audioTrack]);
+
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+        await localTracks.videoTrack.setEnabled(false);
 
         const localWrapper = createUserWrapper('local', `${user_id} (You)`, true);
         videoContainer.appendChild(localWrapper);
 
-        await localTracks.videoTrack.play('local-player');
-        await client.publish(Object.values(localTracks));
+        const localPlayer = document.getElementById('local-player');
+        const defaultIcon = document.getElementById('default-user-icon');
+        localPlayer.style.display = 'none';
+        defaultIcon.classList.remove('hidden');
+        defaultIcon.classList.add('flex');
+
+        const iconCam = document.getElementById('iconCam');
+        const textCam = document.getElementById('textCam');
+        iconCam.textContent = 'videocam_off';
+        textCam.textContent = 'Turn On Cam';
+
+        // Disable share screen initially
+        disableButton('btnShareScreen', true, 'Turn on camera to share screen');
 
         get_each_users_data(user_id, true);
-
         setStatus(`✅ Joined meeting: ${code} as ${user_id}`, "success");
-
-    } catch(err) {
+    } catch (err) {
         console.error(err);
         setStatus("❌ Failed to join meeting: " + err.message, "error");
     }
@@ -268,39 +295,43 @@ async function joinMeeting(code) {
 
 // ---------------------- Toggle Camera ----------------------
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
-    if(!localTracks.videoTrack) return;
+    if (!localTracks.videoTrack) return;
+
+    if (isSharingScreen && localTracks.videoTrack.enabled) {
+        setStatus("⚠️ Cannot turn off camera while screen sharing.", "error");
+        return;
+    }
 
     const icon = document.getElementById('iconCam');
     const text = document.getElementById('textCam');
     const defaultIcon = document.getElementById('default-user-icon');
     const localPlayer = document.getElementById('local-player');
 
-    if(localTracks.videoTrack.enabled) {
+    if (localTracks.videoTrack.enabled) {
         await localTracks.videoTrack.setEnabled(false);
+        await client.unpublish(localTracks.videoTrack);
         icon.textContent = 'videocam_off';
         text.textContent = 'Turn On Cam';
         localPlayer.style.display = 'none';
-        if(defaultIcon) {
-            get_each_users_data(user_id, true);
-            defaultIcon.classList.remove('hidden');
-            defaultIcon.classList.add('flex');
-        }
+        defaultIcon.classList.remove('hidden');
+        defaultIcon.classList.add('flex');
+        disableButton('btnShareScreen', true, 'Turn on camera to share screen');
     } else {
-        await localTracks.videoTrack.setEnabled(true);
+        localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+        await client.publish(localTracks.videoTrack);
+        await localTracks.videoTrack.play('local-player');
         icon.textContent = 'videocam';
         text.textContent = 'Turn Off Cam';
         localPlayer.style.display = 'block';
-        if(defaultIcon) {
-            defaultIcon.classList.add('hidden');
-            defaultIcon.classList.remove('flex');
-        }
+        defaultIcon.classList.add('hidden');
+        defaultIcon.classList.remove('flex');
+        disableButton('btnShareScreen', false);
     }
 });
 
 // ---------------------- Toggle Mic ----------------------
 document.getElementById('btnToggleMic').addEventListener('click', async () => {
     if (!localTracks.audioTrack) return;
-
     const icon = document.getElementById('iconMic');
     const text = document.getElementById('textMic');
     const micIndicator = document.getElementById('mic-status-local');
@@ -318,49 +349,39 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
     }
 });
 
-
-
 // ---------------------- Share Screen ----------------------
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
-        setStatus("❌ Screen sharing not supported on this browser/device.", "error");
+    if (localTracks.videoTrack && !localTracks.videoTrack.enabled) {
+        setStatus("⚠️ Please turn on your camera before sharing screen.", "error");
         return;
     }
 
     try {
         if (!isSharingScreen) {
-            // Create screen track
             screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
-
-            // Stop and release camera track cleanly
             if (localTracks.videoTrack) {
-                try {
-                    await client.unpublish(localTracks.videoTrack);
-                } catch {}
+                try { await client.unpublish(localTracks.videoTrack); } catch {}
                 localTracks.videoTrack.stop();
                 localTracks.videoTrack.close();
                 localTracks.videoTrack = null;
             }
-
-            // Publish and play screen
             await client.publish(screenTrack);
             screenTrack.play('local-player');
 
-            icon.textContent = 'stop_screen_share';
+            icon.textContent = 'screen_share';
             text.textContent = 'Stop Sharing';
             isSharingScreen = true;
             setStatus("🖥️ Screen sharing started.", "success");
-
-            // If user stops from browser UI
+            disableButton('btnToggleCam', true, 'Stop screen sharing first to toggle camera');
             screenTrack.on('track-ended', async () => await stopScreenShare());
         } else {
             await stopScreenShare();
         }
     } catch (err) {
-        console.error("Error sharing screen:", err);
+        console.error(err);
         setStatus("❌ Failed to start screen sharing: " + err.message, "error");
         await stopScreenShare();
     }
@@ -371,42 +392,84 @@ async function stopScreenShare() {
     const text = document.getElementById('textScreen');
 
     try {
-        // Unpublish and close screen track safely
         if (screenTrack) {
-            try {
-                await client.unpublish(screenTrack);
-            } catch {}
+            try { await client.unpublish(screenTrack); } catch {}
             screenTrack.stop();
             screenTrack.close();
             screenTrack = null;
         }
 
-        // Always create a fresh camera track (never reuse closed one)
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-
         await client.publish(localTracks.videoTrack);
         await localTracks.videoTrack.play('local-player');
 
-        // Reset UI
         const defaultIcon = document.getElementById('default-user-icon');
-        if (defaultIcon) {
-            defaultIcon.classList.add('hidden');
-            defaultIcon.classList.remove('flex');
-        }
+        defaultIcon.classList.add('hidden');
+        defaultIcon.classList.remove('flex');
 
-        icon.textContent = 'screen_share';
+        icon.textContent = 'stop_screen_share';
         text.textContent = 'Share Screen';
         isSharingScreen = false;
         setStatus("🖥️ Screen sharing stopped. Camera restored.", "success");
+        disableButton('btnToggleCam', false);
     } catch (err) {
-        console.error("Error stopping screen share:", err);
+        console.error(err);
         setStatus("❌ Error restoring camera: " + err.message, "error");
     }
 }
 
-
-// ---------------------- Auto join ----------------------
+// ---------------------- Auto Join ----------------------
 joinMeeting(meetingCode);
+
+// ---------------------- Fetch User Data ----------------------
+function get_each_users_data(userId, isLocal = false) {
+    $.ajax({
+        url: "../controller/end-points/controller.php",
+        type: "GET",
+        data: { requestType: "get_users_data", user_id: userId },
+        dataType: "json",
+        success: function(response) {
+            if(response && response.status === 200 && response.data) {
+                const { user_fullname, user_profile_pict } = response.data;
+                const wrapperId = isLocal ? 'wrapper-local' : `wrapper-${userId}`;
+                const profileId = isLocal ? 'default-user-icon' : `default-icon-${userId}`;
+                const nameTagId = isLocal ? 'name-tag-local' : `name-tag-${userId}`;
+                const wrapper = document.getElementById(wrapperId);
+                const profileDiv = wrapper ? wrapper.querySelector(`#${profileId}`) : null;
+                const nameTag = wrapper ? wrapper.querySelector(`#${nameTagId}`) : null;
+                if(nameTag) nameTag.innerText = isLocal ? `${user_fullname} (You)` : user_fullname;
+                if(profileDiv) {
+                    const size = 150;
+                    profileDiv.style.width = `${size}px`;
+                    profileDiv.style.height = `${size}px`;
+                    profileDiv.style.borderRadius = '50%';
+                    profileDiv.style.position = 'absolute';
+                    profileDiv.style.top = '50%';
+                    profileDiv.style.left = '50%';
+                    profileDiv.style.transform = 'translate(-50%, -50%)';
+                    profileDiv.style.overflow = 'hidden';
+                    if(user_profile_pict && user_profile_pict.trim() !== "") {
+                        profileDiv.style.backgroundImage = `url('../static/upload/profile/${user_profile_pict}')`;
+                        profileDiv.style.backgroundSize = 'cover';
+                        profileDiv.style.backgroundPosition = 'center';
+                        profileDiv.textContent = '';
+                    } else {
+                        profileDiv.style.backgroundImage = '';
+                        profileDiv.style.backgroundColor = '#6b7280';
+                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase();
+                    }
+                    if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
+                        profileDiv.classList.remove('hidden');
+                        profileDiv.classList.add('flex');
+                    }
+                }
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("AJAX Error:", error);
+        }
+    });
+}
 </script>
 
 
@@ -674,84 +737,6 @@ $(document).on("click", ".removeMemberBtn", function() {
     });
 
 });
-</script>
-
-
-
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
-
-<script>
-// ---------------------- Fetch user data ----------------------
-function get_each_users_data(userId, isLocal = false) {
-    $.ajax({
-        url: "../controller/end-points/controller.php",
-        type: "GET",
-        data: { requestType: "get_users_data", user_id: userId },
-        dataType: "json",
-        success: function(response) {
-            if(response && response.status === 200 && response.data) {
-                const { user_fullname, user_profile_pict } = response.data;
-                const wrapperId = isLocal ? 'wrapper-local' : `wrapper-${userId}`;
-                const profileId = isLocal ? 'default-user-icon' : `default-icon-${userId}`;
-                const nameTagId = isLocal ? 'name-tag-local' : `name-tag-${userId}`;
-
-                const wrapper = document.getElementById(wrapperId);
-                const profileDiv = wrapper ? wrapper.querySelector(`#${profileId}`) : null;
-                const nameTag = wrapper ? wrapper.querySelector(`#${nameTagId}`) : null;
-
-                if(nameTag) {
-                    nameTag.innerText = isLocal ? `${user_fullname} (You)` : user_fullname;
-                }
-
-                if(profileDiv) {
-                    const size = 150;
-                    profileDiv.style.width = `${size}px`;
-                    profileDiv.style.height = `${size}px`;
-                    profileDiv.style.borderRadius = '50%';
-                    profileDiv.style.position = 'absolute';
-                    profileDiv.style.top = '50%';
-                    profileDiv.style.left = '50%';
-                    profileDiv.style.transform = 'translate(-50%, -50%)';
-                    profileDiv.style.overflow = 'hidden';
-
-                    if(user_profile_pict && user_profile_pict.trim() !== "") {
-                        profileDiv.style.backgroundImage = `url('../static/upload/profile/${user_profile_pict}')`;
-                        profileDiv.style.backgroundSize = 'cover';
-                        profileDiv.style.backgroundPosition = 'center';
-                        profileDiv.textContent = '';
-                    } else {
-                        profileDiv.style.backgroundImage = '';
-                        profileDiv.style.backgroundColor = '#6b7280';
-                        profileDiv.textContent = user_fullname.charAt(0).toUpperCase();
-                    }
-
-                    if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
-                        profileDiv.classList.remove('hidden');
-                        profileDiv.classList.add('flex');
-                    }
-                }
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", error);
-        }
-    });
-}
-
-
 
 // ✅ Leave room
 $(document).ready(function() {
@@ -784,77 +769,6 @@ $(document).ready(function() {
 
 
 
-
-   <script>
-const chatToggle = document.getElementById('chat-toggle');
-const chatIcon = document.getElementById('chat-toggle-icon');
-const chatMessagesWrapper = document.getElementById('chat-messages-wrapper');
-const chatInput = document.getElementById('chat-input');
-const chatForm = document.getElementById('chat-form');
-
-let isCollapsed = window.innerWidth < 640;
-let inputFocused = false;
-let submitting = false;
-
-// Initialize chat state
-function initChat() {
-    if (isCollapsed && !inputFocused) {
-        chatMessagesWrapper.style.maxHeight = '0';
-        chatIcon.textContent = 'expand_more';
-    } else {
-        chatMessagesWrapper.style.maxHeight = '60vh';
-        chatIcon.textContent = 'expand_less';
-    }
-}
-initChat();
-
-// Toggle messages container manually
-chatToggle.addEventListener('click', () => {
-    if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
-        chatMessagesWrapper.style.maxHeight = '60vh';
-        chatIcon.textContent = 'expand_less';
-    } else {
-        chatMessagesWrapper.style.maxHeight = '0';
-        chatIcon.textContent = 'expand_more';
-    }
-});
-
-// Keep chat expanded while typing
-chatInput.addEventListener('focus', () => {
-    inputFocused = true;
-    chatMessagesWrapper.style.maxHeight = '60vh';
-    chatIcon.textContent = 'expand_less';
-});
-
-chatInput.addEventListener('blur', () => {
-    if (!submitting) {  // only collapse if not submitting
-        inputFocused = false;
-        if (isCollapsed) {
-            chatMessagesWrapper.style.maxHeight = '0';
-            chatIcon.textContent = 'expand_more';
-        }
-    }
-});
-
-// Prevent collapse when submitting
-chatForm.addEventListener('submit', (e) => {
-    submitting = true;
-    inputFocused = true;  // keep expanded
-    chatMessagesWrapper.style.maxHeight = '60vh';
-    chatIcon.textContent = 'expand_less';
-    
-    // allow some delay before resetting
-    setTimeout(() => {
-        submitting = false;
-    }, 100); // adjust if needed
-});
-
-// Update on resize
-window.addEventListener('resize', () => {
-    isCollapsed = window.innerWidth < 640;
-    initChat();
-});
-</script>
 
 
 
