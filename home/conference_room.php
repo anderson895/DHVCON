@@ -104,8 +104,6 @@ $user_id = $On_Session[0]['user_id'];
 
 
 
-
-
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
@@ -260,8 +258,8 @@ async function joinMeeting(code) {
         localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         await client.publish([localTracks.audioTrack]);
 
-        localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-        await localTracks.videoTrack.setEnabled(false);
+        // Initialize camera OFF by default
+        localTracks.videoTrack = null;
 
         const localWrapper = createUserWrapper('local', `${user_id} (You)`, true);
         videoContainer.appendChild(localWrapper);
@@ -277,7 +275,6 @@ async function joinMeeting(code) {
         iconCam.textContent = 'videocam_off';
         textCam.textContent = 'Turn On Cam';
 
-        // Disable share screen initially
         disableButton('btnShareScreen', true, 'Turn on camera to share screen');
 
         get_each_users_data(user_id, true);
@@ -288,39 +285,62 @@ async function joinMeeting(code) {
     }
 }
 
-// ---------------------- Toggle Camera ----------------------
+// ---------------------- ✅ Fixed Toggle Camera ----------------------
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
-    if (!localTracks.videoTrack) return;
-
-    if (isSharingScreen && localTracks.videoTrack.enabled) {
-        setStatus("⚠️ Cannot turn off camera while screen sharing.", "error");
-        return;
-    }
-
     const icon = document.getElementById('iconCam');
     const text = document.getElementById('textCam');
     const defaultIcon = document.getElementById('default-user-icon');
     const localPlayer = document.getElementById('local-player');
 
-    if (localTracks.videoTrack.enabled) {
-        await localTracks.videoTrack.setEnabled(false);
-        await client.unpublish(localTracks.videoTrack);
-        icon.textContent = 'videocam_off';
-        text.textContent = 'Turn On Cam';
-        localPlayer.style.display = 'none';
-        defaultIcon.classList.remove('hidden');
-        defaultIcon.classList.add('flex');
-        disableButton('btnShareScreen', true, 'Turn on camera to share screen');
-    } else {
+    try {
+        // Prevent toggling while sharing screen
+        if (isSharingScreen) {
+            setStatus("⚠️ Stop screen sharing before toggling camera.", "error");
+            return;
+        }
+
+        // CASE 1: Turn camera OFF
+        if (localTracks.videoTrack) {
+            try { await client.unpublish(localTracks.videoTrack); } catch {}
+            localTracks.videoTrack.stop();
+            localTracks.videoTrack.close();
+            localTracks.videoTrack = null;
+
+            icon.textContent = 'videocam_off';
+            text.textContent = 'Turn On Cam';
+            localPlayer.style.display = 'none';
+            defaultIcon.classList.remove('hidden');
+            defaultIcon.classList.add('flex');
+            disableButton('btnShareScreen', true, 'Turn on camera to share screen');
+            setStatus("📷 Camera turned off.", "success");
+            return;
+        }
+
+        // CASE 2: Turn camera ON
+        setStatus("🔄 Initializing camera...");
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
         await client.publish(localTracks.videoTrack);
-        await localTracks.videoTrack.play('local-player');
+        localTracks.videoTrack.play('local-player');
+
         icon.textContent = 'videocam';
         text.textContent = 'Turn Off Cam';
         localPlayer.style.display = 'block';
         defaultIcon.classList.add('hidden');
         defaultIcon.classList.remove('flex');
         disableButton('btnShareScreen', false);
+        setStatus("📷 Camera turned on.", "success");
+
+    } catch (err) {
+        console.error("Toggle camera error:", err);
+        setStatus("❌ Error toggling camera: " + err.message, "error");
+
+        if (localTracks.videoTrack) {
+            try {
+                localTracks.videoTrack.stop();
+                localTracks.videoTrack.close();
+            } catch {}
+            localTracks.videoTrack = null;
+        }
     }
 });
 
@@ -349,7 +369,7 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
 
-    if (localTracks.videoTrack && !localTracks.videoTrack.enabled) {
+    if (!localTracks.videoTrack) {
         setStatus("⚠️ Please turn on your camera before sharing screen.", "error");
         return;
     }
@@ -395,14 +415,8 @@ async function stopScreenShare() {
             screenTrack = null;
         }
 
-        // Restore camera track safely
         if (!localTracks.videoTrack) {
             localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-        }
-
-        // Only publish if not already published
-        const publishedTracks = client.localTracks || [];
-        if (!publishedTracks.includes(localTracks.videoTrack)) {
             await client.publish(localTracks.videoTrack);
         }
 
@@ -420,7 +434,6 @@ async function stopScreenShare() {
         setStatus("❌ Error restoring camera: " + err.message, "error");
     }
 }
-
 
 // ---------------------- Auto Join ----------------------
 joinMeeting(meetingCode);
@@ -462,7 +475,7 @@ function get_each_users_data(userId, isLocal = false) {
                         profileDiv.style.backgroundColor = '#6b7280';
                         profileDiv.textContent = user_fullname.charAt(0).toUpperCase();
                     }
-                    if((isLocal && !localTracks.videoTrack.enabled) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
+                    if((isLocal && !localTracks.videoTrack) || (!isLocal && wrapper.querySelector(`#player-${userId}`).style.display === 'none')) {
                         profileDiv.classList.remove('hidden');
                         profileDiv.classList.add('flex');
                     }
@@ -475,6 +488,7 @@ function get_each_users_data(userId, isLocal = false) {
     });
 }
 </script>
+
 
 
 
