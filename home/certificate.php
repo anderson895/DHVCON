@@ -127,7 +127,7 @@ if (isset($_GET['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
         This certificate is proudly presented to
       </p>
 
-      <h2 class="text-3xl font-[Playfair_Display] text-white font-semibold underline decoration-yellow-500 mb-8">
+      <h2 class="text-3xl font-[Playfair_Display] text-white font-semibold underline decoration-yellow-500 mb-8 capitalize">
         <?=$certificate_data[0]['user_fullname']?>
       </h2>
 
