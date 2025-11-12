@@ -168,6 +168,9 @@ $(document).ready(function() {
 // ========================
 // CHAT
 // ========================
+// ========================
+// CHAT
+// ========================
 
 const chatToggle = document.getElementById('chat-toggle');
 const chatIcon = document.getElementById('chat-toggle-icon');
@@ -190,7 +193,6 @@ chatCloseContainer.appendChild(chatCloseIcon);
 // State variables
 // ------------------------
 let isCollapsed = window.innerWidth < 640;
-let inputFocused = false;
 let submitting = false;
 
 // ------------------------
@@ -262,20 +264,15 @@ chatCloseIcon.addEventListener('click', () => {
 });
 
 // ------------------------
-// Expand while typing
+// Expand while typing / input
 // ------------------------
 chatInput.addEventListener('focus', () => {
-    inputFocused = true;
     chatMessagesWrapper.style.maxHeight = '60vh';
 });
 
-chatInput.addEventListener('blur', () => {
-    if (!submitting && isCollapsed) {
-        setTimeout(() => {
-            inputFocused = false;
-            chatMessagesWrapper.style.maxHeight = '0';
-        }, 50);
-    }
+// Keep chat open while typing
+chatInput.addEventListener('input', () => {
+    chatMessagesWrapper.style.maxHeight = '60vh';
 });
 
 // ------------------------
@@ -284,7 +281,6 @@ chatInput.addEventListener('blur', () => {
 chatForm.addEventListener('submit', (e) => {
     e.preventDefault();
     submitting = true;
-    inputFocused = true;
     chatMessagesWrapper.style.maxHeight = '60vh';
     setTimeout(() => (submitting = false), 100);
 });
