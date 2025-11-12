@@ -42,80 +42,102 @@ $(document).ready(function() {
                         : "../static/image/no_image.jpg";
 
                     // ✂️ Limit the description length
-                    const maxLength = 255;
-                    const fullDesc = room.room_description || "";
-                    const shortDesc = fullDesc.length > maxLength 
-                        ? fullDesc.substring(0, maxLength) + "..." 
-                        : fullDesc;
+                   const maxLength = 100; // Reduce description length for smaller cards
+const fullDesc = room.room_description || "";
+const shortDesc = fullDesc.length > maxLength
+    ? fullDesc.substring(0, maxLength) + "..."
+    : fullDesc;
+const hasLongText = fullDesc.length > maxLength;
 
-                    const hasLongText = fullDesc.length > maxLength;
+let card = "";
 
-                    // Generate card
-                    let card = "";
+if (room.room_creator_user_id == response.user_id) {
+    card = `
+        <div class="bg-[#2b2d31] text-white rounded-xl overflow-hidden shadow-md animate-fadeIn relative flex flex-col">
+            <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-36 object-cover">
 
-                    if (room.room_creator_user_id == response.user_id) {
-                        card = `
-                            <div class="bg-[#2b2d31] text-white rounded-xl overflow-hidden shadow-md animate-fadeIn relative flex flex-col h-[26rem]">
-                                    <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
+            <div class="absolute top-2 right-2 flex gap-1">
+                <button class="edit-room cursor-pointer w-6 h-6 flex items-center justify-center bg-gray-600 rounded-full hover:bg-gray-500 transition"
+                        data-room_id="${room.room_id}" title="Edit Room">
+                    <span class="material-icons text-white text-xs">edit</span>
+                </button>
+                <button class="delete-room cursor-pointer w-6 h-6 flex items-center justify-center bg-red-600 rounded-full hover:bg-red-700 transition"
+                        data-room_id="${room.room_id}" title="Delete Room">
+                    <span class="material-icons text-white text-xs">close</span>
+                </button>
+            </div>
 
-                                    <div class="absolute top-2 right-2 flex gap-1">
-                                        <button class="edit-room cursor-pointer w-6 h-6 flex items-center justify-center bg-gray-600 rounded-full hover:bg-gray-500 transition"
-                                                data-room_id="${room.room_id}" title="Edit Room">
-                                            <span class="material-icons text-white text-xs">edit</span>
-                                        </button>
-                                        <button class="delete-room cursor-pointer w-6 h-6 flex items-center justify-center bg-red-600 rounded-full hover:bg-red-700 transition"
-                                                data-room_id="${room.room_id}" title="Delete Room">
-                                            <span class="material-icons text-white text-xs">close</span>
-                                        </button>
-                                    </div>
-
-                                    <div class="p-4 flex flex-col justify-between flex-grow">
-                                        <div>
-                                            <h3 class="uppercase font-semibold text-lg mb-2">${room.room_name}</h3>
-                                            <div class="desc-wrapper text-gray-300 text-sm">
-                                                <span class="desc-text" data-full="${fullDesc}">
-                                                    ${shortDesc}
-                                                </span>
-                                                ${hasLongText ? `<span class="text-blue-400 cursor-pointer see-more hover:underline ml-1">See more</span>` : ""}
-                                            </div>
-                                            <p class="text-gray-300 text-sm mt-1">CODE: ${room.room_code}</p>
-                                        </div>
-                                        <a href="room?code=${room.room_code}&&room_name=${room.room_name}" 
-                                            class="text-center cursor-pointer w-full bg-[#5865f2] font-semibold text-white py-2 rounded-md hover:bg-[#4752c4] transition">
-                                            My Room
-                                        </a>
-                                    </div>
-                                </div>
-
-                        `;
-                    } else {
-                        card = `
-                            <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md animate-fadeIn flex flex-col h-[26rem]">
-                                <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-40 object-cover">
-                                <div class="p-4 flex flex-col justify-between flex-grow">
-                                    <div>
-                                        <h3 class="uppercase font-semibold text-lg mb-2">${room.room_name}</h3>
-                                        <div class="desc-wrapper text-gray-400 text-sm">
-                                            <span class="desc-text" data-full="${fullDesc}">
-                                                ${shortDesc}
-                                            </span>
-                                            ${hasLongText ? `<span class="text-blue-400 cursor-pointer see-more hover:underline ml-1">See more</span>` : ""}
-                                        </div>
-                                        <p class="text-gray-400 text-sm mt-1">CODE: ${room.room_code}</p>
-                                    </div>
-                                    <button class="btnJoinRoom cursor-pointer w-full bg-[#5865f2] font-semibold text-white py-2 rounded-md hover:bg-[#4752c4] transition"
-                                            data-code='${room.room_code}'>
-                                        Join Room
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                    }
+            <div class="p-4 flex flex-col justify-between flex-grow">
+                <div>
+                    <h3 class="uppercase font-semibold text-lg mb-2">${room.room_name}</h3>
+                    <div class="desc-wrapper text-gray-300 text-sm line-clamp-3">
+                        <span class="desc-text" data-full="${fullDesc}">
+                            ${shortDesc}
+                        </span>
+                        ${hasLongText ? `<span class="text-blue-400 cursor-pointer see-more hover:underline ml-1">See more</span>` : ""}
+                    </div>
+                    <p class="text-gray-300 text-sm mt-1">CODE: ${room.room_code}</p>
+                </div>
+                <a href="room?code=${room.room_code}&&room_name=${room.room_name}" 
+                    class="text-center cursor-pointer w-full bg-[#5865f2] font-semibold text-white py-2 rounded-md hover:bg-[#4752c4] transition mt-2">
+                    My Room
+                </a>
+            </div>
+        </div>
+    `;
+} else {
+    card = `
+        <div class="bg-[#2b2d31] rounded-xl overflow-hidden shadow-md animate-fadeIn flex flex-col">
+            <img src="${bannerUrl}" alt="${room.room_name}" class="w-full h-36 object-cover">
+            <div class="p-4 flex flex-col justify-between flex-grow">
+                <div>
+                    <h3 class="uppercase font-semibold text-lg mb-2">${room.room_name}</h3>
+                    <div class="desc-wrapper text-gray-400 text-sm line-clamp-3">
+                        <span class="desc-text" data-full="${fullDesc}">
+                            ${shortDesc}
+                        </span>
+                        ${hasLongText ? `<span class="text-blue-400 cursor-pointer see-more hover:underline ml-1">See more</span>` : ""}
+                    </div>
+                    <p class="text-gray-400 text-sm mt-1">CODE: ${room.room_code}</p>
+                </div>
+                <button class="btnJoinRoom cursor-pointer w-full bg-[#5865f2] font-semibold text-white py-2 rounded-md hover:bg-[#4752c4] transition mt-2"
+                        data-code='${room.room_code}'>
+                    Join Room
+                </button>
+            </div>
+        </div>
+    `;
+}
 
                     container.append(card);
                 });
 
-                // 🔽 Toggle See More / See Less (preserve text color + scrollable)
+               
+
+                } else {
+                    console.error("Failed to fetch rooms");
+                }
+            },
+            error: function(err) {
+                console.error("AJAX error:", err);
+            }
+        });
+    }
+
+    // Initial fetch
+    fetchRooms();
+});
+
+
+
+
+
+
+
+
+
+
+ // Toggle See More / See Less (preserve text color + scrollable)
                 $(document).on("click", ".see-more", function() {
                     const wrapper = $(this).closest(".desc-wrapper");
                     const textBox = wrapper.find(".desc-text");
@@ -210,24 +232,6 @@ $(document).ready(function() {
                         }
                     });
                 });
-
-                } else {
-                    console.error("Failed to fetch rooms");
-                }
-            },
-            error: function(err) {
-                console.error("AJAX error:", err);
-            }
-        });
-    }
-
-    // Initial fetch
-    fetchRooms();
-});
-
-
-
-
 
 
 
