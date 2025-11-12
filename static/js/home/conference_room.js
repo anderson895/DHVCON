@@ -166,8 +166,6 @@ $(document).ready(function() {
 
 // REQUEST
 // ========================
-// CHAT
-// ========================
 // ========================
 // CHAT
 // ========================
@@ -218,19 +216,28 @@ function slideOut(element) {
 function initChat() {
     isCollapsed = window.innerWidth < 640;
 
-    // Show/hide mobile close icon
     chatCloseIcon.style.display = isCollapsed ? 'inline-flex' : 'none';
 
-    // Messages max-height
-    chatMessagesWrapper.style.maxHeight = isCollapsed ? '0' : '60vh';
+    // Keep chat open if user is typing
+    const inputActive = document.activeElement === chatInput;
+
+    chatMessagesWrapper.style.maxHeight = inputActive ? '60vh' : (isCollapsed ? '0' : '60vh');
     chatIcon.textContent = 'expand_less';
 
-    // Show/hide chat & mobile button
     if (isCollapsed) {
-        chatSection.style.display = 'none';
-        chatSection.style.transform = 'translateX(100%)';
-        chatSection.style.opacity = '0';
-        if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
+        if (!inputActive) {
+            chatSection.style.display = 'none';
+            chatSection.style.transform = 'translateX(100%)';
+            chatSection.style.opacity = '0';
+        } else {
+            // Ensure chat is visible if input is active
+            chatSection.style.display = 'flex';
+            chatSection.style.transform = 'translateX(0)';
+            chatSection.style.opacity = '1';
+        }
+
+        // Only show mobile button if input is NOT active
+        if (mobileChatBtn) mobileChatBtn.style.display = inputActive ? 'none' : 'flex';
     } else {
         chatSection.style.display = 'flex';
         chatSection.style.transform = 'translateX(0)';
@@ -259,21 +266,22 @@ chatIcon.addEventListener('click', () => {
 chatCloseIcon.addEventListener('click', () => {
     if (isCollapsed) {
         slideOut(chatSection);
-        if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
+
+        // Show mobile chat button only if input is NOT active
+        if (mobileChatBtn && document.activeElement !== chatInput) mobileChatBtn.style.display = 'flex';
     }
 });
 
 // ------------------------
-// Expand while typing / input
+// Hide mobile chat button while typing
 // ------------------------
-chatInput.addEventListener('focus', () => {
+function hideMobileBtnWhileTyping() {
+    if (mobileChatBtn) mobileChatBtn.style.display = 'none';
     chatMessagesWrapper.style.maxHeight = '60vh';
-});
+}
 
-// Keep chat open while typing
-chatInput.addEventListener('input', () => {
-    chatMessagesWrapper.style.maxHeight = '60vh';
-});
+chatInput.addEventListener('focus', hideMobileBtnWhileTyping);
+chatInput.addEventListener('input', hideMobileBtnWhileTyping);
 
 // ------------------------
 // Prevent collapse while submitting
@@ -299,6 +307,3 @@ if (mobileChatBtn) {
 // Update on window resize
 // ------------------------
 window.addEventListener('resize', initChat);
-
-
-

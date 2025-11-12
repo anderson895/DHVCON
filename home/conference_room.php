@@ -77,14 +77,13 @@ $user_id = $On_Session[0]['user_id'];
             </form>
         </div>
 
-
+            <!-- Mobile Chat Button -->
+        <button id="mobile-chat-btn" class="sm:hidden fixed bottom-4 right-4 z-50 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
+            <span class="material-icons">message</span>
+        </button>
     </div>
 
-    <!-- Mobile Chat Button -->
-    <button id="mobile-chat-btn" class="sm:hidden fixed bottom-4 right-4 z-50 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
-        <span class="material-icons">message</span>
-    </button>
-
+   
     <!-- Controls: Cam / Mic / Screen -->
     <div class="flex justify-center gap-4 mb-4">
         <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">

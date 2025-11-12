@@ -55,9 +55,11 @@ include "../plugins/PageSpinner.php";
 <body class="bg-[#1e1f22] text-white min-h-screen flex">
 
   <!-- Mobile menu button -->
-<button id="mobile-menu-btn" class="md:hidden absolute top-4 right-4 z-50 p-2 bg-gray-700 rounded h-12 w-12 flex items-center justify-center">
+<button id="mobile-menu-btn" 
+        class="md:hidden fixed top-4 right-4 z-50 p-2 bg-gray-700 rounded h-12 w-12 flex items-center justify-center">
   <span class="material-icons-outlined text-white text-2xl">menu</span>
 </button>
+
 
 
   <!-- Sidebar -->
