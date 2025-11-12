@@ -385,6 +385,7 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
 async function stopScreenShare() {
     const icon = document.getElementById('iconScreen');
     const text = document.getElementById('textScreen');
+    const defaultIcon = document.getElementById('default-user-icon');
 
     try {
         if (screenTrack) {
@@ -394,11 +395,18 @@ async function stopScreenShare() {
             screenTrack = null;
         }
 
-        localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-        await client.publish(localTracks.videoTrack);
-        await localTracks.videoTrack.play('local-player');
+        // Restore camera track safely
+        if (!localTracks.videoTrack) {
+            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+        }
 
-        const defaultIcon = document.getElementById('default-user-icon');
+        // Only publish if not already published
+        const publishedTracks = client.localTracks || [];
+        if (!publishedTracks.includes(localTracks.videoTrack)) {
+            await client.publish(localTracks.videoTrack);
+        }
+
+        localTracks.videoTrack.play('local-player');
         defaultIcon.classList.add('hidden');
         defaultIcon.classList.remove('flex');
 
@@ -412,6 +420,7 @@ async function stopScreenShare() {
         setStatus("❌ Error restoring camera: " + err.message, "error");
     }
 }
+
 
 // ---------------------- Auto Join ----------------------
 joinMeeting(meetingCode);
