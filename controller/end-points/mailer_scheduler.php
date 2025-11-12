@@ -76,7 +76,7 @@ try {
     $mail->Password = 'fcdc wynb xmsf clnl';
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
     $mail->Port = 587;
-    $mail->setFrom('jessbertsoliguin456@gmail.com', 'Meeting Scheduler');
+    $mail->setFrom('jessbertsoliguin456@gmail.com', 'Meeting Schedule');
     $mail->isHTML(true);
 
     // ✅ Prepare email content
