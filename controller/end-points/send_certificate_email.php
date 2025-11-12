@@ -35,7 +35,7 @@ if (isset($_SESSION['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
         }
 
         // Generate certificate link with user_id
-        $certificateLink = "https://dhvcon.space/DHVCON/home/certificate?user_id=$user_id&meeting_id=$meeting_id&meeting_pass=$meeting_pass";
+        $certificateLink = "https://dhvcon.space/home/certificate?user_id=$user_id&meeting_id=$meeting_id&meeting_pass=$meeting_pass";
 
         // Send email
         $mail = new PHPMailer(true);
