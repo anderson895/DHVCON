@@ -83,21 +83,19 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
         </div>
 
 
-            <!-- Main Content: Video + Chat -->
+        <!-- Main Content: Video + Chat -->
         <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-            
         
         
         
-        
-        <!-- Video Section -->
+
+            <!-- Video Section -->
             <div id="video-container" class="flex-1 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen">
                 <!-- Video players will appear here -->
             </div>
 
 
 
-                                    <!-- Chat Section -->
                                 <!-- Chat Section -->
             <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
 
@@ -131,6 +129,285 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
 
 
+<script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
+
+
+<?php 
+$user_id = $On_Session[0]['user_id'];
+?>
+
+
+
+
+<script>
+const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
+let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+let localTracks = { videoTrack: null, audioTrack: null };
+let screenTrack = null;
+let isSharingScreen = false;
+
+const videoContainer = document.getElementById('video-container');
+const statusBox = document.getElementById('status');
+const meetingCode  = "<?= $meetingCode ?>";
+const user_id = `<?= $user_id ?>`;
+
+function setStatus(message, type = '') {
+    statusBox.textContent = message;
+    if(type === "success") 
+        statusBox.className = "w-full p-2 mb-4 bg-green-100 rounded-md text-green-700 text-center";
+    else if(type === "error") 
+        statusBox.className = "w-full p-2 mb-4 bg-red-100 rounded-md text-red-700 text-center";
+    else 
+        statusBox.className = "w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center";
+}
+
+// ---------------------- Helper: Create user wrapper ----------------------
+function createUserWrapper(uid, name, isLocal = false) {
+    const wrapper = document.createElement('div');
+    wrapper.id = `wrapper-${uid}`;
+    wrapper.className = "relative aspect-video rounded-md overflow-hidden shadow-md bg-black m-2";
+
+    const videoDiv = document.createElement('div');
+    videoDiv.id = isLocal ? 'local-player' : `player-${uid}`;
+    videoDiv.className = "w-full h-full";
+    wrapper.appendChild(videoDiv);
+
+    const profileDiv = document.createElement('div');
+    profileDiv.id = isLocal ? 'default-user-icon' : `default-icon-${uid}`;
+    profileDiv.className = `absolute inset-0 ${isLocal ? 'hidden' : 'flex'} items-center justify-center text-white text-4xl font-bold rounded-full`;
+    profileDiv.style.fontFamily = 'sans-serif';
+    profileDiv.style.backgroundColor = '#6b7280';
+    wrapper.appendChild(profileDiv);
+
+    const nameTag = document.createElement('div');
+    nameTag.id = `name-tag-${uid}`;
+    nameTag.innerText = name;
+    nameTag.className = "absolute bottom-0 left-0 w-full text-center text-white bg-black/60 text-sm py-1 z-20";
+    wrapper.appendChild(nameTag);
+
+    // ---------------------- Mic Status ----------------------
+    const micStatus = document.createElement('span');
+    micStatus.id = `mic-status-${uid}`;
+    micStatus.className = "material-icons absolute top-2 right-2 text-white bg-black/50 rounded-full p-1";
+    micStatus.textContent = "mic"; // default mic ON
+    wrapper.appendChild(micStatus);
+
+    return wrapper;
+}
+
+
+
+// ---------------------- Join meeting ----------------------
+async function joinMeeting(code) {
+    try {
+        setStatus("Requesting camera & microphone permission...");
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        stream.getTracks().forEach(track => track.stop());
+
+        client.on('user-published', async (user, mediaType) => {
+            await client.subscribe(user, mediaType);
+
+            let wrapper = document.getElementById('wrapper-' + user.uid);
+            if(!wrapper) {
+                wrapper = createUserWrapper(user.uid, `User ${user.uid}`);
+                videoContainer.appendChild(wrapper);
+            }
+
+            if(mediaType === 'video') {
+                user.videoTrack.play('player-' + user.uid);
+                document.getElementById('player-' + user.uid).style.display = 'block';
+                document.getElementById('default-icon-' + user.uid).classList.add('hidden');
+            }
+
+            if(mediaType === 'audio') {
+                user.audioTrack.play();
+                const micIndicator = document.getElementById(`mic-status-${user.uid}`);
+                if(micIndicator) micIndicator.textContent = "mic"; // mic ON
+            }
+
+            get_each_users_data(user.uid);
+        });
+
+        client.on('user-unpublished', (user, mediaType) => {
+            if(mediaType === 'video') {
+                const player = document.getElementById('player-' + user.uid);
+                const icon = document.getElementById('default-icon-' + user.uid);
+                if(player && icon) {
+                    player.style.display = 'none';
+                    icon.classList.remove('hidden');
+                    icon.classList.add('flex');
+                    get_each_users_data(user.uid);
+                }
+            } else if (mediaType === 'audio') {
+                const micIndicator = document.getElementById(`mic-status-${user.uid}`);
+                if(micIndicator) micIndicator.textContent = "mic_off"; // mic OFF
+            }
+        });
+
+        setStatus(`Joining room: ${code} as ${user_id}...`);
+        await client.join(APP_ID, code, null, user_id);
+
+        localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+
+        const localWrapper = createUserWrapper('local', `${user_id} (You)`, true);
+        videoContainer.appendChild(localWrapper);
+
+        await localTracks.videoTrack.play('local-player');
+        await client.publish(Object.values(localTracks));
+
+        get_each_users_data(user_id, true);
+
+        setStatus(`✅ Joined meeting: ${code} as ${user_id}`, "success");
+
+    } catch(err) {
+        console.error(err);
+        setStatus("❌ Failed to join meeting: " + err.message, "error");
+    }
+}
+
+// ---------------------- Toggle Camera ----------------------
+document.getElementById('btnToggleCam').addEventListener('click', async () => {
+    if(!localTracks.videoTrack) return;
+
+    const icon = document.getElementById('iconCam');
+    const text = document.getElementById('textCam');
+    const defaultIcon = document.getElementById('default-user-icon');
+    const localPlayer = document.getElementById('local-player');
+
+    if(localTracks.videoTrack.enabled) {
+        await localTracks.videoTrack.setEnabled(false);
+        icon.textContent = 'videocam_off';
+        text.textContent = 'Turn On Cam';
+        localPlayer.style.display = 'none';
+        if(defaultIcon) {
+            get_each_users_data(user_id, true);
+            defaultIcon.classList.remove('hidden');
+            defaultIcon.classList.add('flex');
+        }
+    } else {
+        await localTracks.videoTrack.setEnabled(true);
+        icon.textContent = 'videocam';
+        text.textContent = 'Turn Off Cam';
+        localPlayer.style.display = 'block';
+        if(defaultIcon) {
+            defaultIcon.classList.add('hidden');
+            defaultIcon.classList.remove('flex');
+        }
+    }
+});
+
+// ---------------------- Toggle Mic ----------------------
+document.getElementById('btnToggleMic').addEventListener('click', async () => {
+    if (!localTracks.audioTrack) return;
+
+    const icon = document.getElementById('iconMic');
+    const text = document.getElementById('textMic');
+    const micIndicator = document.getElementById('mic-status-local');
+
+    if (localTracks.audioTrack.enabled) {
+        await localTracks.audioTrack.setEnabled(false);
+        icon.textContent = 'mic_off';
+        text.textContent = 'Turn On Mic';
+        if(micIndicator) micIndicator.textContent = "mic_off";
+    } else {
+        await localTracks.audioTrack.setEnabled(true);
+        icon.textContent = 'mic';
+        text.textContent = 'Turn Off Mic';
+        if(micIndicator) micIndicator.textContent = "mic";
+    }
+});
+
+
+
+// ---------------------- Share Screen ----------------------
+document.getElementById('btnShareScreen').addEventListener('click', async () => {
+    const icon = document.getElementById('iconScreen');
+    const text = document.getElementById('textScreen');
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getDisplayMedia) {
+        setStatus("❌ Screen sharing not supported on this browser/device.", "error");
+        return;
+    }
+
+    try {
+        if (!isSharingScreen) {
+            // Create screen track
+            screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
+
+            // Stop and release camera track cleanly
+            if (localTracks.videoTrack) {
+                try {
+                    await client.unpublish(localTracks.videoTrack);
+                } catch {}
+                localTracks.videoTrack.stop();
+                localTracks.videoTrack.close();
+                localTracks.videoTrack = null;
+            }
+
+            // Publish and play screen
+            await client.publish(screenTrack);
+            screenTrack.play('local-player');
+
+            icon.textContent = 'stop_screen_share';
+            text.textContent = 'Stop Sharing';
+            isSharingScreen = true;
+            setStatus("🖥️ Screen sharing started.", "success");
+
+            // If user stops from browser UI
+            screenTrack.on('track-ended', async () => await stopScreenShare());
+        } else {
+            await stopScreenShare();
+        }
+    } catch (err) {
+        console.error("Error sharing screen:", err);
+        setStatus("❌ Failed to start screen sharing: " + err.message, "error");
+        await stopScreenShare();
+    }
+});
+
+async function stopScreenShare() {
+    const icon = document.getElementById('iconScreen');
+    const text = document.getElementById('textScreen');
+
+    try {
+        // Unpublish and close screen track safely
+        if (screenTrack) {
+            try {
+                await client.unpublish(screenTrack);
+            } catch {}
+            screenTrack.stop();
+            screenTrack.close();
+            screenTrack = null;
+        }
+
+        // Always create a fresh camera track (never reuse closed one)
+        localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
+
+        await client.publish(localTracks.videoTrack);
+        await localTracks.videoTrack.play('local-player');
+
+        // Reset UI
+        const defaultIcon = document.getElementById('default-user-icon');
+        if (defaultIcon) {
+            defaultIcon.classList.add('hidden');
+            defaultIcon.classList.remove('flex');
+        }
+
+        icon.textContent = 'screen_share';
+        text.textContent = 'Share Screen';
+        isSharingScreen = false;
+        setStatus("🖥️ Screen sharing stopped. Camera restored.", "success");
+    } catch (err) {
+        console.error("Error stopping screen share:", err);
+        setStatus("❌ Error restoring camera: " + err.message, "error");
+    }
+}
+
+
+// ---------------------- Auto join ----------------------
+joinMeeting(meetingCode);
+</script>
 
 
 
@@ -144,7 +421,11 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 
 
 
-    
+
+
+
+
+
 <script>
 
 
