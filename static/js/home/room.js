@@ -1363,7 +1363,6 @@ $(document).on('click', '.delete-btn', function () {
 
 
 
-
 $("#frmMeeting").submit(function (e) {
     e.preventDefault();
 
@@ -1371,11 +1370,13 @@ $("#frmMeeting").submit(function (e) {
     formData.append('requestType', 'CreateMeeting');
     formData.append('room_id', room_id); 
 
-    // ✅ Show Swal loader
+    // ✅ Show Swal loader (dark mode)
     Swal.fire({
         title: 'Creating meeting...',
         html: 'Please wait while we create the meeting and notify members.',
         allowOutsideClick: false,
+        background: '#1a1a1a', // dark background
+        color: '#f0f0f0', // text color
         didOpen: () => {
             Swal.showLoading();
         }
@@ -1410,7 +1411,9 @@ $("#frmMeeting").submit(function (e) {
                                 title: 'Meeting Created!',
                                 html: 'Emails sent to all members successfully.',
                                 timer: 2000,
-                                showConfirmButton: false
+                                showConfirmButton: false,
+                                background: '#1a1a1a',
+                                color: '#f0f0f0'
                             }).then(() => {
                                 location.reload();
                             });
@@ -1419,7 +1422,9 @@ $("#frmMeeting").submit(function (e) {
                                 icon: 'warning',
                                 title: 'Meeting Created!',
                                 html: 'But email sending failed: ' + mailResponse.message,
-                                confirmButtonText: 'Reload'
+                                confirmButtonText: 'Reload',
+                                background: '#1a1a1a',
+                                color: '#f0f0f0'
                             }).then(() => {
                                 location.reload();
                             });
@@ -1430,7 +1435,9 @@ $("#frmMeeting").submit(function (e) {
                             icon: 'error',
                             title: 'Mailer AJAX failed',
                             html: error,
-                            confirmButtonText: 'Reload'
+                            confirmButtonText: 'Reload',
+                            background: '#1a1a1a',
+                            color: '#f0f0f0'
                         }).then(() => {
                             location.reload();
                         });
@@ -1441,7 +1448,9 @@ $("#frmMeeting").submit(function (e) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    html: response.message
+                    html: response.message,
+                    background: '#1a1a1a',
+                    color: '#f0f0f0'
                 });
             }
         },
@@ -1449,7 +1458,9 @@ $("#frmMeeting").submit(function (e) {
             Swal.fire({
                 icon: 'error',
                 title: 'AJAX Error',
-                html: error
+                html: error,
+                background: '#1a1a1a',
+                color: '#f0f0f0'
             });
         }
     });
