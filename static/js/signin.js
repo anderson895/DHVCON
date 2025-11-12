@@ -20,8 +20,8 @@ $(document).ready(function () {
         $('#btnLogin').prop('disabled', false);
 
         const darkSwal = {
-          background: "#2c2c2c", // dark background
-          color: "#f1f1f1",      // light text
+          background: "#2c2c2c",
+          color: "#f1f1f1",      
         };
 
         if (response.status === "success") {
