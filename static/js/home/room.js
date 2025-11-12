@@ -745,12 +745,8 @@ $(document).on("click", ".join-meeting", function() {
 
 
 
-
-// Inside fetchMeetings(), after appending all cards
 $(document).on('click', '.btnCloseMeeting', function() {
     const button = $(this);
-
-    console.log('click');
 
     // Prevent clicking if disabled
     if (button.prop("disabled")) return;
@@ -764,8 +760,8 @@ $(document).on('click', '.btnCloseMeeting', function() {
         confirmButtonText: 'Yes, close it',
         cancelButtonText: 'Cancel',
         background: '#1e1f22',        // dark background
-        color: '#ffffff',              // text color
-        iconColor: '#FFD700',          // optional icon color (gold)
+        color: '#ffffff',              // white text
+        iconColor: '#FFD700',          // gold icon
         customClass: {
             confirmButton: 'bg-red-600 hover:bg-red-700 text-white',
             cancelButton: 'bg-gray-600 hover:bg-gray-700 text-white'
@@ -773,9 +769,9 @@ $(document).on('click', '.btnCloseMeeting', function() {
     }).then((result) => {
         if (result.isConfirmed) {
 
-            const meetingId = $(this).data("meeting-id"); 
+            const meetingId = button.data("meeting-id"); 
 
-            // Send AJAX request to update status
+            // AJAX request to close meeting
             $.ajax({
                 url: '../controller/end-points/controller.php',
                 type: 'POST',
@@ -799,11 +795,8 @@ $(document).on('click', '.btnCloseMeeting', function() {
                                       .removeClass("hover:bg-red-300");
                             }
                         }).then(() => {
-                            setTimeout(() => {
-                                location.reload();
-                            }, 500); 
+                            setTimeout(() => location.reload(), 500); 
                         });
-
                     } else {
                         Swal.fire({
                             icon: 'error',
@@ -815,8 +808,7 @@ $(document).on('click', '.btnCloseMeeting', function() {
                         });
                     }
                 },
-                error: function(xhr, status, error) {
-                    console.error(error);
+                error: function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
