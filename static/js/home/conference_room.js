@@ -166,7 +166,6 @@ $(document).ready(function() {
 
 // REQUEST
 
-
 // CHAT
 const chatToggle = document.getElementById('chat-toggle');
 const chatIcon = document.getElementById('chat-toggle-icon');
@@ -186,8 +185,6 @@ chatCloseContainer.appendChild(chatCloseIcon);
 let isCollapsed = window.innerWidth < 640;
 let inputFocused = false;
 let submitting = false;
-
-
 
 // Slide helpers
 function slideIn(element) {
@@ -212,22 +209,20 @@ function initChat() {
     chatCloseIcon.style.display = isCollapsed ? 'inline-flex' : 'none';
 
     // Messages max-height
-    if (!inputFocused) {
-        chatMessagesWrapper.style.maxHeight = isCollapsed ? '0' : '60vh';
-        chatIcon.textContent = isCollapsed ? 'expand_less' : 'expand_less';
-    }
+    chatMessagesWrapper.style.maxHeight = isCollapsed ? '0' : '60vh';
+    chatIcon.textContent = 'expand_less';
 
     // Show/hide chat & mobile button
     if (isCollapsed) {
         chatSection.style.display = 'none';
         chatSection.style.transform = 'translateX(100%)';
         chatSection.style.opacity = '0';
-        mobileChatBtn.style.display = 'flex';
+        if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
     } else {
         chatSection.style.display = 'flex';
         chatSection.style.transform = 'translateX(0)';
         chatSection.style.opacity = '1';
-        mobileChatBtn.style.display = 'none';
+        if (mobileChatBtn) mobileChatBtn.style.display = 'none';
     }
 }
 initChat();
@@ -247,7 +242,7 @@ chatIcon.addEventListener('click', () => {
 chatCloseIcon.addEventListener('click', () => {
     if (isCollapsed) {
         slideOut(chatSection);
-        mobileChatBtn.style.display = 'flex';
+        if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
     }
 });
 
@@ -259,13 +254,19 @@ chatInput.addEventListener('focus', () => {
 
 chatInput.addEventListener('blur', () => {
     if (!submitting && isCollapsed) {
-        inputFocused = false;
-        chatMessagesWrapper.style.maxHeight = '0';
+        // Only collapse if focus moved outside the chat
+        setTimeout(() => {
+            if (!chatSection.contains(document.activeElement)) {
+                inputFocused = false;
+                chatMessagesWrapper.style.maxHeight = '0';
+            }
+        }, 0);
     }
 });
 
 // Prevent collapse while submitting
-chatForm.addEventListener('submit', () => {
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
     submitting = true;
     inputFocused = true;
     chatMessagesWrapper.style.maxHeight = '60vh';
@@ -280,10 +281,11 @@ mobileChatBtn.addEventListener('click', () => {
 
 // Click outside to close (mobile)
 document.addEventListener('click', (event) => {
-    if (!chatSection.contains(event.target) && !mobileChatBtn.contains(event.target)) {
-        if (isCollapsed && chatSection.style.display !== 'none') {
+    if (isCollapsed && chatSection.style.display !== 'none') {
+        // Only close if click is outside chat AND outside mobile button
+        if (!chatSection.contains(event.target) && (!mobileChatBtn || !mobileChatBtn.contains(event.target))) {
             slideOut(chatSection);
-            mobileChatBtn.style.display = 'flex';
+            if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
         }
     }
 });
