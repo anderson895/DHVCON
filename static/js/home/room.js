@@ -755,17 +755,24 @@ $(document).on('click', '.btnCloseMeeting', function() {
     // Prevent clicking if disabled
     if (button.prop("disabled")) return;
 
-    // Optionally, confirm with user
+    // Dark mode SweetAlert
     Swal.fire({
         title: 'Close Meeting?',
         text: "Are you sure you want to close this meeting?",
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Yes, close it',
-        cancelButtonText: 'Cancel'
+        cancelButtonText: 'Cancel',
+        background: '#1e1f22',        // dark background
+        color: '#ffffff',              // text color
+        iconColor: '#FFD700',          // optional icon color (gold)
+        customClass: {
+            confirmButton: 'bg-red-600 hover:bg-red-700 text-white',
+            cancelButton: 'bg-gray-600 hover:bg-gray-700 text-white'
+        }
     }).then((result) => {
         if (result.isConfirmed) {
-           
+
             const meetingId = $(this).data("meeting-id"); 
 
             // Send AJAX request to update status
@@ -779,27 +786,32 @@ $(document).on('click', '.btnCloseMeeting', function() {
                 dataType: 'json',
                 success: function(res) {
                     if (res.status === 200) {
-                       Swal.fire({
-                          icon: 'success',
-                          title: 'Meeting Closed',
-                          timer: 1000,    
-                          showConfirmButton: false,
-                          didOpen: () => {
-                              button.prop("disabled", true)
-                                    .addClass("cursor-not-allowed opacity-50")
-                                    .removeClass("hover:bg-red-300");
-                          }
-                      }).then(() => {
-                          setTimeout(() => {
-                              location.reload();
-                          }, 500); 
-                      });
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Meeting Closed',
+                            timer: 1000,    
+                            showConfirmButton: false,
+                            background: '#1e1f22',
+                            color: '#ffffff',
+                            didOpen: () => {
+                                button.prop("disabled", true)
+                                      .addClass("cursor-not-allowed opacity-50")
+                                      .removeClass("hover:bg-red-300");
+                            }
+                        }).then(() => {
+                            setTimeout(() => {
+                                location.reload();
+                            }, 500); 
+                        });
 
                     } else {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: res.message || 'Something went wrong.'
+                            text: res.message || 'Something went wrong.',
+                            background: '#1e1f22',
+                            color: '#ffffff',
+                            iconColor: '#FF4C4C'
                         });
                     }
                 },
@@ -808,13 +820,17 @@ $(document).on('click', '.btnCloseMeeting', function() {
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'Unable to close the meeting.'
+                        text: 'Unable to close the meeting.',
+                        background: '#1e1f22',
+                        color: '#ffffff',
+                        iconColor: '#FF4C4C'
                     });
                 }
             });
         }
     });
 });
+
 
 
 
