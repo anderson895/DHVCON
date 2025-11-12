@@ -53,15 +53,12 @@ $(document).ready(function() {
                         self.addMessage({
                             message: message,
                             sender_self: true,
-                            sender_name: 'You', // optional display for self
+                            sender_name: 'You',
                             sender_position: ''
                         });
                     } else {
                         alert('Failed to send message');
                     }
-                },
-                error: function() {
-                    // alert('Error sending message');
                 }
             });
         }
@@ -87,14 +84,27 @@ $(document).ready(function() {
         }
 
         addMessage(msg) {
+
+            console.log(msg);
+            // Profile picture or first letter icon
+            let userAvatar = "";
+            if (msg.user_profile_pict) {
+                userAvatar = `<img src="../static/upload/profile/${msg.user_profile_pict}" alt="${msg.sender_name}" class="w-8 h-8 rounded-full object-cover mt-1">`;
+            } else {
+                const firstLetter = msg.sender_name.charAt(0).toUpperCase();
+                userAvatar = `
+                    <div class="w-8 h-8 rounded-full bg-gray-600 text-white flex items-center justify-center font-semibold mt-1">
+                        ${firstLetter}
+                    </div>
+                `;
+            }
+
             const messageEl = $(`
-              <div class="flex ${msg.sender_self ? 'justify-end' : 'justify-start'} mb-2">
-                <div class="flex flex-col ${msg.sender_self ? 'items-end' : 'items-start'} max-w-[70%]">
-                    <!-- Message bubble -->
+              <div class="flex ${msg.sender_self ? 'justify-end' : 'justify-start'} mb-2 items-start">
+                ${!msg.sender_self ? userAvatar : ''}
+                <div class="flex flex-col ${msg.sender_self ? 'items-end' : 'items-start'} max-w-[70%] ml-2 ${msg.sender_self ? 'mr-2 ml-0' : ''}">
                     <div class="px-3 py-2 rounded-lg ${msg.sender_self ? 'bg-gray-700 text-white' : 'bg-gray-800 text-gray-200'} break-words">
                         ${msg.message}
-
-                        <!-- Sender name and position below the bubble -->
                         <div class="text-xs font-medium ${msg.sender_self ? 'text-gray-400' : 'text-gray-500'} mt-1">
                             ${msg.sender_self ? 'You' : msg.sender_name} 
                             <span class="text-[10px] text-gray-400">
@@ -102,13 +112,11 @@ $(document).ready(function() {
                             </span>
                         </div>
                     </div>
-                    
                 </div>
-            </div>
-
-
-
+                ${msg.sender_self ? userAvatar : ''}
+              </div>
             `);
+
             this.chatContainer.append(messageEl);
             this.scrollBottom();
         }
@@ -149,7 +157,6 @@ $(document).ready(function() {
     const chatApp = new Chat(roomCode);
 
 });
-
 
 
 
