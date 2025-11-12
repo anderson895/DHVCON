@@ -163,3 +163,5 @@ include "../src/components/home/footer.php";
 ?>
 
 <script src="../static/js/home/index.js"></script>
+
+
