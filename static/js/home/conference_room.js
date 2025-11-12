@@ -166,8 +166,10 @@ $(document).ready(function() {
 
 // REQUEST
 
-
+// ========================
 // CHAT
+// ========================
+
 const chatToggle = document.getElementById('chat-toggle');
 const chatIcon = document.getElementById('chat-toggle-icon');
 const chatCloseContainer = document.getElementById('chat-close-container');
@@ -177,19 +179,24 @@ const chatForm = document.getElementById('chat-form');
 const chatSection = document.getElementById('chat-section');
 const mobileChatBtn = document.getElementById('mobile-chat-btn');
 
+// ------------------------
 // Create mobile close icon
+// ------------------------
 const chatCloseIcon = document.createElement('span');
 chatCloseIcon.className = 'material-icons text-gray-300 hover:text-white cursor-pointer sm:hidden';
 chatCloseIcon.textContent = 'close';
 chatCloseContainer.appendChild(chatCloseIcon);
 
+// ------------------------
+// State variables
+// ------------------------
 let isCollapsed = window.innerWidth < 640;
 let inputFocused = false;
 let submitting = false;
 
-
-
+// ------------------------
 // Slide helpers
+// ------------------------
 function slideIn(element) {
     element.style.display = 'flex';
     requestAnimationFrame(() => {
@@ -204,7 +211,9 @@ function slideOut(element) {
     setTimeout(() => (element.style.display = 'none'), 300);
 }
 
+// ------------------------
 // Initialize chat state
+// ------------------------
 function initChat() {
     isCollapsed = window.innerWidth < 640;
 
@@ -212,27 +221,27 @@ function initChat() {
     chatCloseIcon.style.display = isCollapsed ? 'inline-flex' : 'none';
 
     // Messages max-height
-    if (!inputFocused) {
-        chatMessagesWrapper.style.maxHeight = isCollapsed ? '0' : '60vh';
-        chatIcon.textContent = isCollapsed ? 'expand_less' : 'expand_less';
-    }
+    chatMessagesWrapper.style.maxHeight = isCollapsed ? '0' : '60vh';
+    chatIcon.textContent = 'expand_less';
 
     // Show/hide chat & mobile button
     if (isCollapsed) {
         chatSection.style.display = 'none';
         chatSection.style.transform = 'translateX(100%)';
         chatSection.style.opacity = '0';
-        mobileChatBtn.style.display = 'flex';
+        if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
     } else {
         chatSection.style.display = 'flex';
         chatSection.style.transform = 'translateX(0)';
         chatSection.style.opacity = '1';
-        mobileChatBtn.style.display = 'none';
+        if (mobileChatBtn) mobileChatBtn.style.display = 'none';
     }
 }
 initChat();
 
+// ------------------------
 // Arrow toggle (desktop + mobile)
+// ------------------------
 chatIcon.addEventListener('click', () => {
     if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
         chatMessagesWrapper.style.maxHeight = '60vh';
@@ -243,15 +252,19 @@ chatIcon.addEventListener('click', () => {
     }
 });
 
+// ------------------------
 // Close chat (mobile only)
+// ------------------------
 chatCloseIcon.addEventListener('click', () => {
     if (isCollapsed) {
         slideOut(chatSection);
-        mobileChatBtn.style.display = 'flex';
+        if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
     }
 });
 
+// ------------------------
 // Expand while typing
+// ------------------------
 chatInput.addEventListener('focus', () => {
     inputFocused = true;
     chatMessagesWrapper.style.maxHeight = '60vh';
@@ -259,36 +272,58 @@ chatInput.addEventListener('focus', () => {
 
 chatInput.addEventListener('blur', () => {
     if (!submitting && isCollapsed) {
-        inputFocused = false;
-        chatMessagesWrapper.style.maxHeight = '0';
+        setTimeout(() => {
+            // Only collapse if focus is outside chat section
+            if (!chatSection.contains(document.activeElement)) {
+                inputFocused = false;
+                chatMessagesWrapper.style.maxHeight = '0';
+            }
+        }, 50);
     }
 });
 
+// ------------------------
 // Prevent collapse while submitting
-chatForm.addEventListener('submit', () => {
+// ------------------------
+chatForm.addEventListener('submit', (e) => {
+    e.preventDefault();
     submitting = true;
     inputFocused = true;
     chatMessagesWrapper.style.maxHeight = '60vh';
     setTimeout(() => (submitting = false), 100);
 });
 
+// ------------------------
 // Mobile chat button
-mobileChatBtn.addEventListener('click', () => {
-    slideIn(chatSection);
-    mobileChatBtn.style.display = 'none';
-});
+// ------------------------
+if (mobileChatBtn) {
+    mobileChatBtn.addEventListener('click', () => {
+        slideIn(chatSection);
+        mobileChatBtn.style.display = 'none';
+    });
+}
 
+// ------------------------
 // Click outside to close (mobile)
+// ------------------------
 document.addEventListener('click', (event) => {
-    if (!chatSection.contains(event.target) && !mobileChatBtn.contains(event.target)) {
-        if (isCollapsed && chatSection.style.display !== 'none') {
-            slideOut(chatSection);
-            mobileChatBtn.style.display = 'flex';
+    if (isCollapsed && chatSection.style.display !== 'none') {
+        if (
+            !chatSection.contains(event.target) &&
+            (!mobileChatBtn || !mobileChatBtn.contains(event.target))
+        ) {
+            // Only close if input is not focused
+            if (document.activeElement !== chatInput) {
+                slideOut(chatSection);
+                if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
+            }
         }
     }
 });
 
+// ------------------------
 // Update on window resize
+// ------------------------
 window.addEventListener('resize', initChat);
 
 
