@@ -7,107 +7,102 @@ $profile_pict=$On_Session[0]['user_profile_pict'];
 $user_id = $On_Session[0]['user_id'];
 ?>
 <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300 min-h-screen flex flex-col">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
-            <!-- Title -->
-            <h1 class="text-2xl md:text-xl text-gray-100 font-semibold truncate w-full md:w-auto">Conference Room</h1>
-            <!-- Right Controls -->
-            <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full md:w-auto">
-                <!-- Room Code -->
-                <div class="text-gray-400 text-sm md:text-base truncate md:mr-4 flex-shrink-0">
-                    Room Code: <span class="text-gray-100 font-medium"><?= $meetingCode ?></span>
-                </div>
-                <!-- Buttons Row (scrollable on mobile) -->
-                <div class="flex flex-row gap-2 overflow-x-auto md:overflow-visible">
-                    <!-- Pending Requests Button -->
-                    <button id="pendingRequestsBtn" <?=$authorization; ?> class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
-                        <span class="material-icons text-base">person_add</span>
-                        <span class="truncate">Requests</span>
-                        <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
-                    </button>
-                    <!-- View Attendance Button -->
-                    <button id="viewAttendanceBtn" <?=$authorization; ?> class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
-                        <span class="material-icons text-base">groups</span>
-                        <span class="truncate">Attendance</span>
-                    </button>
-
-                    <!-- Leave Room Button -->
-                    <button id="btnLeaveRoom" class="joiner-only cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md flex-shrink-0">
-                        <span class="material-icons text-base">exit_to_app</span>
-                        <span class="hidden sm:inline truncate">Leave Room</span>
-                    </button>
-                </div>
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center px-4 sm:px-6 py-4 bg-[#1f1f25] rounded-md shadow-lg mb-4 border border-gray-700 gap-3 md:gap-0">
+        <!-- Title -->
+        <h1 class="text-2xl md:text-xl text-gray-100 font-semibold truncate w-full md:w-auto">Conference Room</h1>
+        <!-- Right Controls -->
+        <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 w-full md:w-auto">
+            <!-- Room Code -->
+            <div class="text-gray-400 text-sm md:text-base truncate md:mr-4 flex-shrink-0">
+                Room Code: <span class="text-gray-100 font-medium"><?= $meetingCode ?></span>
+            </div>
+            <!-- Buttons Row (scrollable on mobile) -->
+            <div class="flex flex-row gap-2 overflow-x-auto md:overflow-visible">
+                <button id="pendingRequestsBtn" <?=$authorization; ?> class="cursor-pointer relative px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex items-center gap-1 flex-shrink-0">
+                    <span class="material-icons text-base">person_add</span>
+                    <span class="truncate">Requests</span>
+                    <span id="pendingCount" class="absolute -top-2 -right-2 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+                </button>
+                <button id="viewAttendanceBtn" <?=$authorization; ?> class="cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white rounded-md flex-shrink-0">
+                    <span class="material-icons text-base">groups</span>
+                    <span class="truncate">Attendance</span>
+                </button>
+                <button id="btnLeaveRoom" class="joiner-only cursor-pointer flex items-center gap-1 px-3 py-1 bg-gray-700 hover:bg-gray-600 text-gray-100 rounded-md flex-shrink-0">
+                    <span class="material-icons text-base">exit_to_app</span>
+                    <span class="hidden sm:inline truncate">Leave Room</span>
+                </button>
             </div>
         </div>
-        <!-- Status -->
-        <div id="status" class="w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center">
-            Ready to join
+    </div>
+
+    <!-- Status -->
+    <div id="status" class="w-full p-2 mb-4 bg-gray-200 rounded-md text-gray-800 text-center">
+        Ready to join
+    </div>
+
+    <!-- Main Content: Video + Chat -->
+    <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
+        <!-- Video Section -->
+        <div class="flex-1 flex flex-col gap-4">
+            <!-- Spotlight Section -->
+            <div id="spotlight-container" class="w-full aspect-video rounded-md overflow-hidden shadow-lg bg-black hidden mb-4"></div>
+            <!-- Video Grid -->
+            <div id="video-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen"></div>
         </div>
 
-        
-
-        <!-- Main Content: Video + Chat -->
-        <div class="flex flex-1 gap-4 flex-col-reverse md:flex-row">
-
-        
-            <!-- Video Section -->
-            <div class="flex-1 flex flex-col gap-4">
-                <!-- Spotlight Section -->
-                <div id="spotlight-container" class="w-full aspect-video rounded-md overflow-hidden shadow-lg bg-black hidden mb-4">
-                    <!-- Spotlight video will appear here -->
+        <!-- Chat Section -->
+        <div id="chat-section" 
+            class="fixed bottom-4 right-4 w-full max-w-[350px] sm:w-80 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50 hidden sm:flex">
+            <!-- Chat Header -->
+            <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
+                <span>Chat</span>
+                <div class="flex items-center gap-2">
+                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white cursor-pointer">expand_less</span>
+                    <span id="chat-close-container"></span> <!-- mobile close icon will go here -->
                 </div>
 
-                <!-- Video Grid -->
-                <div id="video-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 overflow-y-auto max-h-screen">
-                    <!-- Video players will appear here -->
-                </div>
             </div>
-            <!-- Chat Section -->
-            <div id="chat-section" class="fixed bottom-0 w-full sm:w-80 right-0 sm:right-4 bg-[#2b2d31] rounded-t-md flex flex-col shadow-lg border border-gray-700 overflow-hidden transition-all duration-300 z-50">
-                <!-- Chat Header -->
-                <div id="chat-toggle" class="px-4 py-2 border-b border-gray-600 text-gray-100 font-semibold flex justify-between items-center cursor-pointer">
-                    <span>Chat</span>
-                    <span id="chat-toggle-icon" class="material-icons text-gray-300 hover:text-white">expand_less</span>
-                </div>
-                <!-- Chat Messages (collapsible) -->
-                <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
-                    <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2">
-                        <!-- Messages appear here -->
-                    </div>
-                </div>
-                <!-- Chat Form (always visible) -->
-                <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
-                    <input type="text" id="chat-input" placeholder="Type a message..." 
-                        class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button type="submit" 
-                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-                        Send
-                    </button>
-                </form>
+
+            <!-- Chat Messages -->
+            <div id="chat-messages-wrapper" class="flex flex-col max-h-[60vh] overflow-hidden transition-all duration-300">
+                <div id="chat-messages" class="flex-1 p-2 overflow-y-auto text-gray-200 space-y-2"></div>
             </div>
+
+            <!-- Chat Form -->
+            <form id="chat-form" class="flex flex-row items-center justify-center p-2 border-t border-gray-600 gap-2 pb-safe">
+                <input type="text" id="chat-input" placeholder="Type a message..." 
+                    class="flex-1 px-3 py-2 rounded-md bg-[#1f1f25] text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button type="submit" class="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">Send</button>
+            </form>
         </div>
 
-        <!-- Controls: Cam / Mic / Screen -->
-        <div class="flex justify-center gap-4 mb-4">
-            <!-- Toggle Camera -->
-            <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-                <span id="iconCam" class="material-icons">videocam</span>
-                <span id="textCam" hidden>Turn Off Cam</span>
-            </button>
 
-            <!-- Toggle Mic -->
-            <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-                <span id="iconMic" class="material-icons">mic</span>
-                <span id="textMic" hidden>Turn Off Mic</span>
-            </button>
+    </div>
 
-            <!-- Share Screen -->
-            <button id="btnShareScreen" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
-                <span id="iconScreen" class="material-icons">stop_screen_share</span>
-                <span id="textScreen" hidden>Share Screen</span>
-            </button>
-        </div>
+    <!-- Mobile Chat Button -->
+    <button id="mobile-chat-btn" class="sm:hidden fixed bottom-4 right-4 z-50 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center">
+        <span class="material-icons">message</span>
+    </button>
+
+    <!-- Controls: Cam / Mic / Screen -->
+    <div class="flex justify-center gap-4 mb-4">
+        <button id="btnToggleCam" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+            <span id="iconCam" class="material-icons">videocam</span>
+            <span id="textCam" hidden>Turn Off Cam</span>
+        </button>
+        <button id="btnToggleMic" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+            <span id="iconMic" class="material-icons">mic</span>
+            <span id="textMic" hidden>Turn Off Mic</span>
+        </button>
+        <button id="btnShareScreen" class="cursor-pointer flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-md">
+            <span id="iconScreen" class="material-icons">stop_screen_share</span>
+            <span id="textScreen" hidden>Share Screen</span>
+        </button>
+    </div>
 </main>
+
+
 
 
 

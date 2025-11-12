@@ -168,31 +168,72 @@ $(document).ready(function() {
 
 
 // CHAT
-
 const chatToggle = document.getElementById('chat-toggle');
 const chatIcon = document.getElementById('chat-toggle-icon');
+const chatCloseContainer = document.getElementById('chat-close-container');
 const chatMessagesWrapper = document.getElementById('chat-messages-wrapper');
 const chatInput = document.getElementById('chat-input');
 const chatForm = document.getElementById('chat-form');
+const chatSection = document.getElementById('chat-section');
+const mobileChatBtn = document.getElementById('mobile-chat-btn');
+
+// Create mobile close icon
+const chatCloseIcon = document.createElement('span');
+chatCloseIcon.className = 'material-icons text-gray-300 hover:text-white cursor-pointer sm:hidden';
+chatCloseIcon.textContent = 'close';
+chatCloseContainer.appendChild(chatCloseIcon);
 
 let isCollapsed = window.innerWidth < 640;
 let inputFocused = false;
 let submitting = false;
 
+
+
+// Slide helpers
+function slideIn(element) {
+    element.style.display = 'flex';
+    requestAnimationFrame(() => {
+        element.style.transform = 'translateX(0)';
+        element.style.opacity = '1';
+    });
+}
+
+function slideOut(element) {
+    element.style.transform = 'translateX(100%)';
+    element.style.opacity = '0';
+    setTimeout(() => (element.style.display = 'none'), 300);
+}
+
 // Initialize chat state
 function initChat() {
-    if (isCollapsed && !inputFocused) {
-        chatMessagesWrapper.style.maxHeight = '0';
-        chatIcon.textContent = 'expand_more';
+    isCollapsed = window.innerWidth < 640;
+
+    // Show/hide mobile close icon
+    chatCloseIcon.style.display = isCollapsed ? 'inline-flex' : 'none';
+
+    // Messages max-height
+    if (!inputFocused) {
+        chatMessagesWrapper.style.maxHeight = isCollapsed ? '0' : '60vh';
+        chatIcon.textContent = isCollapsed ? 'expand_less' : 'expand_less';
+    }
+
+    // Show/hide chat & mobile button
+    if (isCollapsed) {
+        chatSection.style.display = 'none';
+        chatSection.style.transform = 'translateX(100%)';
+        chatSection.style.opacity = '0';
+        mobileChatBtn.style.display = 'flex';
     } else {
-        chatMessagesWrapper.style.maxHeight = '60vh';
-        chatIcon.textContent = 'expand_less';
+        chatSection.style.display = 'flex';
+        chatSection.style.transform = 'translateX(0)';
+        chatSection.style.opacity = '1';
+        mobileChatBtn.style.display = 'none';
     }
 }
 initChat();
 
-// Toggle messages container manually
-chatToggle.addEventListener('click', () => {
+// Arrow toggle (desktop + mobile)
+chatIcon.addEventListener('click', () => {
     if (chatMessagesWrapper.style.maxHeight === '0px' || chatMessagesWrapper.style.maxHeight === '0') {
         chatMessagesWrapper.style.maxHeight = '60vh';
         chatIcon.textContent = 'expand_less';
@@ -202,43 +243,53 @@ chatToggle.addEventListener('click', () => {
     }
 });
 
-// Keep chat expanded while typing
+// Close chat (mobile only)
+chatCloseIcon.addEventListener('click', () => {
+    if (isCollapsed) {
+        slideOut(chatSection);
+        mobileChatBtn.style.display = 'flex';
+    }
+});
+
+// Expand while typing
 chatInput.addEventListener('focus', () => {
     inputFocused = true;
     chatMessagesWrapper.style.maxHeight = '60vh';
-    chatIcon.textContent = 'expand_less';
 });
 
 chatInput.addEventListener('blur', () => {
-    if (!submitting) {  // only collapse if not submitting
+    if (!submitting && isCollapsed) {
         inputFocused = false;
-        if (isCollapsed) {
-            chatMessagesWrapper.style.maxHeight = '0';
-            chatIcon.textContent = 'expand_more';
+        chatMessagesWrapper.style.maxHeight = '0';
+    }
+});
+
+// Prevent collapse while submitting
+chatForm.addEventListener('submit', () => {
+    submitting = true;
+    inputFocused = true;
+    chatMessagesWrapper.style.maxHeight = '60vh';
+    setTimeout(() => (submitting = false), 100);
+});
+
+// Mobile chat button
+mobileChatBtn.addEventListener('click', () => {
+    slideIn(chatSection);
+    mobileChatBtn.style.display = 'none';
+});
+
+// Click outside to close (mobile)
+document.addEventListener('click', (event) => {
+    if (!chatSection.contains(event.target) && !mobileChatBtn.contains(event.target)) {
+        if (isCollapsed && chatSection.style.display !== 'none') {
+            slideOut(chatSection);
+            mobileChatBtn.style.display = 'flex';
         }
     }
 });
 
-// Prevent collapse when submitting
-chatForm.addEventListener('submit', (e) => {
-    submitting = true;
-    inputFocused = true;  // keep expanded
-    chatMessagesWrapper.style.maxHeight = '60vh';
-    chatIcon.textContent = 'expand_less';
-    
-    // allow some delay before resetting
-    setTimeout(() => {
-        submitting = false;
-    }, 100); // adjust if needed
-});
-
-// Update on resize
-window.addEventListener('resize', () => {
-    isCollapsed = window.innerWidth < 640;
-    initChat();
-});
-
-
+// Update on window resize
+window.addEventListener('resize', initChat);
 
 
 
