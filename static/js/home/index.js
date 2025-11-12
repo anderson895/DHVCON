@@ -126,7 +126,6 @@ $(document).ready(function() {
 
     // Initial fetch
     fetchRooms();
-});
 
 
 
@@ -137,33 +136,10 @@ $(document).ready(function() {
 
 
 
- // Toggle See More / See Less (preserve text color + scrollable)
-                $(document).on("click", ".see-more", function() {
-                    const wrapper = $(this).closest(".desc-wrapper");
-                    const textBox = wrapper.find(".desc-text");
-                    const fullText = textBox.data("full");
-                    const shortText = fullText.substring(0, 255) + "...";
-
-                    if ($(this).text() === "See more") {
-                        textBox.html(`
-                            <div class="max-h-24 overflow-y-auto pr-1 custom-scroll">
-                                ${fullText}
-                            </div>
-                        `);
-                        $(this).text("See less");
-                    } else {
-                        textBox.text(shortText);
-                        $(this).text("See more");
-                    }
-                });
 
 
 
-
-                
-
-                    // ✅ Attach click event for delete buttons after rendering
-                //  $(".delete-room").click(function() {
+                // $(".delete-room").click(function() {
                 $(document).on("click", ".delete-room", function() {
                     let room_id = $(this).data("room_id");
 
@@ -233,6 +209,43 @@ $(document).ready(function() {
                         }
                     });
                 });
+});
+
+
+
+
+
+
+
+
+
+
+ // Toggle See More / See Less (preserve text color + scrollable)
+                $(document).on("click", ".see-more", function() {
+                    const wrapper = $(this).closest(".desc-wrapper");
+                    const textBox = wrapper.find(".desc-text");
+                    const fullText = textBox.data("full");
+                    const shortText = fullText.substring(0, 255) + "...";
+
+                    if ($(this).text() === "See more") {
+                        textBox.html(`
+                            <div class="max-h-24 overflow-y-auto pr-1 custom-scroll">
+                                ${fullText}
+                            </div>
+                        `);
+                        $(this).text("See less");
+                    } else {
+                        textBox.text(shortText);
+                        $(this).text("See more");
+                    }
+                });
+
+
+
+
+                
+
+                
 
 
 
@@ -270,15 +283,36 @@ $("#createRoomForm").submit(function(e){
 
     // Validate inputs
     if (!roomName) {
-        Swal.fire("Warning", "Please enter a room name.", "warning");
+        Swal.fire({
+            title: "Warning",
+            text: "Please enter a room name.",
+            icon: "warning",
+            background: "#1A1A1A",
+            color: "#FFFFFF",
+            confirmButtonColor: "#5865f2"
+        });
         return;
     }
     if (!roomDescription) {
-        Swal.fire("Warning", "Please enter a room description.", "warning");
+        Swal.fire({
+            title: "Warning",
+            text: "Please enter a room description.",
+            icon: "warning",
+            background: "#1A1A1A",
+            color: "#FFFFFF",
+            confirmButtonColor: "#5865f2"
+        });
         return;
     }
     if (!roomBanner) {
-        Swal.fire("Warning", "Please select a room banner image.", "warning");
+        Swal.fire({
+            title: "Warning",
+            text: "Please select a room banner image.",
+            icon: "warning",
+            background: "#1A1A1A",
+            color: "#FFFFFF",
+            confirmButtonColor: "#5865f2"
+        });
         return;
     }
 
@@ -297,7 +331,14 @@ $("#createRoomForm").submit(function(e){
         success: function(res){
             let response = JSON.parse(res);
             if(response.status === 200){
-                Swal.fire("Success", response.message, "success");
+                Swal.fire({
+                    title: "Success",
+                    text: response.message,
+                    icon: "success",
+                    background: "#1A1A1A",
+                    color: "#FFFFFF",
+                    confirmButtonColor: "#5865f2"
+                });
                 $("#createRoomModal").fadeOut(200);
 
                 // Refresh rooms after 1 second
@@ -306,7 +347,14 @@ $("#createRoomForm").submit(function(e){
                 }, 1000);
 
             } else {
-                Swal.fire("Error", response.message || "Failed to create room", "error");
+                Swal.fire({
+                    title: "Error",
+                    text: response.message || "Failed to create room",
+                    icon: "error",
+                    background: "#1A1A1A",
+                    color: "#FFFFFF",
+                    confirmButtonColor: "#FF6347"
+                });
             }
         },
         complete: function(){ 
@@ -314,6 +362,7 @@ $("#createRoomForm").submit(function(e){
         }
     });
 });
+
 
 
 // ---------------- UPDATE ROOM ----------------
@@ -343,7 +392,6 @@ $("#updateRoomModal").click(function(e){ if(e.target === this) $(this).fadeOut(2
 
 
 
-
 // Submit update form
 $("#updateRoomForm").submit(function(e){
     e.preventDefault();
@@ -363,15 +411,31 @@ $("#updateRoomForm").submit(function(e){
         success: function(res){
             let response = JSON.parse(res);
             if(response.status === 200){
-             Swal.fire("Success", response.message, "success").then(() => {
-                location.reload();
-            });
+                Swal.fire({
+                    title: "Success",
+                    text: response.message,
+                    icon: "success",
+                    background: "#1A1A1A",   // dark background
+                    color: "#FFFFFF",          // white text
+                    confirmButtonColor: "#5865f2" // gold button
+                }).then(() => {
+                    location.reload();
+                });
 
             } else {
-                Swal.fire("Error", response.message || "Failed to update room", "error");
+                Swal.fire({
+                    title: "Error",
+                    text: response.message || "Failed to update room",
+                    icon: "error",
+                    background: "#1A1A1A",
+                    color: "#FFFFFF",
+                    confirmButtonColor: "#FF6347" // subtle red button
+                });
             }
         },
-        complete: function(){ $("#spinnerUpdate").hide(); }
+        complete: function(){ 
+            $("#spinnerUpdate").hide(); 
+        }
     });
 });
 
