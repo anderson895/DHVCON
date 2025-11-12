@@ -165,7 +165,6 @@ $(document).ready(function() {
 
 
 // REQUEST
-
 // ========================
 // CHAT
 // ========================
@@ -273,11 +272,8 @@ chatInput.addEventListener('focus', () => {
 chatInput.addEventListener('blur', () => {
     if (!submitting && isCollapsed) {
         setTimeout(() => {
-            // Only collapse if focus is outside chat section
-            if (!chatSection.contains(document.activeElement)) {
-                inputFocused = false;
-                chatMessagesWrapper.style.maxHeight = '0';
-            }
+            inputFocused = false;
+            chatMessagesWrapper.style.maxHeight = '0';
         }, 50);
     }
 });
@@ -302,24 +298,6 @@ if (mobileChatBtn) {
         mobileChatBtn.style.display = 'none';
     });
 }
-
-// ------------------------
-// Click outside to close (mobile)
-// ------------------------
-document.addEventListener('click', (event) => {
-    if (isCollapsed && chatSection.style.display !== 'none') {
-        if (
-            !chatSection.contains(event.target) &&
-            (!mobileChatBtn || !mobileChatBtn.contains(event.target))
-        ) {
-            // Only close if input is not focused
-            if (document.activeElement !== chatInput) {
-                slideOut(chatSection);
-                if (mobileChatBtn) mobileChatBtn.style.display = 'flex';
-            }
-        }
-    }
-});
 
 // ------------------------
 // Update on window resize
