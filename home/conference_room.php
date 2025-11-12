@@ -592,7 +592,7 @@ checkMemberStatus();
                 } else {
                     res.data.forEach(user => {
                         container.append(`
-                            <div class="flex justify-between items-center bg-white/10 backdrop-blur-md p-3 rounded-md border border-gray-700 shadow hover:bg-white/20 transition" data-jr-id="${user.jr_id}">
+                            <div class="flex justify-between items-center bg-white/10 backdrop-blur-md p-3 rounded-md border border-gray-700 transition" data-jr-id="${user.jr_id}">
                                 <div>
                                     <p class="font-semibold">${user.user_fullname}</p>
                                     <p class="text-xs text-gray-400">Requested: ${formatDateTime(user.jr_requested_at)}</p>
