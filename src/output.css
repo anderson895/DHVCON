@@ -479,6 +479,12 @@
   .ml-auto {
     margin-left: auto;
   }
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
   .block {
     display: block;
   }
@@ -533,6 +539,9 @@
   .h-32 {
     height: calc(var(--spacing) * 32);
   }
+  .h-36 {
+    height: calc(var(--spacing) * 36);
+  }
   .h-40 {
     height: calc(var(--spacing) * 40);
   }
@@ -544,6 +553,15 @@
   }
   .h-96 {
     height: calc(var(--spacing) * 96);
+  }
+  .h-\[13rem\] {
+    height: 13rem;
+  }
+  .h-\[20rem\] {
+    height: 20rem;
+  }
+  .h-\[24rem\] {
+    height: 24rem;
   }
   .h-\[26rem\] {
     height: 26rem;
