@@ -212,7 +212,7 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
     {
         // Join meeting_chats with user table to get fullname and position
         $stmt = $this->conn->prepare("
-            SELECT mc.chat_message, mc.chat_sender, u.user_fullname, u.user_type
+            SELECT mc.chat_message, mc.chat_sender, u.user_fullname, u.user_type,u.user_profile_pict
             FROM meeting_chats mc
             INNER JOIN user u ON mc.chat_sender = u.user_id
             WHERE mc.chat_meeting_code = ?
@@ -230,7 +230,8 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
                 'message' => htmlspecialchars($row['chat_message']),
                 'sender_self' => $row['chat_sender'] == $userId,
                 'sender_name' => $row['user_fullname'],
-                'sender_position' => $row['user_type']
+                'sender_position' => $row['user_type'],
+                'user_profile_pict' => $row['user_profile_pict']
             ];
         }
 
