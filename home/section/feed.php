@@ -1,9 +1,16 @@
 <section id="feed" class="tab-section p-6 bg-gradient-to-r from-[#1e1f22] via-[#2f3150] to-[#1e1f22] space-y-10">
   <!-- Welcome Banner -->
   <div class="rounded-2xl bg-[#2b2d31] p-10 text-center shadow-lg">
-    <h1 class="text-4xl font-extrabold mb-3 text-white uppercase">Welcome to <span class="roomName"></span></h1>
-    <p class="text-gray-400 mb-2 text-lg roomDescription"> </p>
+    <h1 class="text-4xl font-extrabold mb-1 text-white uppercase mb-2">
+      Welcome to <span class="roomName"></span>
+    </h1>
+
+    <!-- ✅ Idinagdag: creator info -->
+    <p class="text-sm text-gray-400 mb-3">Created by <span class="roomCreator capitalize"></span></p>
+
+    <p class="text-gray-400 mb-2 text-lg roomDescription"></p>
   </div>
+
   <!-- Create Post Section -->
   
 

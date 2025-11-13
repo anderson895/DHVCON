@@ -51,6 +51,7 @@ function fetchRoomsDetails() {
       const isCreator = response.user_id === data.creator_id;
 
       $(".roomName").text(data.room_name || 'Unnamed Room');
+      $(".roomCreator").text(data.creator_name || 'UnKnown.');
       $(".roomDescription").text(data.room_description || 'No description provided.');
       $(".roomBanner").attr("src", data.room_banner || "../static/image/default_banner.png");
 
