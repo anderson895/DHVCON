@@ -79,7 +79,13 @@ include "../plugins/PageSpinner.php";
           <!-- Created Rooms Section -->
       <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Created Rooms</h2>
       <div id="createdRooms" 
-          class="flex flex-col gap-1 max-h-60 overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+          class="flex flex-col gap-1 px-2"
+          style="
+              max-height: 240px; 
+              overflow-y: auto; 
+              scrollbar-width: thin; 
+              scrollbar-color: #555 #1a1a1a;
+          ">
       </div>
 
       <hr class="my-3 border-gray-600">
@@ -87,8 +93,40 @@ include "../plugins/PageSpinner.php";
       <!-- Joined Rooms Section -->
       <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Joined Rooms</h2>
       <div id="joinedRooms" 
-          class="flex flex-col gap-1 max-h-60 overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+          class="flex flex-col gap-1 px-2"
+          style="
+              max-height: 240px; 
+              overflow-y: auto; 
+              scrollbar-width: thin; 
+              scrollbar-color: #555 #1a1a1a;
+          ">
       </div>
+
+      <!-- Custom Scrollbar Style -->
+      <style>
+      /* For Chrome, Edge, Safari */
+      #createdRooms::-webkit-scrollbar,
+      #joinedRooms::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #createdRooms::-webkit-scrollbar-track,
+      #joinedRooms::-webkit-scrollbar-track {
+        background: #1a1a1a;
+        border-radius: 10px;
+      }
+
+      #createdRooms::-webkit-scrollbar-thumb,
+      #joinedRooms::-webkit-scrollbar-thumb {
+        background-color: #555;
+        border-radius: 10px;
+      }
+
+      #createdRooms::-webkit-scrollbar-thumb:hover,
+      #joinedRooms::-webkit-scrollbar-thumb:hover {
+        background-color: #777;
+      }
+      </style>
 
     </nav>
 
