@@ -1912,6 +1912,13 @@
       }
     }
   }
+  .hover\:bg-\[\#404eed\] {
+    &:hover {
+      @media (hover: hover) {
+        background-color: #404eed;
+      }
+    }
+  }
   .hover\:bg-\[\#4752c4\] {
     &:hover {
       @media (hover: hover) {
@@ -2186,6 +2193,11 @@
     &:focus {
       --tw-outline-style: none;
       outline-style: none;
+    }
+  }
+  .active\:bg-\[\#2f39b9\] {
+    &:active {
+      background-color: #2f39b9;
     }
   }
   .disabled\:cursor-not-allowed {

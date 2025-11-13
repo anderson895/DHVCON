@@ -55,9 +55,11 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
       </div>
 
       <div class="mt-6 flex space-x-3">
-        <button id="editProfileBtn" class="bg-[#5865f2] text-black font-semibold px-5 py-2 rounded-lg hover:bg-[#5865f2] cursor-pointer">
+        <button id="editProfileBtn"
+          class="bg-[#5865f2] text-white font-semibold px-5 py-2 rounded-lg hover:bg-[#404eed] active:bg-[#2f39b9] transition duration-200">
           <i class="fa fa-edit mr-1"></i> Edit Profile
         </button>
+
         <button id="changePassBtn" class="bg-gray-700 hover:bg-gray-600 text-white px-5 py-2 rounded-lg cursor-pointer">
           <i class="fa fa-lock mr-1"></i> Change Password
         </button>
@@ -121,9 +123,10 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
           Cancel
         </button>
         <button type="submit"
-          class="bg-[#5865f2] text-black font-semibold px-4 py-2 rounded-lg hover:bg-[#5865f2] cursor-pointer">
+          class="bg-[#5865f2] text-white font-semibold px-4 py-2 rounded-lg hover:bg-[#404eed] active:bg-[#2f39b9] transition duration-200">
           Save Changes
         </button>
+
       </div>
     </form>
   </div>
