@@ -76,12 +76,12 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
 <!-- ✨ Edit Profile Modal -->
 <div id="editProfileModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
   <div class="bg-[#1a1a1a]/80 p-6 rounded-xl shadow-2xl w-full max-w-md border border-gray-700 backdrop-blur-md">
-    <h3 class="text-xl font-bold text-[#FFD700] mb-4">Edit Profile</h3>
+    <h3 class="text-xl font-bold text-[#5865f2] mb-4">Edit Profile</h3>
     <form id="editProfileForm" class="space-y-4" enctype="multipart/form-data">
       
       <!-- Profile Picture Upload -->
       <div class="flex flex-col items-center space-y-3">
-        <div class="w-24 h-24 rounded-full border-2 border-[#FFD700] bg-gray-700 flex items-center justify-center overflow-hidden text-white text-4xl font-bold relative">
+        <div class="w-24 h-24 rounded-full border-2 border-[#5865f2] bg-gray-700 flex items-center justify-center overflow-hidden text-white text-4xl font-bold relative">
             <img id="profilePreview" 
                 src="<?= !empty($User['user_profile_pict']) ? '../static/upload/profile/' . htmlspecialchars($User['user_profile_pict']) : '' ?>" 
                 alt="Profile Preview" 
@@ -105,7 +105,7 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
         <label class="block text-sm text-gray-300 mb-1">Full Name</label>
         <input type="text" name="fullname" id="fullname"
           value="<?= htmlspecialchars($User['user_fullname']) ?>"
-          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#5865f2]">
       </div>
 
       <!-- Email -->
@@ -113,7 +113,7 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
         <label class="block text-sm text-gray-300 mb-1">Email</label>
         <input type="email" name="email" id="email"
           value="<?= htmlspecialchars($User['user_email']) ?>"
-          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          class="w-full px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#5865f2]">
       </div>
 
       <!-- Buttons -->
@@ -158,7 +158,7 @@ profileInput.addEventListener('change', function() {
 <!-- ✨ Change Password Modal -->
 <div id="changePassModal" class="hidden fixed inset-0 bg-black/40 backdrop-blur-sm flex justify-center items-center z-50">
   <div class="bg-[#1a1a1a]/80 p-6 rounded-xl shadow-2xl w-full max-w-md border border-gray-700 backdrop-blur-md">
-    <h3 class="text-xl font-bold text-[#FFD700] mb-4">Change Password</h3>
+    <h3 class="text-xl font-bold text-[#5865f2] mb-4">Change Password</h3>
     <form id="changePasswordForm" class="space-y-4">
 
           <!-- Current Password -->
@@ -166,7 +166,7 @@ profileInput.addEventListener('change', function() {
       <label class="block text-sm text-gray-300 mb-1">Current Password</label>
       <div class="relative">
         <input type="password" name="old_password" id="old_password" required
-          class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#5865f2]">
         <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="old_password">
           visibility_off
         </span>
@@ -178,7 +178,7 @@ profileInput.addEventListener('change', function() {
       <label class="block text-sm text-gray-300 mb-1">New Password</label>
       <div class="relative">
         <input type="password" name="new_password" id="new_password" required
-          class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#5865f2]">
         <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="new_password">
           visibility_off
         </span>
@@ -190,7 +190,7 @@ profileInput.addEventListener('change', function() {
       <label class="block text-sm text-gray-300 mb-1">Confirm Password</label>
       <div class="relative">
         <input type="password" id="confirm_password_modal" required
-          class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#FFD700]">
+          class="w-full pr-10 px-3 py-2 bg-[#0D0D0D]/60 text-white rounded border border-gray-700 focus:outline-none focus:border-[#5865f2]">
         <span class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 toggle-password" data-target="confirm_password_modal">
           visibility_off
         </span>
@@ -202,7 +202,7 @@ profileInput.addEventListener('change', function() {
         <button type="button" id="closePassModal"
           class="bg-gray-700/70 hover:bg-gray-600 text-white px-4 py-2 rounded-lg cursor-pointer">Cancel</button>
         <button type="submit"
-          class="bg-[#FFD700] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">Update Password</button>
+          class="bg-[#5865f2] text-black font-semibold px-4 py-2 rounded-lg hover:bg-yellow-500 cursor-pointer">Update Password</button>
       </div>
     </form>
   </div>
@@ -266,7 +266,7 @@ $(document).ready(function(){
       text: "Do you want to update your profile information?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#FFD700",
+      confirmButtonColor: "#5865f2",
       cancelButtonColor: "#6B7280",
       confirmButtonText: "Yes, save it!"
     }).then((result) => {
@@ -275,8 +275,8 @@ $(document).ready(function(){
           url: "../controller/end-points/controller.php",
           type: "POST",
           data: formData,
-          processData: false, // important for file upload
-          contentType: false, // important for file upload
+          processData: false, 
+          contentType: false, 
           dataType: "json",
           success: function(res){
             if(res.success){
@@ -319,7 +319,7 @@ $(document).ready(function(){
       text: "Are you sure you want to change your password?",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#FFD700",
+      confirmButtonColor: "#5865f2",
       cancelButtonColor: "#6B7280",
       confirmButtonText: "Yes, update it!"
     }).then((result) => {

@@ -1058,6 +1058,9 @@
   .border-\[\#3c3f44\] {
     border-color: #3c3f44;
   }
+  .border-\[\#5865f2\] {
+    border-color: #5865f2;
+  }
   .border-\[\#5865f2\]\/40 {
     border-color: color-mix(in oklab, #5865f2 40%, transparent);
   }
