@@ -63,119 +63,81 @@ include "../plugins/PageSpinner.php";
 
 
   <!-- Sidebar -->
-  <aside id="sidebar" class="bg-[#232428] w-60 p-3 border-r border-gray-800 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col z-40">
-    <h2 class="text-lg font-semibold px-2 mb-4">DHVCON</h2>
+<aside id="sidebar" class="bg-[#232428] w-60 p-4 border-r border-gray-800 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col z-40">
 
-   <style>
-/* Dark scrollbar for modern browsers */
-.scrollbar-dark::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollbar-dark::-webkit-scrollbar-track {
-  background: #1a1a1a; /* track color */
-}
-
-.scrollbar-dark::-webkit-scrollbar-thumb {
-  background-color: #56585d; /* thumb color */
-  border-radius: 10px;
-  border: 2px solid #1a1a1a;
-}
-
-/* Firefox */
-.scrollbar-dark {
-  scrollbar-width: thin;
-  scrollbar-color: #56585d #1a1a1a;
-}
-</style>
-
-<nav id="roomNav" class="flex flex-col gap-1 bg-[#1a1a1a] p-2 text-gray-300 h-full">
-
-  <!-- All Rooms Link -->
-  <a href="../home/" 
-     class="flex items-center gap-3 px-3 py-2 rounded-md 
-            text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
-    <span class="material-icons-outlined text-xl">groups</span>
-    <span>All Rooms</span>
-  </a>
-
-  <hr class="my-3 border-gray-600">
-
-  <!-- Created Rooms Section -->
-  <button id="toggleCreated" 
-          class="flex justify-between items-center w-full px-3 py-2 text-gray-400 uppercase text-sm font-medium hover:text-white cursor-pointer">
-    Created Rooms
-    <span class="material-icons-outlined transition-transform rotate-180">expand_more</span>
-  </button>
-  <div id="createdRooms" class="flex flex-col gap-1 max-h-64 overflow-y-auto p-1 scrollbar-dark">
-    <!-- Rooms will be appended here -->
-  </div>
-
-  <hr class="my-3 border-gray-600">
-
-  <!-- Joined Rooms Section -->
-  <button id="toggleJoined" 
-          class="flex justify-between items-center w-full px-3 py-2 text-gray-400 uppercase text-sm font-medium hover:text-white cursor-pointer">
-    Joined Rooms
-    <span class="material-icons-outlined transition-transform rotate-180">expand_more</span>
-  </button>
-  <div id="joinedRooms" class="flex flex-col gap-1 max-h-64 overflow-y-auto p-1 scrollbar-dark">
-    <!-- Rooms will be appended here -->
-  </div>
-
-</nav>
-
-
-
-
-
-
+  <!-- Logo / Title -->
+  <div class="flex flex-col items-center justify-start mb-6">
     
-    <!-- User Section -->
-    <div class="mt-auto pt-4 border-t border-gray-700 relative">
-      <div class="flex items-center gap-3 px-3 py-2">
-              <!-- Profile Picture -->
-        <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600 flex items-center justify-center bg-gray-700 text-white font-semibold text-lg relative">
-          <?php if (!empty($On_Session[0]['user_profile_pict'])): ?>
-            <!-- Display actual image -->
-            <img 
-              src="<?= '../static/upload/profile/' . htmlspecialchars($On_Session[0]['user_profile_pict']); ?>" 
-              alt="Profile Picture" 
-              class="w-full h-full object-cover"
-            >
-          <?php else: ?>
-            <!-- Display first letter if no picture -->
-            <span id="profileInitial">
-              <?= strtoupper(substr($On_Session[0]['user_fullname'], 0, 1)); ?>
-            </span>
-          <?php endif; ?>
-        </div>
+     <div class="mb-4"></div>
+     <img src="../static/image/logo1.png" alt="DHVCON Logo" class="w-16 h-16 object-contain mb-2">  
+    <h2 class="text-xl font-bold text-white tracking-wider ">DHVCON</h2> 
+  </div>
 
-        <!-- User Info -->
-        <div class="flex flex-col">
-          <p class="text-sm font-semibold text-white">
-            <?= ucfirst($On_Session[0]['user_fullname']); ?>
-          </p>
-          <p class="text-xs text-gray-400 capitalize">
-            <?= $On_Session[0]['user_type'] ?>
-          </p>
-        </div>
+  <!-- Navigation -->
+  <nav id="roomNav" class="flex-1 flex flex-col gap-3 overflow-y-auto scrollbar-dark">
 
-        <!-- Settings Button -->
-        <span id="settings-btn" class="material-icons-outlined text-gray-400 text-xl cursor-pointer ml-auto hover:text-white">
-          settings
-        </span>
+    <!-- All Rooms Link -->
+    <a href="../home/" class="flex items-center gap-3 px-4 py-2 rounded-lg text-gray-300 hover:bg-[#2A2C31] hover:text-white transition-colors duration-200">
+      <span class="material-icons-outlined text-xl">groups</span>
+      <span class="font-medium">All Rooms</span>
+    </a>
+
+    <hr class="border-gray-700 my-2">
+
+    <!-- Created Rooms Section -->
+    <button id="toggleCreated" class="flex justify-between items-center w-full px-4 py-2 text-gray-400 uppercase text-sm font-medium hover:text-white cursor-pointer transition-colors duration-200">
+      Created Rooms
+      <span class="material-icons-outlined transition-transform rotate-180">expand_more</span>
+    </button>
+    <div id="createdRooms" class="flex flex-col gap-1 max-h-64 overflow-y-auto p-1 scrollbar-dark">
+      <!-- Rooms will be appended here -->
+    </div>
+
+    <hr class="border-gray-700 my-2">
+
+    <!-- Joined Rooms Section -->
+    <button id="toggleJoined" class="flex justify-between items-center w-full px-4 py-2 text-gray-400 uppercase text-sm font-medium hover:text-white cursor-pointer transition-colors duration-200">
+      Joined Rooms
+      <span class="material-icons-outlined transition-transform rotate-180">expand_more</span>
+    </button>
+    <div id="joinedRooms" class="flex flex-col gap-1 max-h-64 overflow-y-auto p-1 scrollbar-dark">
+      <!-- Rooms will be appended here -->
+    </div>
+
+  </nav>
+
+  <!-- User Section -->
+  <div class="mt-auto pt-4 border-t border-gray-700">
+    <div class="flex items-center gap-3 px-4 py-2 bg-[#2A2C31] rounded-lg hover:bg-[#33353A] transition-colors duration-200 cursor-pointer relative">
+      
+      <!-- Profile Picture -->
+      <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600 flex items-center justify-center bg-gray-700 text-white font-semibold text-lg">
+        <?php if (!empty($On_Session[0]['user_profile_pict'])): ?>
+          <img src="<?= '../static/upload/profile/' . htmlspecialchars($On_Session[0]['user_profile_pict']); ?>" alt="Profile Picture" class="w-full h-full object-cover">
+        <?php else: ?>
+          <span><?= strtoupper(substr($On_Session[0]['user_fullname'], 0, 1)); ?></span>
+        <?php endif; ?>
       </div>
 
+      <!-- User Info -->
+      <div class="flex flex-col flex-1">
+        <p class="text-sm font-semibold text-white"><?= ucfirst($On_Session[0]['user_fullname']); ?></p>
+        <p class="text-xs text-gray-400 capitalize"><?= $On_Session[0]['user_type'] ?></p>
+      </div>
+
+      <!-- Settings Button -->
+      <span id="settings-btn" class="material-icons-outlined text-gray-400 text-xl hover:text-white transition-colors duration-200">settings</span>
+
       <!-- Dropdown Menu -->
-      <div id="settings-menu" class="hidden absolute bottom-14 left-0 right-0 bg-[#2b2d31] border-t border-gray-700 shadow-lg">
+      <div id="settings-menu" class="hidden absolute bottom-14 left-0 right-0 bg-[#2b2d31] border-t border-gray-700 shadow-lg rounded-lg overflow-hidden">
         <a href="profile" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition">Profile</a>
         <a href="logout.php" class="block px-4 py-2 text-sm hover:bg-[#3c3f44] transition text-red-400">Logout</a>
       </div>
     </div>
+  </div>
 
-    </div>
-  </aside>
+</aside>
+
 
 
   <script>
