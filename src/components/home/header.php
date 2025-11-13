@@ -108,7 +108,7 @@ include "../plugins/PageSpinner.php";
 
   <!-- User Section -->
   <div class="mt-auto pt-4 border-t border-gray-700">
-    <div class="flex items-center gap-3 px-4 py-2 bg-[#2A2C31] rounded-lg hover:bg-[#33353A] transition-colors duration-200 cursor-pointer relative">
+    <div class="flex items-center gap-2 px-4 py-2 bg-[#2A2C31] rounded-lg hover:bg-[#33353A] transition-colors duration-200 cursor-pointer relative">
       
       <!-- Profile Picture -->
       <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600 flex items-center justify-center bg-gray-700 text-white font-semibold text-lg">
