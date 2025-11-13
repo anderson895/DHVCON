@@ -16,3 +16,29 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background-color: #6f6f72ff;
 }
+
+
+
+
+
+
+/* Dark scrollbar for modern browsers */
+  .scrollbar-dark::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-track {
+    background: #1a1a1a; /* track color */
+  }
+
+  .scrollbar-dark::-webkit-scrollbar-thumb {
+    background-color: #56585d; /* thumb color */
+    border-radius: 10px;
+    border: 2px solid #1a1a1a;
+  }
+
+  /* Firefox */
+  .scrollbar-dark {
+    scrollbar-width: thin;
+    scrollbar-color: #56585d #1a1a1a;
+  }
