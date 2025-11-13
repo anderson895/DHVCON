@@ -102,7 +102,6 @@ $user_id = $On_Session[0]['user_id'];
 </main>
 
 
-
 <script src="https://download.agora.io/sdk/release/AgoraRTC_N.js"></script>
 <script>
 const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
@@ -115,6 +114,8 @@ const videoContainer = document.getElementById('video-container');
 const statusBox = document.getElementById('status');
 const meetingCode  = "<?= $meetingCode ?>";
 const user_id = `<?= $user_id ?>`;
+
+let pinnedUserId = null;
 
 // ---------------------- Helper Functions ----------------------
 function setStatus(message, type = '') {
@@ -136,8 +137,7 @@ function disableButton(id, disabled, reason = '') {
     btn.title = reason || '';
 }
 
-let pinnedUserId = null;
-
+// ---------------------- Create User UI ----------------------
 function createUserWrapper(uid, name, isLocal = false) {
     const wrapper = document.createElement('div');
     wrapper.id = `wrapper-${uid}`;
@@ -151,7 +151,6 @@ function createUserWrapper(uid, name, isLocal = false) {
     const profileDiv = document.createElement('div');
     profileDiv.id = isLocal ? 'default-user-icon' : `default-icon-${uid}`;
     profileDiv.className = `absolute inset-0 ${isLocal ? 'hidden' : 'flex'} items-center justify-center text-white text-4xl font-bold rounded-full`;
-    profileDiv.style.fontFamily = 'sans-serif';
     profileDiv.style.backgroundColor = '#6b7280';
     wrapper.appendChild(profileDiv);
 
@@ -187,11 +186,12 @@ function updatePins() {
     document.querySelectorAll('[id^="pin-btn-"]').forEach(btn => {
         const uid = btn.id.replace('pin-btn-', '');
         const wrapper = document.getElementById(`wrapper-${uid}`);
+        if (!wrapper) return;
         if (uid === pinnedUserId) {
             btn.style.color = "#facc15";
             wrapper.style.border = "3px solid #facc15";
             wrapper.style.zIndex = 10;
-            if (wrapper && spotlight) {
+            if (spotlight) {
                 spotlight.innerHTML = '';
                 spotlight.appendChild(wrapper);
                 spotlight.classList.remove('hidden');
@@ -200,7 +200,7 @@ function updatePins() {
             btn.style.color = "white";
             wrapper.style.border = "none";
             wrapper.style.zIndex = 1;
-            if (wrapper && spotlight.contains(wrapper)) {
+            if (spotlight && spotlight.contains(wrapper)) {
                 videoContainer.appendChild(wrapper);
                 spotlight.classList.add('hidden');
             }
@@ -215,6 +215,7 @@ async function joinMeeting(code) {
         const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
         stream.getTracks().forEach(track => track.stop());
 
+        // --- User Publishes ---
         client.on('user-published', async (user, mediaType) => {
             await client.subscribe(user, mediaType);
             let wrapper = document.getElementById('wrapper-' + user.uid);
@@ -235,6 +236,7 @@ async function joinMeeting(code) {
             get_each_users_data(user.uid);
         });
 
+        // --- User Unpublishes ---
         client.on('user-unpublished', (user, mediaType) => {
             if (mediaType === 'video') {
                 const player = document.getElementById('player-' + user.uid);
@@ -251,13 +253,23 @@ async function joinMeeting(code) {
             }
         });
 
+        // --- User Leaves ---
+        client.on('user-left', (user) => {
+            const wrapper = document.getElementById(`wrapper-${user.uid}`);
+            if (wrapper) wrapper.remove();
+            if (pinnedUserId === user.uid) {
+                pinnedUserId = null;
+                const spotlight = document.getElementById('spotlight-container');
+                if (spotlight) spotlight.classList.add('hidden');
+            }
+        });
+
         setStatus(`Joining room: ${code} as ${user_id}...`);
         await client.join(APP_ID, code, null, user_id);
 
         localTracks.audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
         await client.publish([localTracks.audioTrack]);
 
-        // Initialize camera OFF by default
         localTracks.videoTrack = null;
 
         const localWrapper = createUserWrapper('local', `${user_id} (You)`, true);
@@ -284,7 +296,7 @@ async function joinMeeting(code) {
     }
 }
 
-// ---------------------- ✅ Fixed Toggle Camera ----------------------
+// ---------------------- Toggle Camera ----------------------
 document.getElementById('btnToggleCam').addEventListener('click', async () => {
     const icon = document.getElementById('iconCam');
     const text = document.getElementById('textCam');
@@ -292,13 +304,11 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
     const localPlayer = document.getElementById('local-player');
 
     try {
-        // Prevent toggling while sharing screen
         if (isSharingScreen) {
             setStatus("⚠️ Stop screen sharing before toggling camera.", "error");
             return;
         }
 
-        // CASE 1: Turn camera OFF
         if (localTracks.videoTrack) {
             try { await client.unpublish(localTracks.videoTrack); } catch {}
             localTracks.videoTrack.stop();
@@ -315,7 +325,6 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
             return;
         }
 
-        // CASE 2: Turn camera ON
         setStatus("🔄 Initializing camera...");
         localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
         await client.publish(localTracks.videoTrack);
@@ -332,12 +341,8 @@ document.getElementById('btnToggleCam').addEventListener('click', async () => {
     } catch (err) {
         console.error("Toggle camera error:", err);
         setStatus("❌ Error toggling camera: " + err.message, "error");
-
         if (localTracks.videoTrack) {
-            try {
-                localTracks.videoTrack.stop();
-                localTracks.videoTrack.close();
-            } catch {}
+            try { localTracks.videoTrack.stop(); localTracks.videoTrack.close(); } catch {}
             localTracks.videoTrack = null;
         }
     }
@@ -365,9 +370,6 @@ document.getElementById('btnToggleMic').addEventListener('click', async () => {
 
 // ---------------------- Share Screen ----------------------
 document.getElementById('btnShareScreen').addEventListener('click', async () => {
-    const icon = document.getElementById('iconScreen');
-    const text = document.getElementById('textScreen');
-
     if (!localTracks.videoTrack) {
         setStatus("⚠️ Please turn on your camera before sharing screen.", "error");
         return;
@@ -376,21 +378,13 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
     try {
         if (!isSharingScreen) {
             screenTrack = await AgoraRTC.createScreenVideoTrack({ encoderConfig: "1080p_1" });
-            if (localTracks.videoTrack) {
-                try { await client.unpublish(localTracks.videoTrack); } catch {}
-                localTracks.videoTrack.stop();
-                localTracks.videoTrack.close();
-                localTracks.videoTrack = null;
-            }
+            if (localTracks.videoTrack) { try { await client.unpublish(localTracks.videoTrack); } catch {} localTracks.videoTrack.stop(); localTracks.videoTrack.close(); localTracks.videoTrack = null; }
             await client.publish(screenTrack);
             screenTrack.play('local-player');
-
-            icon.textContent = 'screen_share';
-            text.textContent = 'Stop Sharing';
             isSharingScreen = true;
             setStatus("🖥️ Screen sharing started.", "success");
             disableButton('btnToggleCam', true, 'Stop screen sharing first to toggle camera');
-            screenTrack.on('track-ended', async () => await stopScreenShare());
+            screenTrack.on('track-ended', stopScreenShare);
         } else {
             await stopScreenShare();
         }
@@ -402,32 +396,16 @@ document.getElementById('btnShareScreen').addEventListener('click', async () => 
 });
 
 async function stopScreenShare() {
-    const icon = document.getElementById('iconScreen');
-    const text = document.getElementById('textScreen');
     const defaultIcon = document.getElementById('default-user-icon');
-
     try {
-        if (screenTrack) {
-            try { await client.unpublish(screenTrack); } catch {}
-            screenTrack.stop();
-            screenTrack.close();
-            screenTrack = null;
-        }
-
-        if (!localTracks.videoTrack) {
-            localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack();
-            await client.publish(localTracks.videoTrack);
-        }
-
+        if (screenTrack) { try { await client.unpublish(screenTrack); } catch {} screenTrack.stop(); screenTrack.close(); screenTrack = null; }
+        if (!localTracks.videoTrack) { localTracks.videoTrack = await AgoraRTC.createCameraVideoTrack(); await client.publish(localTracks.videoTrack); }
         localTracks.videoTrack.play('local-player');
         defaultIcon.classList.add('hidden');
         defaultIcon.classList.remove('flex');
-
-        icon.textContent = 'stop_screen_share';
-        text.textContent = 'Share Screen';
         isSharingScreen = false;
-        setStatus("🖥️ Screen sharing stopped. Camera restored.", "success");
         disableButton('btnToggleCam', false);
+        setStatus("🖥️ Screen sharing stopped. Camera restored.", "success");
     } catch (err) {
         console.error(err);
         setStatus("❌ Error restoring camera: " + err.message, "error");
@@ -487,6 +465,7 @@ function get_each_users_data(userId, isLocal = false) {
     });
 }
 </script>
+
 
 
 
