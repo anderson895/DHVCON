@@ -103,15 +103,6 @@ function checkApproval() {
                             break;
                     }
                 } 
-            },
-            error: function(xhr, status, error) {
-                console.error(error);
-                clearInterval(interval);
-                Swal.fire({
-                    icon: "error",
-                    title: "Approval Request Error",
-                    text: "Something went wrong while checking approval."
-                });
             }
         });
     }, 3000); // Poll every 3 seconds
