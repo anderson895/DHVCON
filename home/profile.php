@@ -45,7 +45,7 @@ $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_statu
       </div>
 
       <div>
-        <label class="text-gray-400 block text-sm mb-1">User Type</label>
+        <label class="text-gray-400 block text-sm mb-1">Account Type</label>
         <p class="text-lg font-semibold capitalize"><?= htmlspecialchars($User['user_type']) ?></p>
       </div>
 
