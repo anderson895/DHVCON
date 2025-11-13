@@ -76,15 +76,20 @@ include "../plugins/PageSpinner.php";
 
       <hr class="my-3 border-gray-600">
 
-      <!-- Created Rooms Section -->
+          <!-- Created Rooms Section -->
       <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Created Rooms</h2>
-      <div id="createdRooms" class="flex flex-col gap-1"></div>
+      <div id="createdRooms" 
+          class="flex flex-col gap-1 max-h-60 overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+      </div>
 
       <hr class="my-3 border-gray-600">
 
       <!-- Joined Rooms Section -->
       <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Joined Rooms</h2>
-      <div id="joinedRooms" class="flex flex-col gap-1"></div>
+      <div id="joinedRooms" 
+          class="flex flex-col gap-1 max-h-60 overflow-y-auto px-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
+      </div>
+
     </nav>
 
 
