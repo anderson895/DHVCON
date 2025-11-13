@@ -66,69 +66,68 @@ include "../plugins/PageSpinner.php";
   <aside id="sidebar" class="bg-[#232428] w-60 p-3 border-r border-gray-800 fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 transition-transform duration-300 flex flex-col z-40">
     <h2 class="text-lg font-semibold px-2 mb-4">DHVCON</h2>
 
-    <nav id="roomNav" class="flex flex-col gap-1">
-      <!-- Create Room Link -->
-      <a href="../home/" class="flex items-center gap-3 px-3 py-2 rounded-md 
-        text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
-        <span class="material-icons-outlined text-xl">groups</span>
-        <span>All Rooms</span>
-      </a>
+   <style>
+/* Dark scrollbar for modern browsers */
+.scrollbar-dark::-webkit-scrollbar {
+  width: 6px;
+}
 
-      <hr class="my-3 border-gray-600">
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: #1a1a1a; /* track color */
+}
 
-          <!-- Created Rooms Section -->
-      <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Created Rooms</h2>
-      <div id="createdRooms" 
-          class="flex flex-col gap-1 px-2"
-          style="
-              max-height: 240px; 
-              overflow-y: auto; 
-              scrollbar-width: thin; 
-              scrollbar-color: #555 #1a1a1a;
-          ">
-      </div>
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background-color: #56585d; /* thumb color */
+  border-radius: 10px;
+  border: 2px solid #1a1a1a;
+}
 
-      <hr class="my-3 border-gray-600">
+/* Firefox */
+.scrollbar-dark {
+  scrollbar-width: thin;
+  scrollbar-color: #56585d #1a1a1a;
+}
+</style>
 
-      <!-- Joined Rooms Section -->
-      <h2 class="text-sm text-gray-400 px-3 mb-1 uppercase tracking-wide">Joined Rooms</h2>
-      <div id="joinedRooms" 
-          class="flex flex-col gap-1 px-2"
-          style="
-              max-height: 240px; 
-              overflow-y: auto; 
-              scrollbar-width: thin; 
-              scrollbar-color: #555 #1a1a1a;
-          ">
-      </div>
+<nav id="roomNav" class="flex flex-col gap-1 bg-[#1a1a1a] p-2 text-gray-300 h-full">
 
-      <!-- Custom Scrollbar Style -->
-      <style>
-      /* For Chrome, Edge, Safari */
-      #createdRooms::-webkit-scrollbar,
-      #joinedRooms::-webkit-scrollbar {
-        width: 6px;
-      }
+  <!-- All Rooms Link -->
+  <a href="../home/" 
+     class="flex items-center gap-3 px-3 py-2 rounded-md 
+            text-gray-300 hover:bg-gray-700 hover:text-white transition-colors duration-200">
+    <span class="material-icons-outlined text-xl">groups</span>
+    <span>All Rooms</span>
+  </a>
 
-      #createdRooms::-webkit-scrollbar-track,
-      #joinedRooms::-webkit-scrollbar-track {
-        background: #1a1a1a;
-        border-radius: 10px;
-      }
+  <hr class="my-3 border-gray-600">
 
-      #createdRooms::-webkit-scrollbar-thumb,
-      #joinedRooms::-webkit-scrollbar-thumb {
-        background-color: #555;
-        border-radius: 10px;
-      }
+  <!-- Created Rooms Section -->
+  <button id="toggleCreated" 
+          class="flex justify-between items-center w-full px-3 py-2 text-gray-400 uppercase text-sm font-medium hover:text-white cursor-pointer">
+    Created Rooms
+    <span class="material-icons-outlined transition-transform rotate-180">expand_more</span>
+  </button>
+  <div id="createdRooms" class="flex flex-col gap-1 max-h-64 overflow-y-auto p-1 scrollbar-dark">
+    <!-- Rooms will be appended here -->
+  </div>
 
-      #createdRooms::-webkit-scrollbar-thumb:hover,
-      #joinedRooms::-webkit-scrollbar-thumb:hover {
-        background-color: #777;
-      }
-      </style>
+  <hr class="my-3 border-gray-600">
 
-    </nav>
+  <!-- Joined Rooms Section -->
+  <button id="toggleJoined" 
+          class="flex justify-between items-center w-full px-3 py-2 text-gray-400 uppercase text-sm font-medium hover:text-white cursor-pointer">
+    Joined Rooms
+    <span class="material-icons-outlined transition-transform rotate-180">expand_more</span>
+  </button>
+  <div id="joinedRooms" class="flex flex-col gap-1 max-h-64 overflow-y-auto p-1 scrollbar-dark">
+    <!-- Rooms will be appended here -->
+  </div>
+
+</nav>
+
+
+
+
 
 
     

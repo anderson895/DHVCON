@@ -1,26 +1,39 @@
 $(document).ready(function() {
 
+  // --- Helper: Get room_name from URL ---
   function getRoomNameFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('room_name'); 
   }
 
+  // --- Highlight active room or Home link & open toggle if needed ---
   function markActiveRoom() {
     const roomName = getRoomNameFromURL();
 
-    // Remove previous active styles from rooms
+    // Remove previous active styles
     $("#joinedRooms a, #createdRooms a").removeClass("bg-[#56585d] font-bold");
 
-    // Highlight the room if room_name exists in URL
     if (roomName) {
+      // Highlight matching room
       $(`#joinedRooms a span:contains("${roomName}"), #createdRooms a span:contains("${roomName}")`).each(function() {
         if ($(this).text() === roomName) {
           $(this).closest('a').addClass("bg-[#56585d] font-bold");
+
+          // Auto expand the section if active room exists
+          if ($(this).closest('#joinedRooms').length) {
+            $("#joinedRooms").show();
+            $("#toggleJoined span").addClass('rotate-180'); // rotate arrow
+          }
+          if ($(this).closest('#createdRooms').length) {
+            $("#createdRooms").show();
+            $("#toggleCreated span").addClass('rotate-180'); // rotate arrow
+          }
+
+          // Scroll active room into view
+          $(this).closest('a')[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
       });
-    } 
-    // Otherwise, highlight the "Rooms" link if we're on /home/
-    else {
+    } else {
       const path = window.location.pathname;
       if (path.endsWith("/home/")) {
         $('a[href="../home/"]').addClass('bg-gray-700 text-white font-semibold');
@@ -28,7 +41,7 @@ $(document).ready(function() {
     }
   }
 
-  // Load rooms the user has joined
+  // --- Load Joined Rooms ---
   function load_getJoinedRooms() {
     $.ajax({
       url: "../controller/end-points/controller.php?requestType=getJoinedRooms",
@@ -52,7 +65,7 @@ $(document).ready(function() {
         }
 
         $("#joinedRooms").html(output);
-        markActiveRoom(); // Call after rendering
+        markActiveRoom(); // highlight & auto-expand active
       },
       error: function() {
         $("#joinedRooms").html(`<p class="text-red-500 px-3 text-sm">Error fetching rooms.</p>`);
@@ -60,7 +73,7 @@ $(document).ready(function() {
     });
   }
 
-  // Load rooms the user has created
+  // --- Load Created Rooms ---
   function load_getCreatedRooms() {
     $.ajax({
       url: "../controller/end-points/controller.php?requestType=getCreatedRooms",
@@ -84,7 +97,7 @@ $(document).ready(function() {
         }
 
         $("#createdRooms").html(output);
-        markActiveRoom(); // Call after rendering
+        markActiveRoom(); // highlight & auto-expand active
       },
       error: function() {
         $("#createdRooms").html(`<p class="text-red-500 px-3 text-sm">Error fetching rooms.</p>`);
@@ -92,10 +105,19 @@ $(document).ready(function() {
     });
   }
 
-  // Load both on page load
+  // --- Toggle functionality ---
+  $("#toggleCreated").click(function() {
+    $("#createdRooms").slideToggle(200);
+    $(this).find('span').toggleClass('rotate-180');
+  });
+
+  $("#toggleJoined").click(function() {
+    $("#joinedRooms").slideToggle(200);
+    $(this).find('span').toggleClass('rotate-180');
+  });
+
+  // --- Initial load ---
   load_getJoinedRooms();
   load_getCreatedRooms();
 
 });
-
-
