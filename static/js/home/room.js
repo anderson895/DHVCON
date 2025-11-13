@@ -1469,7 +1469,8 @@ $("#frmMeeting").submit(function (e) {
 
 
 // API AGORA
-const APP_ID = "b2e962fe791e4b23a34dee48010a733f";
+// const APP_ID = "b2e962fe791e4b23a34dee48010a733f";    //mypet02025@gmail.com 
+const APP_ID = "c42009de5c62418e89f96461844b6c2f";  //jessbertsoliguin456@gmail.com
 let client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
 let localTracks = { videoTrack: null, audioTrack: null };
 let localPlayer;
