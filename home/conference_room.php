@@ -476,15 +476,6 @@ function get_each_users_data(userId, isLocal = false) {
 
 
 
-
-
-
-
-
-
-
-
-
 <script>
 
 
