@@ -495,7 +495,7 @@ $("#updateRoomForm").submit(function(e){
             console.log(response);
 
             if (response.status === "success") {
-                alertify.success('Created Successfully');
+                alertify.success('Successfully Joined');
                 setTimeout(function () {
                     location.reload();
                 }, 1000);
