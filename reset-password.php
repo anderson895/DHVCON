@@ -10,7 +10,6 @@ if (!$token) {
 }
 ?>
 
-
 <main class="min-h-screen flex items-center justify-center bg-gray-900 text-white p-4">
     <div class="w-full max-w-md bg-[#1f2023]/80 backdrop-blur-xl border border-[#3c3f44] rounded-3xl shadow-2xl p-10 space-y-6">
         
