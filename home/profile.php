@@ -305,7 +305,7 @@ $(document).ready(function(){
     e.preventDefault();
 
     let newPass = $("#new_password").val();
-    let confirmPass = $("#confirm_password").val();
+    let confirmPass = $("#confirm_password_modal").val();
 
     if (newPass !== confirmPass) {
       Swal.fire("Error!", "Passwords do not match.", "error");
