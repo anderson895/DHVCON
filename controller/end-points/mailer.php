@@ -247,9 +247,7 @@ if ($requestType === 'ResetPassword') {
         exit;
     }
 
-    $hash = password_hash($newPassword, PASSWORD_DEFAULT);
-
-    if ($db->updatePasswordByToken($token, $hash)) {
+    if ($db->updatePasswordByToken($token, $newPassword)) {
         echo json_encode(['status' => 'success', 'message' => 'Password updated successfully.']);
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Failed to update password.']);
