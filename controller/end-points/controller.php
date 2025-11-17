@@ -363,7 +363,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
 
-            $file_upload = $_FILES['profilePic'];
+            $file_upload = (isset($_FILES['profilePic']) && $_FILES['profilePic']['error'] === 0) ? $_FILES['profilePic']: null;
+
             $uploadDir = '../../static/upload/profile/';
             $fileName = null;
 
