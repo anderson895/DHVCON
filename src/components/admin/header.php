@@ -114,7 +114,7 @@ if (isset($_SESSION['user_id'])) {
 
   <!-- Main Content -->
   <main class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12">
-    <button id="menuButton" class="lg:hidden text-[#FFD700] bg-white/10 hover:bg-white/20 p-2 rounded-md mb-4">
+    <button id="menuButton" class="cursor-pointer lg:hidden text-[#FFD700] bg-white/10 hover:bg-white/20 p-2 rounded-md mb-4">
       <span class="material-icons">menu</span>
     </button>
 
