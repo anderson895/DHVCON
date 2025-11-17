@@ -44,9 +44,7 @@ if (!$token) {
 
     </div>
 </main>
-
 <?php include "src/components/footer.php"; ?>
-
 <script>
 function togglePassword(fieldId, icon) {
     const input = document.getElementById(fieldId);
@@ -60,5 +58,4 @@ function togglePassword(fieldId, icon) {
     }
 }
 </script>
-
 <script src="static/js/forgotpassword.js"></script>
