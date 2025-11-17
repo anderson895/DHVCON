@@ -12,7 +12,7 @@ $statusText = $User['user_status'] == 1 ? "Active" : ($User['user_status'] == 0 
 $statusColor = $User['user_status'] == 1 ? "text-green-400" : ($User['user_status'] == 0 ? "text-yellow-400" : "text-red-400");
 ?>
 
-<main class="flex-1 p-4 sm:p-6 md:p-8 lg:p-12">
+ <main class="flex-1 bg-[#1e1f22] ml-0 md:ml-60 p-4 transition-all duration-300">
 
 <!-- Profile Container -->
 <div class="bg-[#1a1a1a] p-6 rounded-lg shadow-md border border-gray-700 max-w-2xl mx-auto text-white">
