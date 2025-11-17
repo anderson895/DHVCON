@@ -14,6 +14,14 @@ class global_class extends db_connect
     }
 
 
+
+    
+
+
+
+
+
+
     public function ratingMeeting($meeting_id, $rating, $user_id, $comment = null) {
     $meeting_id = intval($meeting_id);
     $rating = intval($rating);
@@ -283,27 +291,63 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
 
 
     public function updateProfile($id, $fullname, $email, $fileName) {
-        // Prepare the SQL statement with placeholders
-        $stmt = $this->conn->prepare("UPDATE user SET user_fullname=?, user_email=?, user_profile_pict=? WHERE user_id=?");
-        
-        if (!$stmt) {
-            return false; // prepare failed
+            // Prepare the SQL statement with placeholders
+            $stmt = $this->conn->prepare("UPDATE user SET user_fullname=?, user_email=?, user_profile_pict=? WHERE user_id=?");
+            
+            if (!$stmt) {
+                return false; // prepare failed
+            }
+
+            // Bind parameters: s = string, i = integer
+            $stmt->bind_param("sssi", $fullname, $email, $fileName, $id);
+
+            // Execute the statement
+            $result = $stmt->execute();
+
+            // Close the statement
+            $stmt->close();
+
+            return $result;
         }
 
-        // Bind parameters: s = string, i = integer
-        $stmt->bind_param("sssi", $fullname, $email, $fileName, $id);
 
-        // Execute the statement
-        $result = $stmt->execute();
 
-        // Close the statement
-        $stmt->close();
+        public function getUserByEmail($email) {
+        $email = $this->conn->real_escape_string(trim($email));
+        $sql = "SELECT * FROM user WHERE user_email = '$email' LIMIT 1";
+        $result = $this->conn->query($sql);
 
-        return $result;
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return false;
     }
 
+    public function saveResetToken($email, $token, $expiry) {
+        $email = $this->conn->real_escape_string(trim($email));
+        $token = $this->conn->real_escape_string($token);
+        $expiry = (int)$expiry;
 
+        $sql = "UPDATE user SET reset_token='$token', reset_expiry=$expiry WHERE user_email='$email' LIMIT 1";
+        return $this->conn->query($sql);
+    }
+
+    public function validateResetToken($token) {
+        $token = $this->conn->real_escape_string($token);
+        $current_time = time();
+
+        $sql = "SELECT * FROM user WHERE reset_token='$token' AND reset_expiry > $current_time LIMIT 1";
+        $result = $this->conn->query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            return $result->fetch_assoc();
+        }
+        return false;
+    }
+
+    // Update password with old password verification
     public function updatePassword($id, $old_pass, $new_pass) {
+        $id = (int)$id;
         $old_pass = trim($old_pass);
         $new_pass = trim($new_pass);
 
@@ -320,6 +364,27 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
         }
         return false;
     }
+
+    // Update password using reset token (forgot password)
+    public function updatePasswordByToken($token, $new_pass) {
+        $token = $this->conn->real_escape_string($token);
+        $new_pass = trim($new_pass);
+        $current_time = time();
+
+        $sql = "SELECT user_id FROM user WHERE reset_token='$token' AND reset_expiry > $current_time LIMIT 1";
+        $result = $this->conn->query($sql);
+
+        if ($result && $result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $user_id = (int)$row['user_id'];
+
+            $newHash = password_hash($new_pass, PASSWORD_BCRYPT);
+            $update = "UPDATE user SET user_password='$newHash', reset_token=NULL, reset_expiry=NULL WHERE user_id=$user_id";
+            return $this->conn->query($update) ? true : false;
+        }
+        return false;
+    }
+
 
     
 
@@ -1711,6 +1776,8 @@ public function viewMeetingLogs($meeting_id)
     $stmt->close();
     return $logs;
 }
+
+
 
 
 

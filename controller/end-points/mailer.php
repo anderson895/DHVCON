@@ -29,7 +29,7 @@ class RegisterUser {
 
         $uploadedFiles = [];
 
-        // ✅ Store uploaded files in session only (base64)
+        // Store uploaded requirement files (base64)
         if (!empty($_FILES['requirements']['name'][0])) {
             foreach ($_FILES['requirements']['name'] as $key => $fileName) {
                 $fileTmpPath = $_FILES['requirements']['tmp_name'][$key];
@@ -43,8 +43,6 @@ class RegisterUser {
                         'size' => $_FILES['requirements']['size'][$key],
                         'content' => base64_encode($fileData)
                     ];
-                } else {
-                    error_log("⚠️ Upload error for $fileName: $fileError");
                 }
             }
         }
@@ -74,10 +72,6 @@ class RegisterUser {
 
         $user = &$_SESSION['register_data'];
         $current_time = time();
-
-        if (!isset($user['last_resend_time'])) {
-            $user['last_resend_time'] = 0;
-        }
 
         $remainingCooldown = $this->resendCooldown - ($current_time - $user['last_resend_time']);
         if ($remainingCooldown > 0) {
@@ -120,8 +114,6 @@ class RegisterUser {
         ];
     }
 
- 
-
     private function sendVerificationEmail() {
         $fullname = $this->full_name;
         $mail = new PHPMailer(true);
@@ -156,20 +148,115 @@ class RegisterUser {
     }
 }
 
-// --- Handle requests ---
+/* -------------------------------------------------------------
+    FORGOT PASSWORD IMPLEMENTATION
+--------------------------------------------------------------*/
+
+// Send reset link to email
+function sendResetEmail($email, $token) {
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'jessbertsoliguin456@gmail.com';
+        $mail->Password = 'fcdc wynb xmsf clnl';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        $mail->setFrom('jessbertsoliguin456@gmail.com', 'DHVCON');
+        $mail->addAddress($email);
+
+        $resetLink = "https://dhvcon.space/reset-password.php?token=$token";
+
+        $mail->isHTML(true);
+        $mail->Subject = "Password Reset Request";
+        $mail->Body = "
+            <h2>Password Reset</h2>
+            <p>Click below to reset your password:</p>
+            <a href='$resetLink'>$resetLink</a>
+            <p>This link expires in 1 hour.</p>
+        ";
+
+        $mail->send();
+        return true;
+
+    } catch (Exception $e) {
+        return false;
+    }
+}
+
+/* -------------------------------------------------------------
+    HANDLE REQUEST TYPES
+--------------------------------------------------------------*/
+
 $db = new global_class();
 $requestType = $_POST['requestType'] ?? '';
 
+/* --- Registration --- */
 if ($requestType === 'Register') {
-    $register = new RegisterUser($db, $_POST);
-    echo json_encode($register->register());
+    $reg = new RegisterUser($db, $_POST);
+    echo json_encode($reg->register());
     exit;
 }
 
+/* --- Resend Verification --- */
 if ($requestType === 'ResendVerification') {
-    $register = new RegisterUser($db);
-    echo json_encode($register->resendVerification());
+    $reg = new RegisterUser($db);
+    echo json_encode($reg->resendVerification());
     exit;
 }
 
+/* --- Forgot Password Request --- */
+if ($requestType === 'ForgotPassword') {
+    $email = $_POST['email'] ?? '';
+
+    $user = $db->getUserByEmail($email);
+    if (!$user) {
+        echo json_encode(['status' => 'error', 'message' => 'Email not found.']);
+        exit;
+    }
+
+    // Generate token
+    $token = bin2hex(random_bytes(16));
+    $expiry = time() + 3600; // 1 hr
+
+    if (!$db->saveResetToken($email, $token, $expiry)) {
+        echo json_encode(['status' => 'error', 'message' => 'Unable to save token.']);
+        exit;
+    }
+
+    if (sendResetEmail($email, $token)) {
+        echo json_encode(['status' => 'success', 'message' => 'Password reset link sent.']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to send email.']);
+    }
+
+    exit;
+}
+
+/* --- Reset Password Final Step --- */
+if ($requestType === 'ResetPassword') {
+    $token = $_POST['token'];
+    $newPassword = $_POST['newPassword'];
+
+    $user = $db->validateResetToken($token);
+    if (!$user) {
+        echo json_encode(['status' => 'error', 'message' => 'Invalid or expired token.']);
+        exit;
+    }
+
+    $hash = password_hash($newPassword, PASSWORD_DEFAULT);
+
+    if ($db->updatePasswordByToken($token, $hash)) {
+        echo json_encode(['status' => 'success', 'message' => 'Password updated successfully.']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to update password.']);
+    }
+
+    exit;
+}
+
+/* --- If no request type matched --- */
 echo json_encode(['status' => 'error', 'message' => 'Invalid request type.']);

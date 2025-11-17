@@ -109,6 +109,14 @@
       <a href="signin" class="text-indigo-400 font-semibold hover:underline">Sign in</a>
     </p>
   </div>
+
+ <!-- Wave Divider -->
+  <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+    <svg class="relative block w-full h-20 text-gray-900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1200 120">
+      <path fill="currentColor" d="M321.39,56.44C205.66,88.78,92.75,106.51,0,95.33V120H1200V0C1072.46,14.93,937.61,44.2,804.43,74.81,670.68,105.52,538.18,132.88,401.19,97.47,370.05,89.42,345.31,78.25,321.39,56.44Z"></path>
+    </svg>
+  </div>
+  
 </main>
 
 
