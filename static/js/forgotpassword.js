@@ -1,5 +1,17 @@
 $(document).ready(function () {
 
+    const swalDark = (icon, title, text) => {
+        Swal.fire({
+            icon: icon,
+            title: title,
+            text: text,
+            background: '#1A1A1A', // dark background
+            color: '#FFFFFF',        // white text
+            iconColor: icon === 'success' ? '#00FF00' : '#FF5555', // green for success, red for error
+            confirmButtonColor: '#FFD700', // gold button
+        });
+    };
+
     // ------------------------------
     // Step 1: Request Reset Token
     // ------------------------------
@@ -8,11 +20,7 @@ $(document).ready(function () {
 
         const email = $('#email').val().trim();
         if (!email) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Please enter your email'
-            });
+            swalDark('error', 'Error', 'Please enter your email');
             return;
         }
 
@@ -29,11 +37,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 $('#spinner').hide();
-                Swal.fire({
-                    icon: res.status === 'success' ? 'success' : 'error',
-                    title: res.status === 'success' ? 'Success' : 'Error',
-                    text: res.message
-                }).then(() => {
+                swalDark(res.status === 'success' ? 'success' : 'error',
+                         res.status === 'success' ? 'Success' : 'Error',
+                         res.message).then(() => {
                     if (res.status === 'success') {
                         $('#frmForgotPassword').hide();
                         $('#frmResetToken').show();
@@ -42,11 +48,7 @@ $(document).ready(function () {
             },
             error: function () {
                 $('#spinner').hide();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Something went wrong. Try again.'
-                });
+                swalDark('error', 'Error', 'Something went wrong. Try again.');
             }
         });
     });
@@ -62,20 +64,12 @@ $(document).ready(function () {
         const confirm_pass = $('#confirm_pass').val().trim();
 
         if (!token || !new_pass || !confirm_pass) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'All fields are required'
-            });
+            swalDark('error', 'Error', 'All fields are required');
             return;
         }
 
         if (new_pass !== confirm_pass) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Passwords do not match'
-            });
+            swalDark('error', 'Error', 'Passwords do not match');
             return;
         }
 
@@ -93,11 +87,9 @@ $(document).ready(function () {
             },
             success: function (res) {
                 $('#spinner').hide();
-                Swal.fire({
-                    icon: res.status === 'success' ? 'success' : 'error',
-                    title: res.status === 'success' ? 'Success' : 'Error',
-                    text: res.message
-                }).then(() => {
+                swalDark(res.status === 'success' ? 'success' : 'error',
+                         res.status === 'success' ? 'Success' : 'Error',
+                         res.message).then(() => {
                     if (res.status === 'success') {
                         window.location.href = 'signin.php';
                     }
@@ -105,11 +97,7 @@ $(document).ready(function () {
             },
             error: function () {
                 $('#spinner').hide();
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Something went wrong. Try again.'
-                });
+                swalDark('error', 'Error', 'Something went wrong. Try again.');
             }
         });
     });
