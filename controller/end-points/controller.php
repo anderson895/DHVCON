@@ -361,21 +361,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $fullname = trim($_POST['fullname']);
             $email = trim($_POST['email']);
 
-
-
-            $file_upload = (isset($_FILES['profilePic']) && $_FILES['profilePic']['error'] === 0) ? $_FILES['profilePic']: null;
+            // Set file_upload to null if walang laman
+            $file_upload = (!empty($_FILES['profilePic']['name']) && $_FILES['profilePic']['error'] === UPLOAD_ERR_OK)
+                ? $_FILES['profilePic']
+                : null;
 
             $uploadDir = '../../static/upload/profile/';
             $fileName = null;
 
-            if (isset($file_upload) && $file_upload['error'] === UPLOAD_ERR_OK) {
+            // If may file at valid
+            if ($file_upload !== null) {
+
                 // Get original file extension
                 $fileExtension = pathinfo($file_upload['name'], PATHINFO_EXTENSION);
+
                 // Create a clean, unique filename
                 $fileName = uniqid('profile_', true) . '.' . strtolower($fileExtension);
                 $filePath = $uploadDir . $fileName;
 
-                // Move the uploaded file
+                // Move upload
                 if (!move_uploaded_file($file_upload['tmp_name'], $filePath)) {
                     echo json_encode([
                         'status' => 500,
@@ -383,17 +387,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     ]);
                     exit;
                 }
-            } elseif ($file_upload['error'] !== UPLOAD_ERR_NO_FILE && $file_upload['error'] !== 0) {
-                echo json_encode([
-                    'status' => 400,
-                    'message' => 'Invalid file upload.'
-                ]);
-                exit;
+
+            } else {
+                // Check if may ibang error except "no file uploaded"
+                if (isset($_FILES['profilePic']) && $_FILES['profilePic']['error'] !== UPLOAD_ERR_NO_FILE) {
+                    echo json_encode([
+                        'status' => 400,
+                        'message' => 'Invalid file upload.'
+                    ]);
+                    exit;
+                }
             }
 
-
-            $res = $db->updateProfile($user_id, $fullname, $email,$fileName);
+            // Update profile
+            $res = $db->updateProfile($user_id, $fullname, $email, $fileName);
             echo json_encode(['success' => $res]);
+
            
             
         }else if($_POST['requestType'] === 'updatePassword') {
