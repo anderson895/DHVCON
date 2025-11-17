@@ -26,57 +26,73 @@
     <!-- Sign In Form -->
     <form id="frmLogin" method="POST" class="space-y-6">
 
-      <!-- Email Field -->
-      <div>
-        <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-        <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition duration-300">
-          <span class="material-icons text-gray-400 mr-3">email</span>
-          <input 
-            type="email" 
-            id="email" 
-            name="email" 
-            class="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none" 
-            placeholder="Enter your email" 
-            required
-          >
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+          <div class="flex items-center border border-[#3c3f44] bg-[#232428] rounded-2xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition duration-300">
+            <span class="material-icons text-gray-400 mr-3">email</span>
+            <input 
+              type="email" 
+              id="email" 
+              name="email" 
+              class="w-full bg-transparent text-white placeholder-gray-500 focus:outline-none" 
+              placeholder="Enter your email" 
+              required
+            >
+          </div>
         </div>
-      </div>
 
-      <!-- Password Field -->
-      <div>
-        <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-        <div class="relative border border-[#3c3f44] bg-[#232428] rounded-2xl focus-within:ring-2 focus-within:ring-indigo-500 transition duration-300">
-          <span class="material-icons text-gray-400 absolute left-3 top-1/2 -translate-y-1/2">lock</span>
-          <input 
-            type="password" 
-            id="password" 
-            name="password" 
-            class="w-full pl-10 pr-10 py-3 bg-transparent text-white focus:outline-none rounded-2xl placeholder-gray-500" 
-            placeholder="Enter your password" 
-            required
-          >
-          <span id="togglePassword" class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2">
-            visibility_off
-          </span>
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+          <div class="relative border border-[#3c3f44] bg-[#232428] rounded-2xl focus-within:ring-2 focus-within:ring-indigo-500 transition duration-300">
+            <span class="material-icons text-gray-400 absolute left-3 top-1/2 -translate-y-1/2">lock</span>
+            <input 
+              type="password" 
+              id="password" 
+              name="password" 
+              class="w-full pl-10 pr-10 py-3 bg-transparent text-white focus:outline-none rounded-2xl placeholder-gray-500" 
+              placeholder="Enter your password" 
+              required
+            >
+            <span id="togglePassword" class="material-icons text-gray-400 cursor-pointer absolute right-3 top-1/2 -translate-y-1/2">
+              visibility_off
+            </span>
+          </div>
         </div>
-      </div>
 
-      <!-- Submit Button -->
-      <button 
-        type="submit" 
-        name="btnLogin" 
-        class="w-full flex items-center justify-center gap-2 cursor-pointer bg-indigo-600 hover:bg-indigo-500 font-semibold py-3 rounded-full shadow-lg transition transform hover:scale-[1.03]"
-      >
-        <span class="material-icons">login</span>
-        Sign In
-      </button>
-    </form>
+        <!-- Forgot Password Link -->
+        <div class="flex justify-end -mt-3">
+          <a href="forgot-password" class="text-indigo-400 text-sm font-semibold hover:underline">
+            Forgot Password?
+          </a>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          name="btnLogin" 
+          class="w-full flex items-center justify-center gap-2 cursor-pointer bg-indigo-600 hover:bg-indigo-500 font-semibold py-3 rounded-full shadow-lg transition transform hover:scale-[1.03]"
+        >
+          <span class="material-icons">login</span>
+          Sign In
+        </button>
+
+      </form>
+
 
     <!-- Footer Text -->
     <p class="text-center text-gray-400 text-sm">
       Don’t have an account?
       <a href="signup" class="text-indigo-400 font-semibold hover:underline">Sign up</a>
     </p>
+  </div>
+
+   <!-- Wave Divider -->
+  <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-[0]">
+    <svg class="relative block w-full h-20 text-gray-900" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1200 120">
+      <path fill="currentColor" d="M321.39,56.44C205.66,88.78,92.75,106.51,0,95.33V120H1200V0C1072.46,14.93,937.61,44.2,804.43,74.81,670.68,105.52,538.18,132.88,401.19,97.47,370.05,89.42,345.31,78.25,321.39,56.44Z"></path>
+    </svg>
   </div>
 
 </main>
