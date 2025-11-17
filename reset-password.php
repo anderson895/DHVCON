@@ -19,7 +19,6 @@ if (!$token) {
 
         <form id="frmResetToken" class="space-y-4">
             <input type="hidden" id="token" value="<?= htmlspecialchars($token) ?>">
-
             <!-- New Password -->
             <div>
                 <label for="new_pass" class="block text-sm font-medium text-gray-300 mb-2">New Password</label>
@@ -28,7 +27,6 @@ if (!$token) {
                     <span class="material-icons-outlined absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400" onclick="togglePassword('new_pass', this)">visibility_off</span>
                 </div>
             </div>
-
             <!-- Confirm Password -->
             <div>
                 <label for="confirm_pass" class="block text-sm font-medium text-gray-300 mb-2">Confirm Password</label>
@@ -37,7 +35,6 @@ if (!$token) {
                     <span class="material-icons-outlined absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400" onclick="togglePassword('confirm_pass', this)">visibility_off</span>
                 </div>
             </div>
-
             <!-- Submit Button -->
             <button type="submit" class="w-full flex items-center justify-center gap-2 cursor-pointer bg-indigo-600 hover:bg-indigo-500 font-semibold py-3 rounded-full shadow-lg transition transform hover:scale-[1.03]">
                 <span class="material-icons-outlined">lock_reset</span>
