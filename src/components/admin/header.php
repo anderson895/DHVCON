@@ -83,6 +83,12 @@ if (isset($_SESSION['user_id'])) {
         </div>
 
         
+        <a href="rooms" class="nav-link flex items-center space-x-3 hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
+          <span class="material-icons">room_preferences</span>
+          <span>View Rooms</span>
+        </a>
+
+        
 
        
       </nav>
