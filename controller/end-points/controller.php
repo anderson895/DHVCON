@@ -1183,6 +1183,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             exit;
+        }else if ($_GET['requestType'] == 'fetch_all_room_pages') {
+           $page  = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            $offset = ($page - 1) * $limit;
+
+            $data  = $db->fetch_all_room_pages($limit, $offset);
+            $total = $db->count_all_room_pages();
+
+            echo json_encode([
+                'status' => 200,
+                'total'  => $total,
+                'data'   => $data
+            ]);
+            exit;
+
         }else{
             echo "404";
         }

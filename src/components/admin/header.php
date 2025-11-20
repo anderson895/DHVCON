@@ -74,7 +74,7 @@ if (isset($_SESSION['user_id'])) {
         <!-- Deals Dropdown -->
         <button id="toggleUsers" class="cursor-pointer flex justify-between items-center w-full text-[#CCCCCC] hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
           <div class="flex items-center space-x-3">
-            <span class="material-icons">sell</span><span>Manage Users</span>
+            <span class="material-icons">sell</span><span>Users</span>
           </div>
           <span id="user_dropdownIcon" class="material-icons transition-transform">expand_more</span>
         </button>
