@@ -95,7 +95,7 @@ if (isset($_SESSION['user_id'])) {
 
         <a href="manage-certificate" class="nav-link flex items-center space-x-3 hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
           <span class="material-icons">badge</span>
-          <span>Certificate</span>
+          <span>Certificate Template</span>
         </a>
 
         
