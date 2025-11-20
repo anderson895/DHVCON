@@ -98,6 +98,52 @@ $(document).ready(function () {
 
 
 
+$(document).ready(function() {
+
+  // Function to apply search
+  function applyUserSearch() {
+    $('#searchUserInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      var rows = $('.user-table tbody tr'); // assuming table has tbody
+      var found = false;
+
+      rows.each(function() {
+        var match = $(this).text().toLowerCase().indexOf(value) > -1;
+        $(this).toggle(match);
+        if (match) found = true;
+      });
+
+      // Remove previous "no match" row
+      $('.user-table .no-match').remove();
+
+      // If no match, show "No match found"
+      if (!found) {
+        $('.user-table tbody').append(
+          '<tr class="no-match"><td colspan="5" class="text-center p-3 text-[#FFD700]">No match found</td></tr>'
+        );
+      }
+    });
+  }
+
+  // Apply search **after table is loaded via AJAX**
+  $(document).ajaxComplete(function() {
+    applyUserSearch();
+  });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 $(document).on("click", ".view-req-btn", function () {
   let rawReq = $(this).data("req");
   const name = $(this).data("name");

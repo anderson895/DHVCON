@@ -115,6 +115,34 @@ $(document).ready(function () {
 
 
 
+ $(document).ready(function() {
+  $('#searchInput').on('keyup', function() {
+    var value = $(this).val().toLowerCase();
+    var rows = $('#roomTableBody tr');
+    var found = false;
+
+    rows.each(function() {
+      var match = $(this).text().toLowerCase().indexOf(value) > -1;
+      $(this).toggle(match);
+      if (match) found = true;
+    });
+
+    // Remove any existing "no match" row
+    $('#roomTableBody .no-match').remove();
+
+    // If no match, show a single row saying "No match found"
+    if (!found) {
+      $('#roomTableBody').append(
+        '<tr class="no-match"><td colspan="5" class="text-center p-3 text-[#FFD700]">No match found</td></tr>'
+      );
+    }
+  });
+});
+
+
+  
+
+
   // ===============================
   // FETCH CLASSWORKS
   // ===============================
