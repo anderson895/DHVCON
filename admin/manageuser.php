@@ -16,6 +16,20 @@ if($_GET['pages'] === 'pending'){
   <h2 class="text-xl font-bold text-[#FFD700] capitalize tracking-wide"><?=$pageTitle?></h2>
 </div>
 
+
+
+<div class="mb-4">
+  <input 
+    type="text" 
+    id="searchUserInput" 
+    placeholder="Search users..." 
+    class="p-2 rounded border border-gray-400 w-full"
+  />
+</div>
+
+
+
+
 <!-- AJAX user table -->
 <div class="user-table"></div>
 

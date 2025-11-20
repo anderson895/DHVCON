@@ -10,8 +10,17 @@ $pageTitle = "View All Rooms";
   <h2 class="text-xl font-bold text-[#FFD700] capitalize tracking-wide"><?=$pageTitle?></h2>
 </div>
 
+<!-- Search Input -->
+<div class="mb-4">
+  <input 
+    type="text" 
+    id="searchInput" 
+    placeholder="Search..." 
+    class="p-2 rounded border border-gray-400 w-full"
+  />
+</div>
 
-  <!-- Table Container -->
+<!-- Table Container -->
 <div class="overflow-x-auto rounded-md">
   <table class="w-full text-sm text-left text-[#CCCCCC]">
     <thead class="bg-[#0D0D0D] text-[#FFD700] uppercase text-xs">
@@ -24,7 +33,21 @@ $pageTitle = "View All Rooms";
       </tr>
     </thead>
     <tbody id="roomTableBody" class="divide-y divide-gray-700">
-      <!-- Dynamic Data -->
+      <tr>
+        <td class="p-3">001</td>
+        <td class="p-3">Room A</td>
+        <td class="p-3">John</td>
+        <td class="p-3">Banner1</td>
+        <td class="p-3 text-center">View</td>
+      </tr>
+      <tr>
+        <td class="p-3">002</td>
+        <td class="p-3">Room B</td>
+        <td class="p-3">Alice</td>
+        <td class="p-3">Banner2</td>
+        <td class="p-3 text-center">View</td>
+      </tr>
+      <!-- More dynamic rows -->
     </tbody>
   </table>
 </div>
@@ -32,7 +55,16 @@ $pageTitle = "View All Rooms";
 <!-- Pagination -->
 <div id="pagination" class="mt-4 flex justify-center gap-2"></div>
 
-
+<script>
+  $(document).ready(function() {
+    $('#searchInput').on('keyup', function() {
+      var value = $(this).val().toLowerCase();
+      $('#roomTableBody tr').filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+      });
+    });
+  });
+</script>
 
 
 
