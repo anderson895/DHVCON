@@ -414,7 +414,7 @@ function fetchMeetings() {
                                             <div class="mb-2 border-b border-gray-600 pb-2 flex items-start space-x-3">
                                                 ${userAvatar}
                                                 <div class="flex-1">
-                                                    <p class="text-gray-300 text-sm font-semibold mb-1">${r.username}</p>
+                                                    <p class="text-gray-300 text-sm font-semibold mb-1 capitalize">${r.username}</p>
                                                     <div class="flex space-x-1 mb-1">${stars}</div>
                                                     ${r.comment 
                                                         ? `<p class="text-gray-400 text-sm italic">"${r.comment}"</p>` 
