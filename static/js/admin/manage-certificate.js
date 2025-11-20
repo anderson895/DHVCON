@@ -152,7 +152,9 @@ $('#updateSignatoryBtn').click(function(){
 });
 
 
-   // Delete signatory using SweetAlert
+
+
+// Delete signatory using SweetAlert
 $(document).on('click', '.delete-btn', function(){
     const index = $(this).closest('.signature-block').data('index');
 
