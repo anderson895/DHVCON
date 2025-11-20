@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 17, 2025 at 12:05 PM
+-- Generation Time: Nov 20, 2025 at 07:30 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,6 +34,13 @@ CREATE TABLE `claimed_certificate` (
   `claimed_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `claimed_certificate`
+--
+
+INSERT INTO `claimed_certificate` (`claimed_id`, `claimed_meeting_id`, `claimed_user_id`, `claimed_date`) VALUES
+(5, 9, 16, '2025-11-20 18:25:50');
+
 -- --------------------------------------------------------
 
 --
@@ -57,7 +64,10 @@ CREATE TABLE `classwork` (
 
 INSERT INTO `classwork` (`classwork_id`, `classwork_title`, `classwork_instruction`, `classwork_file`, `classwork_by_user_id`, `classwork_room_id`, `classwork_status`, `created_at`) VALUES
 (17, 'dawdaw ssss', 'ersfsreg', 'classwork_68f7c05b821b24.57595105.avif', 15, 33, 0, '2025-10-21 17:21:35'),
-(18, 'task 2', 'dawdaw', 'classwork_68f7c03a499832.64730949.webp', 15, 33, 0, '2025-10-21 17:21:29');
+(18, 'task 2', 'dawdaw', 'classwork_68f7c03a499832.64730949.webp', 15, 33, 0, '2025-10-21 17:21:29'),
+(19, 'classwork 1', 'dawdawd', 'classwork_691f357fede651.43931320.pdf', 15, 33, 1, '2025-11-20 15:36:31'),
+(20, 'classwork 2', 'sefesfesfes', 'classwork_691f35b4b79bc6.62110369.jpg', 15, 33, 1, '2025-11-20 15:37:24'),
+(21, 'classwork 3', 'fesfse', 'classwork_691f35d700a984.03062720.jpg', 15, 33, 1, '2025-11-20 15:37:59');
 
 -- --------------------------------------------------------
 
@@ -275,6 +285,24 @@ CREATE TABLE `submitted_classwork` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `system`
+--
+
+CREATE TABLE `system` (
+  `system_id` int(11) NOT NULL,
+  `signatories` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`signatories`))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `system`
+--
+
+INSERT INTO `system` (`system_id`, `signatories`) VALUES
+(1, '[\n    {\n        \"name\": \"Dr. Maria Santos\",\n        \"position\": \"Dean\",\n        \"department\": \"College of Computing Studies\"\n    },\n    {\n        \"name\": \"Mr. Juan Dela Cruzss\",\n        \"position\": \"Chairperson\",\n        \"department\": \"Computer Studies Department\"\n    },\n    {\n        \"name\": \"joshua padilla\",\n        \"position\": \"teacher 99\",\n        \"department\": \"awdawd\"\n    }\n]');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `user`
 --
 
@@ -297,7 +325,7 @@ CREATE TABLE `user` (
 
 INSERT INTO `user` (`user_id`, `user_fullname`, `user_email`, `user_password`, `user_type`, `user_requirements`, `user_profile_pict`, `user_status`, `reset_token`, `reset_expiry`) VALUES
 (1, 'admin de la cruzss', 'admin@gmail.com', '$2y$10$A1uALnxcGXc2Bo.APqZyRub3JPK/yuQytdrEzBE79vwcV.XQip1Te', 'admin', NULL, NULL, 1, NULL, NULL),
-(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$XSPraUmPB0CrRtZ05pYrh.tDFy3zSyyYcIIdge2/bFc0lmwLJ2lVy', 'teacher', NULL, 'profile_6914b93159ec80.30504779.jpg', 1, '7b233409e9f5146f436dc6bddbd48fe8', 1763381011),
+(15, 'joshua padilla', 'andersonandy046@gmail.com', '$2y$10$sy0kHWXypweB0dSe1VLoGuXcWHheaHBNtTixAK4Vw9GqiA2c7RPtm', 'teacher', NULL, 'profile_6914b93159ec80.30504779.jpg', 1, NULL, NULL),
 (16, 'san jose', 'masterparj@gmail.com', '$2y$10$jwEF4zulPduxjA28gqgRS.8ZfWeFrp03blGD9PGIHWO57bEKWiJM.', 'student', NULL, NULL, 1, NULL, NULL),
 (22, 'april jane', 'padillajoshuaanderson.pdm@gmail.com', '$2y$10$lrrhk5bEA6IRcYxPEI9KheHuA8TYaPoKj.K8ZDJG0A3uGTk2Kn03a', 'student', '[\"6907778db0bd4_bini-desktop-wallpapers-v0-v1z43kmivtbd1.webp\",\"6907778db0e6b_dbd95cee-40e9-420e-a3f0-0b63d7073197.webp\",\"6907778db1176_Exercise-04.docs.pdf\"]', 'profile_6909c07c45a1c5.44233590.webp', 1, NULL, NULL);
 
@@ -385,6 +413,12 @@ ALTER TABLE `submitted_classwork`
   ADD KEY `sw_user_id` (`sw_user_id`);
 
 --
+-- Indexes for table `system`
+--
+ALTER TABLE `system`
+  ADD PRIMARY KEY (`system_id`);
+
+--
 -- Indexes for table `user`
 --
 ALTER TABLE `user`
@@ -398,13 +432,13 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `claimed_certificate`
 --
 ALTER TABLE `claimed_certificate`
-  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `claimed_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `classwork`
 --
 ALTER TABLE `classwork`
-  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `classwork_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `meeting`
@@ -453,6 +487,12 @@ ALTER TABLE `room_members`
 --
 ALTER TABLE `submitted_classwork`
   MODIFY `sw_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT for table `system`
+--
+ALTER TABLE `system`
+  MODIFY `system_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`

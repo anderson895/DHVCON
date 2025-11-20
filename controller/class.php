@@ -15,12 +15,6 @@ class global_class extends db_connect
 
 
 
-    
-
-
-
-
-
 
     public function ratingMeeting($meeting_id, $rating, $user_id, $comment = null) {
     $meeting_id = intval($meeting_id);
@@ -2094,5 +2088,92 @@ public function get_users_data($user_id) {
 
 
 
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class System extends db_connect
+{
+    public function __construct()
+    {
+        $this->connect();
+    }
+
+
+
+
+    // Get all signatories
+    public function getSignatories($system_id = 1) {
+        $stmt = $this->conn->prepare("SELECT signatories FROM `system` WHERE system_id = ?");
+        $stmt->bind_param("i", $system_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $signatories = [];
+        if ($row = $result->fetch_assoc()) {
+            $signatories = json_decode($row['signatories'], true);
+        }
+        $stmt->close();
+        return $signatories;
+    }
+
+    // Save signatories (replace all)
+    public function saveSignatories($signatories, $system_id = 1) {
+        $json = json_encode($signatories, JSON_PRETTY_PRINT);
+        $stmt = $this->conn->prepare("UPDATE `system` SET signatories = ? WHERE system_id = ?");
+        $stmt->bind_param("si", $json, $system_id);
+        $stmt->execute();
+        $stmt->close();
+        return true;
+    }
+
+    // Add a new signatory
+    public function addSignatory($name, $position, $department, $system_id = 1) {
+        $signatories = $this->getSignatories($system_id);
+        $signatories[] = [
+            'name' => $name,
+            'position' => $position,
+            'department' => $department
+        ];
+        return $this->saveSignatories($signatories, $system_id);
+    }
+
+    // Update a signatory by index
+    public function updateSignatory($index, $name, $position, $department, $system_id = 1) {
+        $signatories = $this->getSignatories($system_id);
+        if (isset($signatories[$index])) {
+            $signatories[$index] = [
+                'name' => $name,
+                'position' => $position,
+                'department' => $department
+            ];
+            return $this->saveSignatories($signatories, $system_id);
+        }
+        return false;
+    }
+
+    // Delete a signatory by index
+    public function deleteSignatory($index, $system_id = 1) {
+        $signatories = $this->getSignatories($system_id);
+        if (isset($signatories[$index])) {
+            array_splice($signatories, $index, 1);
+            return $this->saveSignatories($signatories, $system_id);
+        }
+        return false;
+    }
 
 }

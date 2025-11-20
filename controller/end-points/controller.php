@@ -1088,7 +1088,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }else if ($_GET['requestType'] == 'get_users_data') {
             $user_id = $_GET['user_id'] ?? null;
 
-            // Fetch the profile image from DB
             $result = $db->get_users_data($user_id);
 
             echo json_encode([
@@ -1126,21 +1125,64 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit;
 
 
-        }else if ($_GET['requestType'] == 'fetch_all_room_pages') {
-           $page  = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
-            $offset = ($page - 1) * $limit;
+        }else if ($_GET['requestType'] == 'signatories') {
 
-            $data  = $db->fetch_all_room_pages($limit, $offset);
-            $total = $db->count_all_room_pages();
+            $system = new System();
 
-            echo json_encode([
-                'status' => 200,
-                'total'  => $total,
-                'data'   => $data
-            ]);
+            $action = $_GET['action'] ?? '';
+
+            switch ($action) {
+                case 'list':
+                    $signatories = $system->getSignatories();
+                    echo json_encode([
+                        'status' => 200,
+                        'data' => $signatories
+                    ]);
+                    break;
+
+                case 'add':
+                    $name = $_GET['name'] ?? '';
+                    $position = $_GET['position'] ?? '';
+                    $department = $_GET['department'] ?? '';
+
+                    $success = $system->addSignatory($name, $position, $department);
+                    echo json_encode([
+                        'status' => $success ? 200 : 500,
+                        'success' => $success
+                    ]);
+                    break;
+
+                case 'update':
+                    $index = isset($_GET['index']) ? (int)$_GET['index'] : null;
+                    $name = $_GET['name'] ?? '';
+                    $position = $_GET['position'] ?? '';
+                    $department = $_GET['department'] ?? '';
+
+                    $success = $system->updateSignatory($index, $name, $position, $department);
+                    echo json_encode([
+                        'status' => $success ? 200 : 500,
+                        'success' => $success
+                    ]);
+                    break;
+
+                case 'delete':
+                    $index = isset($_GET['index']) ? (int)$_GET['index'] : null;
+                    $success = $system->deleteSignatory($index);
+                    echo json_encode([
+                        'status' => $success ? 200 : 500,
+                        'success' => $success
+                    ]);
+                    break;
+
+                default:
+                    echo json_encode([
+                        'status' => 400,
+                        'message' => 'Invalid action'
+                    ]);
+                    break;
+            }
+
             exit;
-
         }else{
             echo "404";
         }
