@@ -844,20 +844,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
         }else if ($_GET['requestType'] === 'get_all_created_works') {
                     $room_id = intval($_GET['room_id']);
-                    $user_id = $_SESSION['user_id'];
-
-
-                    $response = $db->get_all_created_works($room_id,$user_id);
+                   
+                    if($_SESSION['user_type']==="admin"){
+                        $response = $db->get_all_created_works_admin($room_id);
+                    }else{
+                         $user_id = $_SESSION['user_id'];
+                         $response = $db->get_all_created_works($room_id,$user_id);
+                    }
+                    
 
                     if ($response) {
                         echo json_encode([
                             'status' => 200,
-                            'data' => $response
+                            'data' => $response,
                         ]);
                     } else {
                         echo json_encode([
                             'status' => 500,
-                            'message' => $response
+                            'message' => $response,
                         ]);
                     }
                     
@@ -865,7 +869,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $room_id = intval($_GET['room_id']);
                     $user_id = $_SESSION['user_id'];
 
-                    $response = $db->GetMeetingsByRoom($room_id, $user_id); 
+                    
+                    if($_SESSION['user_type']==="admin"){
+                        $response = $db->GetMeetingsByRoom_admin($room_id);
+                    }else{
+                        $response = $db->GetMeetingsByRoom($room_id, $user_id); 
+                    }
+                    
+
+
 
                     if ($response) {
                         echo json_encode([
@@ -1113,6 +1125,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
                 exit;
 
+
+        }else if ($_GET['requestType'] == 'fetch_all_room_pages') {
+           $page  = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
+            $offset = ($page - 1) * $limit;
+
+            $data  = $db->fetch_all_room_pages($limit, $offset);
+            $total = $db->count_all_room_pages();
+
+            echo json_encode([
+                'status' => 200,
+                'total'  => $total,
+                'data'   => $data
+            ]);
+            exit;
 
         }else{
             echo "404";

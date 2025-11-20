@@ -162,6 +162,91 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
 
 
 
+
+
+
+public function GetMeetingsByRoom_admin($room_id)
+{
+    $query = "
+        SELECT 
+            m.meeting_id,
+            m.meeting_link,
+            m.meeting_title,
+            m.meeting_description,
+            m.meeting_start,
+            m.meeting_end,
+            m.meeting_room_id,
+            m.meeting_creator_user_id,
+            m.meeting_status,
+            m.meeting_pass,
+            IFNULL((
+                SELECT ROUND(AVG(r.rating),1) 
+                FROM meeting_ratings r 
+                WHERE r.meeting_id = m.meeting_id
+            ), 0) AS average_rating
+        FROM meeting m
+        WHERE m.meeting_room_id = ?
+        ORDER BY m.meeting_start ASC
+    ";
+
+    $stmt = $this->conn->prepare($query);
+    if (!$stmt) {
+        die("Prepare failed: " . $this->conn->error);
+    }
+
+    $room_id = intval($room_id);
+    $stmt->bind_param("i", $room_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    $meetings = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $row['average_rating'] = floatval($row['average_rating']);
+
+        // 🔹 Fetch all ratings + comments for this meeting
+        $ratingsQuery = "
+            SELECT 
+                r.rating, 
+                r.comment, 
+                u.user_fullname AS username,
+                u.user_profile_pict
+            FROM meeting_ratings r
+            JOIN user u ON u.user_id = r.user_id
+            WHERE r.meeting_id = ?
+            ORDER BY r.created_at DESC
+        ";
+
+        $ratingsStmt = $this->conn->prepare($ratingsQuery);
+        $ratingsStmt->bind_param("i", $row['meeting_id']);
+        $ratingsStmt->execute();
+        $ratingsResult = $ratingsStmt->get_result();
+
+        $ratings = [];
+        while ($ratingRow = $ratingsResult->fetch_assoc()) {
+            $ratings[] = $ratingRow;
+        }
+        $ratingsStmt->close();
+
+        $row['ratings'] = $ratings;
+
+        $meetings[] = $row;
+    }
+
+    $stmt->close();
+    return $meetings;
+}
+
+
+
+
+
+
+
+
+
+
+
      // Fetch rating results for a meeting
     public function getMeetingRating($meeting_id) {
         $meeting_id = intval($meeting_id);
@@ -275,6 +360,47 @@ public function GetMeetingsByRoom($room_id, $user_id = null)
 
         return $data;
     }
+
+
+
+
+
+     public function fetch_all_room_pages($limit, $offset) {
+        $query = $this->conn->prepare("
+            SELECT r.*,u.user_fullname AS room_creator_name
+            FROM room r
+            LEFT JOIN user u ON r.room_creator_user_id  = u.user_id
+            WHERE room_status = '1' 
+            ORDER BY room_id DESC 
+            LIMIT ? OFFSET ?
+        ");
+        $query->bind_param("ii", $limit, $offset);
+
+        if ($query->execute()) {
+            $result = $query->get_result();
+            $dogs = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $dogs[] = $row;
+            }
+
+            return $dogs;
+        }
+        return []; 
+    }
+
+
+    public function count_all_room_pages() {
+        $result = $this->conn->query("
+            SELECT COUNT(*) as total 
+            FROM room 
+            WHERE room_status = '1'
+        ");
+        $row = $result->fetch_assoc();
+        return (int)$row['total'];
+    }
+
+
 
 
     public function updateUserStatus($id, $status) {
@@ -943,6 +1069,26 @@ public function get_all_created_works($room_id, $user_id) {
 }
 
 
+
+
+public function get_all_created_works_admin($room_id) {
+    $sql = "SELECT * FROM classwork 
+            WHERE classwork_room_id = ? 
+              AND classwork_status = 1
+            ORDER BY created_at DESC";
+
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $room_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // Return all rows as an array
+        return $result->fetch_all(MYSQLI_ASSOC);
+    } else {
+        return [];
+    }
+}
 
 
 
@@ -1887,7 +2033,7 @@ public function getDataAnalytics()
             (SELECT COUNT(*) FROM meeting WHERE meeting_status = 0) AS closed_meetings,
 
             -- Total classworks
-            (SELECT COUNT(*) FROM classwork) AS total_classworks,
+            (SELECT COUNT(*) FROM classwork WHERE classwork_status='1') AS total_classworks,
 
             -- Active classworks
             (SELECT COUNT(*) FROM classwork WHERE classwork_status = 1) AS active_classworks,
