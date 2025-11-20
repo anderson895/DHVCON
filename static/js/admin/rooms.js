@@ -87,19 +87,19 @@ $(document).ready(function () {
 
     if (totalPages > 1) {
       paginationHTML += `
-        <button class="px-3 py-1 bg-gray-700 text-white rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}"
+        <button class="px-3 cursor-pointer py-1 bg-gray-700 text-white rounded ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}"
           ${currentPage === 1 ? 'disabled' : ''} data-page="${currentPage - 1}">Prev</button>
       `;
 
       for (let i = 1; i <= totalPages; i++) {
         paginationHTML += `
-          <button class="px-3 py-1 mx-1 rounded ${i === currentPage ? 'bg-yellow-400 text-black' : 'bg-gray-700 text-white'}"
+          <button class="px-3 cursor-pointer py-1 mx-1 rounded ${i === currentPage ? 'bg-yellow-400 text-black' : 'bg-gray-700 text-white'}"
             data-page="${i}">${i}</button>
         `;
       }
 
       paginationHTML += `
-        <button class="px-3 py-1 bg-gray-700 text-white rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}"
+        <button class="px-3 cursor-pointer py-1 bg-gray-700 text-white rounded ${currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}"
           ${currentPage === totalPages ? 'disabled' : ''} data-page="${currentPage + 1}">Next</button>
       `;
     }
