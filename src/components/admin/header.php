@@ -16,6 +16,9 @@ if (isset($_SESSION['user_id'])) {
     header('location: ../login');
     exit;
 }
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -82,10 +85,17 @@ if (isset($_SESSION['user_id'])) {
           <a href="manageuser?pages=student&&user_type=student" class="block hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md">Student</a>
         </div>
 
-        
+
         <a href="rooms" class="nav-link flex items-center space-x-3 hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
           <span class="material-icons">room_preferences</span>
           <span>View Rooms</span>
+        </a>
+
+
+
+        <a href="manage-certificate" class="nav-link flex items-center space-x-3 hover:text-[#FFD700] hover:bg-white/10 px-4 py-2 rounded-md transition">
+          <span class="material-icons">badge</span>
+          <span>Certificate</span>
         </a>
 
         

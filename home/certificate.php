@@ -157,18 +157,9 @@ if (isset($_GET['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
 
     </div>
 
-    <!-- Signatures -->
-    <div class="flex justify-between items-center px-16 mb-4">
-      <div class="text-center">
-        <div class="w-48 h-16 border-b border-gray-500 mx-auto mb-2"></div>
-        <p class="font-semibold text-white">Dr. Maria Santos</p>
-        <p class="text-gray-400 text-sm">Dean, College of Computing Studies</p>
-      </div>
-      <div class="text-center">
-        <div class="w-48 h-16 border-b border-gray-500 mx-auto mb-2"></div>
-        <p class="font-semibold text-white">Mr. Juan Dela Cruz</p>
-        <p class="text-gray-400 text-sm">Chairperson, Computer Studies Department</p>
-      </div>
+   <!-- Signatures -->
+    <div id="signaturesContainer" class="flex justify-between items-center px-16 mb-4">
+            <!-- Signatories will be dynamically loaded via AJAX -->
     </div>
 
     <!-- Decorative Frame -->
@@ -183,3 +174,5 @@ if (isset($_GET['user_id'], $_GET['meeting_id'], $_GET['meeting_pass'])) {
 
 </body>
 </html>
+
+<script src="../static/js/home/certificate.js"></script>
