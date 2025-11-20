@@ -136,7 +136,7 @@ $pageTitle = "Manage Certificates";
       </div>
 
       <button id="addSignatoryBtn" 
-              class="bg-yellow-400 hover:bg-yellow-500 transition-colors duration-200 text-black font-semibold rounded-lg py-3 mt-3 w-full">
+              class="bg-yellow-400 cursor-pointer hover:bg-yellow-500 transition-colors duration-200 text-black font-semibold rounded-lg py-3 mt-3 w-full">
         Add Signatory
       </button>
     </div>
